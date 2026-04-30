@@ -72,6 +72,8 @@ Shipped as a new helper in `@newkrok/nape-js` (`packages/nape-js/src/helpers/Par
 | #   | Priority                            | Effort | Impact          | Why                                                                                                                                                                                                                                                  |
 | --- | ----------------------------------- | ------ | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | P65 | **One-click game templates**        | M      | :fire: adoption | `npm create nape-game@latest` or StackBlitz templates: platformer starter (CharacterController + tilemap + camera), top-down car, ragdoll fighter, pinball. A running first game in 5 minutes = the most important onboarding element                 |
+| P71 | **Save/Load + Replay demo**         | S      | docs            | Serialization (`spaceToJSON` / `spaceToBinary`) is a flagship feature with no demo in the grid. A snapshot-stack rewind demo (record N frames, scrub backwards, branch) showcases the API and doubles as the seed implementation for P69              |
+| P72 | **`convexCast` demo**               | S      | docs            | `Space.convexCast` / `convexMultiCast` is a public API but invisible in the demo grid. A swept-shape hit-prediction demo (e.g. swung sword finding the first impact along its arc) makes the feature discoverable                                     |
 
 ### Tooling & Infrastructure
 
@@ -101,6 +103,8 @@ Shipped as a new helper in `@newkrok/nape-js` (`packages/nape-js/src/helpers/Par
 ### Phase 4 — Polish & tooling
 
 6. ~~**P62** — Particle system~~ ✅ done (`ParticleEmitter` helper)
-7. **P69** — Deterministic replay system
-8. **P61** — Bundle size reduction
-9. **P29** — Continue test coverage push toward 80%
+7. **P71** — Save/Load + Replay demo (seeds P69)
+8. **P72** — `convexCast` demo
+9. **P69** — Deterministic replay system
+10. **P61** — Bundle size reduction
+11. **P29** — Continue test coverage push toward 80%
