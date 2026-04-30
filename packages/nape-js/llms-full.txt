@@ -2073,3 +2073,133 @@ function render() {
 }
 render();
 ```
+
+---
+
+## Replay Sub-Package (`@newkrok/nape-js/replay`)
+
+Record a deterministic simulation as `(initial snapshot, per-frame input log)`
+and replay it deterministically — same machine, another machine, days later.
+Built on `/serialization` plus `space.deterministic = true`. Tree-shakeable.
+
+```typescript
+import "@newkrok/nape-js"; // engine bootstrap
+import { Recorder, Player, encodeReplay, decodeReplay } from "@newkrok/nape-js/replay";
+```
+
+### Recorder
+
+```typescript
+new Recorder<T>(space: Space, options?: { keyframeEvery?: number })
+```
+
+Captures the initial snapshot at construction and stores user-supplied input
+payloads via `recordFrame`. With `keyframeEvery > 0` (default `60`), also
+captures intermediate snapshots for fast scrub.
+
+**Methods:**
+- `recordFrame(input?: T | null): void` — Log a payload at the current frame
+  and advance. Pass `null` (or omit) for input-less frames; only non-null
+  payloads are stored. Payloads are deep-cloned via JSON (primitives
+  fast-pathed). Throws after `finish()`.
+- `finish(): Replay<T>` — Seal the recording and return an immutable result.
+
+**Properties:**
+- `frame: number` — Frames recorded so far.
+- `finished: boolean` — True after `finish()`.
+
+### Player
+
+```typescript
+new Player<T>(replay: Replay<T>, applyInput?: ((input: T, space: Space, frame: number) => void) | null, options?: { dt?: number; velocityIterations?: number; positionIterations?: number })
+```
+
+Plays a recorded `Replay`. Owns its own `Space` deserialised from the initial
+snapshot.
+
+**Lifecycle:**
+- `restore(): Space` — Restore initial snapshot. Idempotent (rewinds to frame 0).
+- `step(): void` — Apply the next recorded input via `applyInput`, then step
+  physics by `dt`. Throws past end or before `restore()`.
+- `stepTo(frame: number): void` — Random-access seek. Forward jumps walk the
+  log; backward jumps restore the latest keyframe ≤ target then step forward.
+
+**Properties:**
+- `space: Space` — Active space (throws before `restore()`).
+- `frame: number` — Current frame index (0 = pre-step).
+- `frameCount: number` — Total frames in the replay.
+- `finished: boolean` — `frame >= frameCount`.
+- `applyInput` — Mutable; swap callback mid-playback.
+
+### encodeReplay / decodeReplay
+
+```typescript
+function encodeReplay<T>(replay: Replay<T>): Uint8Array
+function decodeReplay<T = unknown>(bytes: Uint8Array): Replay<T>
+```
+
+Compact binary format: magic `RPLY`, versioned, length-prefixed snapshots,
+UTF-8 JSON for input payloads. Round-trip preserves frame count, inputs, and
+keyframes byte-for-byte. Throws on bad magic or unsupported version.
+
+### validateDeterministicConfig
+
+```typescript
+function validateDeterministicConfig(space: Space): { ok: boolean; warnings: string[] }
+```
+
+Sanity-checks `space.deterministic = true` and friends. Pure inspection.
+
+### Replay type
+
+```typescript
+interface Replay<T> {
+  readonly version: number;
+  readonly initialSnapshot: Uint8Array;
+  readonly inputs: ReadonlyArray<{ frame: number; payload: T }>;
+  readonly keyframes: ReadonlyArray<{ frame: number; snapshot: Uint8Array }>;
+  readonly frameCount: number;
+}
+```
+
+### Determinism contract
+
+Replay matches recording bit-close on the **same platform** when:
+
+1. `space.deterministic = true` is set on the recording space (and survives in
+   the snapshot).
+2. Both sides use a fixed `dt` and matching velocity/position iteration counts.
+3. The user's `applyInput` is a pure function of `(input, space, frame)` — no
+   `Math.random()`, no wall-clock reads, no closure mutations.
+
+Cross-platform bit-exact replay is not currently supported (floating-point
+rounding differs across CPUs). `body.userData` is NOT preserved through binary
+snapshots — encode it into your input payload if needed.
+
+### Usage example
+
+```typescript
+import "@newkrok/nape-js";
+import { Recorder, Player, encodeReplay, decodeReplay } from "@newkrok/nape-js/replay";
+
+type Input = { fire?: boolean };
+
+// Record
+space.deterministic = true;
+const recorder = new Recorder<Input>(space, { keyframeEvery: 60 });
+for (let f = 0; f < 600; f++) {
+  const input = readInput();
+  recorder.recordFrame(input);
+  if (input?.fire) ball.applyImpulse(new Vec2(0, -200));
+  space.step(1 / 60);
+}
+const blob = encodeReplay(recorder.finish());
+
+// Replay
+const replay = decodeReplay<Input>(blob);
+const player = new Player(replay, (input, sp) => {
+  if (input.fire) sp.bodies.at(1).applyImpulse(new Vec2(0, -200));
+});
+player.restore();
+while (!player.finished) player.step();
+```

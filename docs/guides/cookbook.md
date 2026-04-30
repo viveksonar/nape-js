@@ -28,6 +28,7 @@ Each recipe shows the minimal working code and explains the "why" behind key dec
 - [Constraint Reference — Which Joint to Use](#constraint-reference--which-joint-to-use)
 - [Serialization (Save / Load)](#serialization-save--load)
 - [Binary Snapshot (Multiplayer)](#binary-snapshot-multiplayer)
+- [Replay & Recording (Deterministic Playback)](#replay--recording-deterministic-playback)
 - [Web Worker Off-Thread Physics](#web-worker-off-thread-physics)
 - [CCD (Bullet Bodies)](#ccd-bullet-bodies)
 - [Sub-Stepping for Stability](#sub-stepping-for-stability)
@@ -834,6 +835,92 @@ ws.onmessage = (event) => {
   const restored = spaceFromBinary(new Uint8Array(event.data));
   // Use restored space for prediction/rendering
 };
+```
+
+---
+
+## Replay & Recording (Deterministic Playback)
+
+`@newkrok/nape-js/replay` records a simulation as `(initial snapshot, per-frame
+input log)` and plays it back deterministically — same machine, another machine,
+days later. Useful for debug repro, multiplayer rollback foundations, shareable
+replays, and regression tests.
+
+The library does not patch `body.applyImpulse`. You provide an `applyInput`
+callback that translates a recorded payload into Space mutations — exactly the
+same calls you'd make during the live recording.
+
+```typescript
+import "@newkrok/nape-js";
+import { Recorder, Player, encodeReplay, decodeReplay } from "@newkrok/nape-js/replay";
+
+// ── Record ────────────────────────────────────────────────────────────────
+type Input = { fire?: boolean; mouseX?: number; mouseY?: number };
+
+space.deterministic = true; // mandatory for replay determinism
+const recorder = new Recorder<Input>(space, { keyframeEvery: 60 });
+
+for (let frame = 0; frame < 600; frame++) {
+  const input = readUserInput(); // your own logic — may be null
+  recorder.recordFrame(input);
+  if (input?.fire) ball.applyImpulse(new Vec2(0, -200));
+  space.step(1 / 60);
+}
+
+const replay = recorder.finish();
+const blob = encodeReplay(replay); // Uint8Array — store / share / transfer
+
+// ── Replay (anywhere on the same platform) ────────────────────────────────
+const replay2 = decodeReplay<Input>(blob);
+const player = new Player(replay2, (input, sp, frame) => {
+  if (input.fire) sp.bodies.at(1).applyImpulse(new Vec2(0, -200));
+});
+
+const sp = player.restore();           // restore initial snapshot
+while (!player.finished) player.step();
+// Or: player.stepTo(150) for random-access scrub via keyframes
+```
+
+### Determinism contract
+
+Replay reproduces the recording bit-close on the **same platform** when:
+
+1. `space.deterministic = true` is set on the recording space (and survives in the snapshot).
+2. Both sides use a fixed `dt` and matching velocity/position iteration counts.
+3. Your `applyInput` is a pure function of `(input, space, frame)` — no `Math.random()`, no wall-clock reads, no closure mutation.
+
+Cross-platform bit-exact replay is not currently supported — floating-point
+rounding differs across CPUs (see roadmap P74 for a fixed-point math layer).
+
+### Scrubbing
+
+Backward `stepTo(target)` jumps restore the latest keyframe ≤ target, then step
+forward through the input log. Without keyframes (`keyframeEvery: 0`), backward
+scrub re-restores from the initial snapshot — still works, just slower.
+
+```typescript
+// Long replay, scrub to 5 seconds in
+player.stepTo(60 * 5);
+
+// Then back to 2 seconds
+player.stepTo(60 * 2);
+```
+
+### What's NOT captured
+
+- `body.userData` — binary serialization skips it (it's not size-bounded). If
+  you need to round-trip userData, encode it into your input payload yourself,
+  or use `spaceToJSON` instead.
+- Sleeping state — bodies wake fresh on snapshot restore. The simulation
+  re-resolves sleep on the next step.
+
+### Validating determinism config
+
+```typescript
+import { validateDeterministicConfig } from "@newkrok/nape-js/replay";
+
+const { ok, warnings } = validateDeterministicConfig(space);
+if (!ok) console.warn("Replay may drift:", warnings);
 ```
 
 ---

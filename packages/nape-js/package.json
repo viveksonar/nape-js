@@ -49,6 +49,16 @@
         "default": "./dist/serialization/index.cjs"
       }
     },
+    "./replay": {
+      "import": {
+        "types": "./dist/replay/index.d.ts",
+        "default": "./dist/replay/index.js"
+      },
+      "require": {
+        "types": "./dist/replay/index.d.cts",
+        "default": "./dist/replay/index.cjs"
+      }
+    },
     "./worker": {
       "import": {
         "types": "./dist/worker/index.d.ts",

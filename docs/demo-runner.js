@@ -130,6 +130,11 @@ export class DemoRunner {
   #workerBridge = null;
   #workerMode = false;
 
+  // Physics-pause flag — when true, #tick() still renders + calls demo.step()
+  // but skips space.step() entirely. Used by demos that pause-and-scrub
+  // through serialized history (P71 save/load+rewind).
+  #physicsPaused = false;
+
   // FPS tracking
   #lastTime   = 0;
   #frameCount = 0;
@@ -190,6 +195,9 @@ export class DemoRunner {
   }
 
   get workerMode() { return this.#workerMode; }
+
+  get physicsPaused() { return this.#physicsPaused; }
+  set physicsPaused(val) { this.#physicsPaused = !!val; }
 
   /** Returns an array of registered adapter IDs. */
   getAvailableAdapters() {
@@ -342,6 +350,7 @@ export class DemoRunner {
     this.#shakeTotal = 0;
     this.#shakeOffX = 0;
     this.#shakeOffY = 0;
+    this.#physicsPaused = false;
     // Expose self to the demo so it can call shakeCamera() etc.
     demoDef._runner = this;
 
@@ -415,6 +424,27 @@ export class DemoRunner {
   async loadAsync(demoDef) {
     if (demoDef.preload) await demoDef.preload();
     this.load(demoDef);
+  }
+
+  /**
+   * Replace the active Space with a different instance. Used by demos that
+   * deserialize or rewind state — `spaceFromBinary` returns a new Space, so
+   * the demo asks the runner to swap its reference.
+   *
+   * Skips if the new space is null or already the active one.
+   */
+  replaceSpace(newSpace) {
+    if (!newSpace || newSpace === this.#space) return;
+    this.#space = newSpace;
+    if (this.#showProfiler) newSpace.profilerEnabled = true;
+    if (this.#activeAdapter) {
+      const adapterId = this.#activeAdapter.id;
+      const hasOverride = this.#demo?.renderOverrides?.[adapterId];
+      if (!hasOverride || adapterId === "pixijs") {
+        this.#activeAdapter.onDemoUnload();
+        this.#activeAdapter.onDemoLoad(newSpace, this.#W, this.#H);
+      }
+    }
   }
 
   // -----------------------------------------------------------------------
@@ -599,13 +629,18 @@ export class DemoRunner {
 
         let stepMs = 0;
         let stepped = false;
-        while (this.#accumulator >= FIXED_DT) {
-          const stepStart = performance.now();
-          this.#space.step(FIXED_DT, velIter, posIter);
-          stepMs += performance.now() - stepStart;
+        if (this.#physicsPaused) {
+          // Drain accumulator without stepping so resuming doesn't burst-step.
+          this.#accumulator = 0;
+        } else {
+          while (this.#accumulator >= FIXED_DT) {
+            const stepStart = performance.now();
+            this.#space.step(FIXED_DT, velIter, posIter);
+            stepMs += performance.now() - stepStart;
 
-          this.#accumulator -= FIXED_DT;
-          stepped = true;
+            this.#accumulator -= FIXED_DT;
+            stepped = true;
+          }
         }
 
         // Update camera every frame (not just on physics steps) so that on

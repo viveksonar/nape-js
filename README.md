@@ -172,6 +172,41 @@ bootstrap when unused. The snapshot captures bodies, shapes, materials, interact
 filters, fluid properties, all constraint types (except `UserConstraint`), and compounds.
 Arbiters and broadphase tree state are reconstructed automatically on the first step.
 
+### Replay (Recorder + Player)
+
+Record a deterministic simulation and play it back later — same machine, another
+machine, days later. Built on top of `/serialization` plus `space.deterministic = true`.
+
+```typescript
+import "@newkrok/nape-js";
+import { Recorder, Player, encodeReplay, decodeReplay } from "@newkrok/nape-js/replay";
+
+// Record — user supplies the input payload type and the apply function.
+space.deterministic = true;
+const recorder = new Recorder<MyInput>(space, { keyframeEvery: 60 });
+for (let f = 0; f < 600; f++) {
+  recorder.recordFrame(readUserInput()); // null = no input this frame
+  applyUserInput(space);                  // user's own logic
+  space.step(1 / 60);
+}
+const replay = recorder.finish();
+const blob = encodeReplay(replay); // Uint8Array — store, share, transfer
+
+// Replay — anywhere, including a different machine on the same platform.
+const replay2 = decodeReplay<MyInput>(blob);
+const player = new Player(replay2, (input, space, frame) => {
+  if (input.fire) somebody.applyImpulse(new Vec2(0, -200));
+});
+const sp = player.restore();
+while (!player.finished) player.step();
+// player.stepTo(150) — random-access scrub via keyframes
+```
+
+The `/replay` entry point is tree-shakeable. The library is intentionally a thin
+layer: it owns the snapshot + input-log plumbing, and the user owns the
+`applyInput` callback. This keeps the replay deterministic as long as the
+callback is a pure function of `(input, space, frame)`.
+
 ### Web Worker
 
 Run physics off the main thread for smooth rendering even with hundreds of bodies.
@@ -209,7 +244,7 @@ present, with automatic `postMessage` fallback otherwise.
 ```bash
 npm install
 npm run build      # tsup → packages/*/dist/ (ESM + CJS + DTS)
-npm test           # vitest — 5632 engine tests + 71 pixi-adapter tests
+npm test           # vitest — 5684 engine tests + 71 pixi-adapter tests
 npm run benchmark  # Performance benchmarks
 ```
 

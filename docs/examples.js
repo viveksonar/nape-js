@@ -61,6 +61,8 @@ import tilemap             from "./demos/tilemap.js?v=3.31.0";
 import planetPlatformer    from "./demos/planet-platformer.js?v=3.31.0";
 import volcano             from "./demos/volcano.js?v=3.31.0";
 import destructibleArena   from "./demos/destructible-arena.js?v=3.31.0";
+import saveLoadRewind      from "./demos/save-load-rewind.js?v=3.31.0";
+import replayRecorder      from "./demos/replay-recorder.js?v=3.31.0";
 
 const ALL_DEMOS = [
   falling, pyramid, chain, explosion, constraints, gravity, stacking, ragdoll, strandbeast,
@@ -89,6 +91,8 @@ const ALL_DEMOS = [
   planetPlatformer,
   volcano,
   destructibleArena,
+  saveLoadRewind,
+  replayRecorder,
 ];
 
 const gtag = window.gtag || function() {};

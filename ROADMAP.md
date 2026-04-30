@@ -2,7 +2,7 @@
 
 ## Completed Items
 
-Done: P21-P28, P30-P33, P35, P37-P43, P44, P45-P48, P50-P55, P57, P60, P62, P63, P64, P66-P68, P70.
+Done: P21-P28, P30-P33, P35, P37-P43, P44, P45-P48, P50-P55, P57, P60, P62, P63, P64, P66-P68, P69, P70, P71.
 Cancelled: P34 (tree shaking — architectural limit), P36 (server demos — superseded by P52), P49 (ECS adapter — trivial pattern).
 
 ### P44 — PixiJS integration (`@newkrok/nape-pixi` 0.1.0)
@@ -37,6 +37,29 @@ Shipped as a new helper in `@newkrok/nape-js` (`packages/nape-js/src/helpers/Rad
 - **New demo** `planet-platformer.js` — Mario-Galaxy-style: walk around ten planetoids (each with its own gravity well) plus a giant **Goliath** in the east, with random debris on every surface. Jump between them, collect coins + a star.
 - **Side fix**: `CharacterController` now exposes a runtime-mutable `down: Vec2` direction (default `(0, 1)`) — ground / wall raycasts and slope detection follow it. Makes radial-gravity walking work natively. Default behaviour unchanged.
 
+### P69 — Deterministic replay system + P71 — Save/Load + Replay demo
+
+Shipped together: P71's snapshot ring buffer is the feature P69 generalises into a full input-recording API. Both ride on the existing `spaceToBinary` / `spaceFromBinary` serialization layer (P39).
+
+**P69 — `@newkrok/nape-js/replay`** (new sub-entry, tree-shakeable, mirrors `serialization` and `worker`).
+
+- `Recorder<T>` — captures the initial snapshot at construction, then logs user-supplied input payloads per frame via `recordFrame(input)`. Optional intermediate keyframes (`keyframeEvery: 60` by default) snapshot the space periodically for fast scrub. Inputs are deep-cloned via JSON (primitives fast-pathed). `finish()` returns an immutable `Replay<T>`.
+- `Player<T>` — owns its own `Space` deserialised from the replay's initial snapshot. `step()` applies the next recorded input via the user's `applyInput` callback, then steps physics. `stepTo(frame)` does random-access scrub: forward steps walk the input log; backward jumps restore the latest keyframe ≤ target and step from there. Backward scrub without keyframes still works (re-restores from frame 0). `restore()` rewinds and is idempotent.
+- `encodeReplay(replay)` / `decodeReplay(bytes)` — compact binary format (magic `RPLY`, versioned, length-prefixed snapshots, UTF-8 JSON payloads). Round-trip preserves frame count, inputs, keyframes byte-for-byte.
+- `validateDeterministicConfig(space)` — sanity-checks `space.deterministic = true` etc., returns `{ ok, warnings }`.
+- 52 unit tests covering construction validation, payload encoding (primitives + nested objects + deep-clone isolation), keyframe capture cadence, encode/decode round-trip (including empty + zero-frame edge cases + magic/version errors), `Player.step` + `stepTo` forward/backward semantics, end-to-end deterministic replay (impulse-driven simulation reproduces position bit-close), and scrub-converges-to-same-state via keyframes.
+- Architectural choice: **inputs in, simulation out** — the library does NOT monkey-patch `body.applyImpulse`. The user provides a pure `applyInput(input, space, frame)` callback, the library handles snapshotting and frame counting. Cleanly separates engine determinism from user-logic determinism, and makes the API trivial to type-parameterise.
+
+**P71 — Save/Load + Rewind demo** (`docs/demos/save-load-rewind.js`).
+
+- Three layered use cases on the same `spaceToBinary` API: 5 explicit save slots, a 3-second time scrubber backed by a ring buffer, and a "Branch from here" button that forks a new timeline from the scrubbed point.
+- Live size readout — shows current snapshot bytes and ring-buffer fill.
+- Driver bits added to `DemoRunner`:
+  - `replaceSpace(newSpace)` — swap the active Space (used after `spaceFromBinary`). Re-attaches the active renderer adapter automatically.
+  - `physicsPaused` flag — `#tick` keeps rendering and calling `demo.step()` but skips `space.step()`. Lets the scrubber show a frozen frame without single-step drift.
+- `docs/demos/replay-recorder.js` — companion P69 demo: click-to-throw recording, then deterministic playback with frame counter, replay binary size, and a progress bar. Demonstrates the full Recorder/Player/encodeReplay flow.
+- Build wiring: serialization + replay sub-bundles are now copied to `docs/serialization/` and `docs/replay/` so demos can `import` them directly (chunk paths resolve via the shared `docs/chunk-*.js` siblings).
+
 ### P62 — ParticleEmitter helper
 
 Shipped as a new helper in `@newkrok/nape-js` (`packages/nape-js/src/helpers/ParticleEmitter.ts`).
@@ -53,7 +76,7 @@ Shipped as a new helper in `@newkrok/nape-js` (`packages/nape-js/src/helpers/Par
 
 | #   | Priority                         | Effort | Impact   | Status                                                         |
 | --- | -------------------------------- | ------ | -------- | -------------------------------------------------------------- |
-| P29 | Test coverage >= 80%             | L      | safety   | :diamonds: ~72% statements (5632 tests)                        |
+| P29 | Test coverage >= 80%             | L      | safety   | :diamonds: ~72% statements (5684 tests)                        |
 | P56 | Interactive playground           | S-M    | adoption | :white_square_button: Not started                              |
 
 ---
@@ -72,7 +95,6 @@ Shipped as a new helper in `@newkrok/nape-js` (`packages/nape-js/src/helpers/Par
 | #   | Priority                            | Effort | Impact          | Why                                                                                                                                                                                                                                                  |
 | --- | ----------------------------------- | ------ | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | P65 | **One-click game templates**        | M      | :fire: adoption | `npm create nape-game@latest` or StackBlitz templates: platformer starter (CharacterController + tilemap + camera), top-down car, ragdoll fighter, pinball. A running first game in 5 minutes = the most important onboarding element                 |
-| P71 | **Save/Load + Replay demo**         | S      | docs            | Serialization (`spaceToJSON` / `spaceToBinary`) is a flagship feature with no demo in the grid. A snapshot-stack rewind demo (record N frames, scrub backwards, branch) showcases the API and doubles as the seed implementation for P69              |
 | P72 | **`convexCast` demo**               | S      | docs            | `Space.convexCast` / `convexMultiCast` is a public API but invisible in the demo grid. A swept-shape hit-prediction demo (e.g. swung sword finding the first impact along its arc) makes the feature discoverable                                     |
 
 ### Tooling & Infrastructure
@@ -80,7 +102,8 @@ Shipped as a new helper in `@newkrok/nape-js` (`packages/nape-js/src/helpers/Par
 | #   | Priority                                 | Effort | Impact          | Why                                                                                                                                                                                                                              |
 | --- | ---------------------------------------- | ------ | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | P61 | **Bundle size reduction**                | S-M    | competitiveness | Close the 123 KB vs Phaser Box2D 65 KB gap (growing — bundle has gained ~36 KB across recent helper additions). Dead code audit, hot path optimization                                                                          |
-| P69 | **Deterministic replay system**          | M      | features        | Input recording + playback on top of existing serialization + deterministic mode. Debug bug reproduction, multiplayer rollback foundation, shareable replays, deterministic regression tests — one feature that connects many others |
+| P73 | **Replay delta encoding**                | M      | size            | P69 stores full snapshots for keyframes (~150-300 B/body each). For long replays / many bodies, delta-encoded keyframes (XOR against the previous + run-length on zeros) could cut keyframe size 5-10×. Requires versioned format bump |
+| P74 | **Cross-platform deterministic math**    | L      | features        | Engine determinism is currently same-platform only (floating-point rounding differs across CPUs). Fixed-point math layer (Q32.32 or similar) on the hot path would enable cross-platform-bit-exact replays — required for true peer-to-peer rollback netcode |
 
 ---
 
@@ -103,8 +126,10 @@ Shipped as a new helper in `@newkrok/nape-js` (`packages/nape-js/src/helpers/Par
 ### Phase 4 — Polish & tooling
 
 6. ~~**P62** — Particle system~~ ✅ done (`ParticleEmitter` helper)
-7. **P71** — Save/Load + Replay demo (seeds P69)
-8. **P72** — `convexCast` demo
-9. **P69** — Deterministic replay system
+7. ~~**P71** — Save/Load + Replay demo~~ ✅ done (`save-load-rewind` demo + `DemoRunner` swap/pause hooks)
+8. ~~**P69** — Deterministic replay system~~ ✅ done (`@newkrok/nape-js/replay` — Recorder, Player, encode/decode, validator + `replay-recorder` demo, 52 tests)
+9. **P72** — `convexCast` demo
 10. **P61** — Bundle size reduction
-11. **P29** — Continue test coverage push toward 80%
+11. **P73** — Replay delta encoding (smaller keyframes for long replays)
+12. **P74** — Cross-platform deterministic math (fixed-point hot path)
+13. **P29** — Continue test coverage push toward 80%

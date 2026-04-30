@@ -2,7 +2,13 @@ import { defineConfig } from "tsup";
 import pkg from "./package.json";
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/serialization/index.ts", "src/worker/index.ts", "src/profiler/index.ts"],
+  entry: [
+    "src/index.ts",
+    "src/serialization/index.ts",
+    "src/replay/index.ts",
+    "src/worker/index.ts",
+    "src/profiler/index.ts",
+  ],
   format: ["esm", "cjs"],
   dts: true,
   sourcemap: true,

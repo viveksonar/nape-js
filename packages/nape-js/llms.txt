@@ -9,7 +9,8 @@ Install: `npm install @newkrok/nape-js`
 - [API Reference](https://newkrok.github.io/nape-js/api/index.html): Full TypeDoc-generated API docs
 - [Interactive Demos](https://newkrok.github.io/nape-js/examples.html): Live physics demos with source code
 - [Full LLM Documentation](https://raw.githubusercontent.com/NewKrok/nape-js/master/packages/nape-js/llms-full.txt): Complete API reference in a single file
-- [Cookbook](https://github.com/NewKrok/nape-js/blob/master/docs/guides/cookbook.md): Task-oriented recipes (platformer, ragdoll, fluid, serialization, etc.)
+- [Cookbook](https://github.com/NewKrok/nape-js/blob/master/docs/guides/cookbook.md): Task-oriented recipes (platformer, ragdoll, fluid, serialization, replay, etc.)
+- [Replay Guide](https://github.com/NewKrok/nape-js/blob/master/docs/guides/replay-guide.md): Recorder + Player + binary encode/decode + determinism contract
 - [Troubleshooting](https://github.com/NewKrok/nape-js/blob/master/docs/guides/troubleshooting.md): Common problems and solutions
 - [Anti-Patterns](https://github.com/NewKrok/nape-js/blob/master/docs/guides/anti-patterns.md): Common mistakes to avoid
 - [PixiJS Integration](https://www.npmjs.com/package/@newkrok/nape-pixi) (`@newkrok/nape-pixi`): Sibling package — body/sprite sync, fixed-step render interpolation, debug draw, and off-thread physics bridge. PIXI v8.
@@ -129,3 +130,14 @@ Higher-level building blocks layered on top of the engine — opt-in modules.
 - `buildWorkerScript(napeUrl)`: Generate self-contained worker script for inline Blob or hosted file
 - `BodyTransform`: `{ x, y, rotation }` per-body transform read from shared buffer
 - `FLOATS_PER_BODY`, `HEADER_FLOATS`: Buffer layout constants
+
+## Replay (`@newkrok/nape-js/replay`)
+
+Record a deterministic simulation and play it back. Built on `/serialization` + `space.deterministic = true`. Tree-shakeable; only loads when imported.
+
+- [Recorder](https://newkrok.github.io/nape-js/api/classes/Recorder.html)`<T>`: Captures the initial snapshot at construction, then `recordFrame(input)` logs an input payload per frame. Optional `keyframeEvery` (default 60) records intermediate snapshots for fast scrub. `finish()` returns an immutable `Replay<T>`.
+- [Player](https://newkrok.github.io/nape-js/api/classes/Player.html)`<T>`: Owns its own deserialised `Space`. `restore()` rewinds to frame 0; `step()` applies the next recorded input (via the user's `applyInput` callback) and steps physics; `stepTo(frame)` does random-access scrub (uses keyframes for backward jumps).
+- [encodeReplay](https://newkrok.github.io/nape-js/api/functions/encodeReplay.html) / [decodeReplay](https://newkrok.github.io/nape-js/api/functions/decodeReplay.html): Compact binary format (magic `RPLY`, versioned, length-prefixed snapshots, UTF-8 JSON payloads). Round-trips byte-for-byte.
+- [validateDeterministicConfig](https://newkrok.github.io/nape-js/api/functions/validateDeterministicConfig.html): Sanity-checks `space.deterministic = true` etc.; returns `{ ok, warnings }`.
+
+**Determinism contract** — replay matches recording when (a) `space.deterministic = true`, (b) fixed `dt` and matching iteration counts on both sides, (c) the user's `applyInput` is a pure function of `(input, space, frame)`. Same-platform soft determinism only (floating-point rounding differs across CPUs).
