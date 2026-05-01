@@ -205,11 +205,13 @@ export default {
   init(container) {
     if (container.querySelector(".save-load-overlay")) return;
 
-    // ── Right-side panel: mode + slots + branch ─────────────────────────────
+    // ── Left-side panel: mode + slots + branch ──────────────────────────────
+    // Positioned top-left so it doesn't collide with the default canvas-controls
+    // overlay (2D/3D toggle, outline, profiler, reset, fullscreen) at top-right.
     const panel = document.createElement("div");
     panel.className = "save-load-overlay";
     panel.style.cssText =
-      "position:absolute;top:8px;right:8px;z-index:10;display:flex;flex-direction:column;gap:6px;" +
+      "position:absolute;top:8px;left:8px;z-index:10;display:flex;flex-direction:column;gap:6px;" +
       "background:rgba(13,17,23,0.78);padding:8px;border-radius:6px;color:#c9d1d9;" +
       "font:11px/1.4 system-ui;border:1px solid rgba(255,255,255,0.08);min-width:170px;" +
       "backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);";
@@ -358,10 +360,10 @@ export default {
     refreshUI();
   },
 
-  // Custom render — let the default outline draw run, then layer a simple
-  // tint that signals scrubbing mode (visual feedback in case the panel is
-  // hidden or off-screen).
-  render(ctx, space, W, H) {
+  // Overlay drawn AFTER the default body render (in screen space, no camera).
+  // Uses render3dOverlay (not render) because `render` would replace the
+  // default body draw entirely — which is why the canvas appeared blank.
+  render3dOverlay(ctx, space, W, H) {
     if (mode === "scrubbing") {
       ctx.save();
       ctx.fillStyle = "rgba(210, 153, 34, 0.06)";
