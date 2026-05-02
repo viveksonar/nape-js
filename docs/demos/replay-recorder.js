@@ -243,11 +243,13 @@ export default {
   init(container) {
     if (container.querySelector(".replay-recorder-overlay")) return;
 
-    // ── Top-right control panel ────────────────────────────────────────────
+    // ── Top-left control panel ─────────────────────────────────────────────
+    // Positioned top-left so it doesn't collide with the default canvas-controls
+    // overlay (2D/3D toggle, outline, profiler, reset, fullscreen) at top-right.
     const panel = document.createElement("div");
     panel.className = "replay-recorder-overlay";
     panel.style.cssText =
-      "position:absolute;top:8px;right:8px;z-index:10;display:flex;flex-direction:column;gap:6px;" +
+      "position:absolute;top:8px;left:8px;z-index:10;display:flex;flex-direction:column;gap:6px;" +
       "background:rgba(13,17,23,0.78);padding:10px;border-radius:6px;color:#c9d1d9;" +
       "font:11px/1.4 system-ui;border:1px solid rgba(255,255,255,0.08);min-width:220px;" +
       "backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);";
