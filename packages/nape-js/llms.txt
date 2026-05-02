@@ -7,7 +7,7 @@ Install: `npm install @newkrok/nape-js`
 - [GitHub Repository](https://github.com/NewKrok/nape-js): Source code, issues, contributing guide
 - [npm Package](https://www.npmjs.com/package/@newkrok/nape-js): Published package with TypeScript declarations
 - [API Reference](https://napejs.org/api/index.html): Full TypeDoc-generated API docs
-- [Interactive Demos](https://napejs.org/examples.html): Live physics demos with source code
+- [Interactive Demos](https://napejs.org/examples): Live physics demos with source code
 - [Full LLM Documentation](https://raw.githubusercontent.com/NewKrok/nape-js/master/packages/nape-js/llms-full.txt): Complete API reference in a single file
 - [Cookbook](https://github.com/NewKrok/nape-js/blob/master/docs/guides/cookbook.md): Task-oriented recipes (platformer, ragdoll, fluid, serialization, replay, etc.)
 - [Replay Guide](https://github.com/NewKrok/nape-js/blob/master/docs/guides/replay-guide.md): Recorder + Player + binary encode/decode + determinism contract

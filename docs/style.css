@@ -190,6 +190,30 @@ a:hover { text-decoration: underline; }
   color: #fff;
   border-color: var(--accent);
 }
+.tab-cat-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 7px;
+  vertical-align: middle;
+  background: var(--text-dim);
+}
+.tab-cat-dot-physics { background: var(--accent); }
+.tab-cat-dot-game    { background: var(--orange); }
+.cat-legend {
+  display: inline-flex;
+  gap: 14px;
+  margin-left: 12px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  vertical-align: middle;
+}
+.cat-legend-item {
+  display: inline-flex;
+  align-items: center;
+}
+.cat-legend-item .tab-cat-dot { margin-right: 6px; }
 .tab-more {
   background: transparent;
   color: var(--green);

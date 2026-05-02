@@ -206,7 +206,7 @@ record/restore/replay loop.
 
 ## Demos
 
-Two demos in the [examples grid](../examples.html) exercise this API:
+Two demos in the [examples grid](../examples/) exercise this API:
 
 - **Save / Load / Rewind** (`save-load-rewind`) — uses the underlying
   `spaceToBinary` directly with a 3-second ring buffer for time-scrub. The

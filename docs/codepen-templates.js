@@ -9,7 +9,7 @@
  *  2. Auto-generation from demo hooks (setup/step/click/drag/release) via .toString()
  */
 
-const NAPE_CDN = "https://cdn.jsdelivr.net/npm/@newkrok/nape-js@3.32.0/dist/index.js";
+const NAPE_CDN = "https://cdn.jsdelivr.net/npm/@newkrok/nape-js@3.33.0/dist/index.js";
 const NAPE_PIXI_CDN = "https://cdn.jsdelivr.net/npm/@newkrok/nape-pixi@0.1.0/dist/index.js";
 const THREE_CDN = "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js";
 
@@ -882,8 +882,9 @@ function autoGenerateCode(demo, adapterId, preamble = "") {
   let demoObj = extractDemoObject(demo, preamble);
   if (!demoObj) return null;
 
-  // Rewrite relative asset URLs to absolute GitHub Pages URLs for CodePen
-  demoObj = demoObj.replace(/([\"'])\.\/(assets\/[^\"']+|[^\"']+\.(svg|png|webp|jpg|jpeg|gif))/g, `$1${ASSET_BASE_URL}$2`);
+  // Rewrite relative asset URLs to absolute GitHub Pages URLs for CodePen.
+  // Supports both ./ (legacy) and ../ (after the examples page moved into /examples/).
+  demoObj = demoObj.replace(/([\"'])\.\.?\/(assets\/[^\"']+|[^\"']+\.(svg|png|webp|jpg|jpeg|gif))/g, `$1${ASSET_BASE_URL}$2`);
 
   // Try to extract gravity from setup body (common pattern: space.gravity = new Vec2(...))
   const setupSrc = demo.setup.toString();

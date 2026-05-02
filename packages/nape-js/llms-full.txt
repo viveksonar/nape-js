@@ -5,7 +5,7 @@
 - **npm**: `npm install @newkrok/nape-js`
 - **GitHub**: https://github.com/NewKrok/nape-js
 - **API docs**: https://napejs.org/api/index.html
-- **Demos**: https://napejs.org/examples.html
+- **Demos**: https://napejs.org/examples
 - **License**: MIT
 - **Version**: 3.30.0
 - **Cookbook**: https://github.com/NewKrok/nape-js/blob/master/docs/guides/cookbook.md

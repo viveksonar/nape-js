@@ -14,7 +14,7 @@
 Fully typed, tree-shakeable 2D physics engine — a modern TypeScript rewrite of the
 [Nape](https://github.com/deltaluca/nape) Haxe physics engine.
 
-**[Homepage & Interactive Demos](https://napejs.org/)** | **[API Reference](https://napejs.org/api/)** | **[Examples](https://napejs.org/examples.html)** | **[Multiplayer Demo](https://napejs.org/multiplayer.html)**
+**[Homepage & Interactive Demos](https://napejs.org/)** | **[API Reference](https://napejs.org/api/)** | **[Examples](https://napejs.org/examples)** | **[Multiplayer Demo](https://napejs.org/multiplayer.html)**
 
 **[Cookbook](docs/guides/cookbook.md)** | **[Troubleshooting](docs/guides/troubleshooting.md)** | **[Anti-Patterns](docs/guides/anti-patterns.md)**
 

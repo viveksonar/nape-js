@@ -3,24 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>nape-js — Examples</title>
-  <meta name="description" content="Interactive physics demos for nape-js — explore rigid bodies, constraints, ragdolls, vehicles, cloth simulation, and more in 2D and 3D." />
-  <meta name="keywords" content="physics engine demos, TypeScript physics examples, 2D physics demo, rigid body simulation, ragdoll physics, constraint demo, cloth simulation, fluid buoyancy, interactive physics, nape-js examples" />
-  <meta name="robots" content="index, follow" />
+  <title>2D Physics Examples — nape-js | TypeScript Physics Engine Demos</title>
+  <meta name="description" content="50+ interactive 2D physics demos in TypeScript &amp; JavaScript — rigid bodies, constraints, ragdolls, vehicles, cloth, fluid buoyancy, fracture, soft body, raycasting, and playable mini-games. Open the source on CodePen." />
+  <meta name="keywords" content="2D physics engine demos, TypeScript physics examples, JavaScript physics demos, rigid body simulation, ragdoll physics, constraint demo, cloth simulation, fluid buoyancy, raycasting demo, soft body, deterministic physics, fracture, slingshot, tower defense, platformer physics, nape-js examples, Box2D alternative, Matter.js alternative" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
   <meta name="theme-color" content="#0d1117" />
-  <link rel="canonical" href="https://napejs.org/examples.html" />
+  <link rel="canonical" href="https://napejs.org/examples" />
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "nape-js — Interactive Physics Examples",
-    "description": "40+ interactive 2D physics demos — rigid bodies, constraints, ragdolls, vehicles, cloth, fluid simulation, and more.",
-    "url": "https://napejs.org/examples.html",
+    "name": "nape-js — 2D Physics Engine Examples",
+    "description": "50+ interactive 2D physics demos for TypeScript &amp; JavaScript — rigid bodies, constraints, ragdolls, vehicles, cloth, fluid simulation, fracture, soft body, and playable game examples.",
+    "url": "https://napejs.org/examples",
     "isPartOf": {
       "@type": "WebSite",
       "name": "nape-js",
       "url": "https://napejs.org/"
+    },
+    "about": {
+      "@type": "SoftwareSourceCode",
+      "name": "nape-js",
+      "programmingLanguage": ["TypeScript", "JavaScript"],
+      "codeRepository": "https://github.com/NewKrok/nape-js"
     },
     "author": {
       "@type": "Person",
@@ -32,17 +38,17 @@
   <!-- Open Graph -->
   <meta property="og:site_name" content="nape-js" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="nape-js — Interactive Physics Examples" />
-  <meta property="og:description" content="40+ interactive demos — rigid bodies, constraints, ragdolls, vehicles, cloth, and more in 2D and 3D." />
-  <meta property="og:url" content="https://napejs.org/examples.html" />
+  <meta property="og:title" content="2D Physics Examples — nape-js" />
+  <meta property="og:description" content="50+ interactive demos — rigid bodies, constraints, ragdolls, vehicles, cloth, fluid, fracture, soft body, and playable mini-games in 2D and 3D." />
+  <meta property="og:url" content="https://napejs.org/examples" />
   <meta property="og:image" content="https://napejs.org/assets/social-card.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:creator" content="@KSomoracz" />
-  <meta name="twitter:title" content="nape-js — Interactive Physics Examples" />
-  <meta name="twitter:description" content="40+ interactive demos — rigid bodies, constraints, ragdolls, vehicles, cloth, and more in 2D and 3D." />
+  <meta name="twitter:title" content="2D Physics Examples — nape-js" />
+  <meta name="twitter:description" content="50+ interactive demos — rigid bodies, constraints, ragdolls, vehicles, cloth, fluid, fracture, soft body, and playable mini-games in 2D and 3D." />
   <meta name="twitter:image" content="https://napejs.org/assets/social-card.png" />
   <!-- Google Analytics (GA4) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TF84DLZ4X8"></script>
@@ -52,8 +58,8 @@
     gtag('js', new Date());
     gtag('config', 'G-TF84DLZ4X8');
   </script>
-  <link rel="icon" type="image/svg+xml" href="logo.svg" />
-  <link rel="stylesheet" href="style.css?v=3.32.0" />
+  <link rel="icon" type="image/svg+xml" href="../logo.svg" />
+  <link rel="stylesheet" href="../style.css?v=3.33.0" />
   <style>
     .examples-hero {
       text-align: center;
@@ -134,6 +140,76 @@
     .grid-size-btn:hover { color: var(--text); }
     .grid-size-btn.active { background: var(--accent-dim); color: #fff; }
     .grid-size-btn svg { display: block; }
+
+    /* ── Category filter bar (always visible) ────────────────────────── */
+    .examples-categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 18px;
+    }
+    .category-pill {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+      user-select: none;
+    }
+    .category-pill:hover {
+      color: var(--text);
+      border-color: var(--text-dim);
+    }
+    .category-pill.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .category-pill-physics.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+    .category-pill-game.active {
+      background: rgba(210, 153, 34, 0.85);
+      border-color: var(--orange);
+    }
+    .category-pill-game:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    /* ── Card category badge ─────────────────────────────────────────── */
+    .card-category-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      vertical-align: 2px;
+      margin-right: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: filter 0.15s, transform 0.1s;
+    }
+    .card-category-badge.category-pill-physics {
+      background: rgba(88, 166, 255, 0.14);
+      color: var(--accent);
+      border-color: rgba(88, 166, 255, 0.35);
+    }
+    .card-category-badge.category-pill-game {
+      background: rgba(210, 153, 34, 0.14);
+      color: var(--orange);
+      border-color: rgba(210, 153, 34, 0.4);
+    }
+    .card-category-badge:hover { filter: brightness(1.25); }
 
     /* ── Tag filter bar (collapsible) ────────────────────────────────── */
     .examples-tags-wrapper {
@@ -327,8 +403,8 @@
       background: var(--accent-dim);
     }
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css?v=3.32.0" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.css?v=3.32.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css?v=3.33.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.css?v=3.33.0" />
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" data-manual></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
@@ -336,9 +412,9 @@
 <body>
   <header class="examples-hero">
     <div class="container">
-      <a href="index.html" class="back-link" onclick="gtag('event','navigation',{event_category:'examples',event_label:'back_to_home'})">&larr; Back to Home</a>
-      <h1>Examples</h1>
-      <p>Tap or drag on the canvas to play with the simulation.</p>
+      <a href="../" class="back-link" onclick="gtag('event','navigation',{event_category:'examples',event_label:'back_to_home'})">&larr; Back to Home</a>
+      <h1>nape-js — 2D Physics Engine Examples</h1>
+      <p>50+ interactive demos for the <a href="../">nape-js</a> TypeScript physics engine. Tap or drag on the canvas to play with the simulation.</p>
 
       <!-- Controls row -->
       <div class="examples-controls">
@@ -374,6 +450,9 @@
         </div>
       </div>
 
+      <!-- Category filter bar (always visible — Physics vs Game) -->
+      <div class="examples-categories" id="categoryFilterBar" role="tablist" aria-label="Filter demos by category"></div>
+
       <!-- Tag filter bar (collapsible, populated by JS) -->
       <div class="examples-tags-wrapper" id="tagFilterWrapper">
         <button class="btn btn-small examples-tags-toggle" id="tagToggleBtn">Tags ▾</button>
@@ -391,7 +470,7 @@
           <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px">Multiplayer Physics</div>
           <div style="font-size:13px;color:var(--text-dim)">Real-time server-authoritative simulation — move a character, push objects, see other players live.</div>
         </div>
-        <a href="multiplayer.html" class="btn btn-primary" style="white-space:nowrap" onclick="gtag('event','navigation',{event_category:'examples',event_label:'multiplayer'})">Play &rarr;</a>
+        <a href="../multiplayer.html" class="btn btn-primary" style="white-space:nowrap" onclick="gtag('event','navigation',{event_category:'examples',event_label:'multiplayer'})">Play &rarr;</a>
       </div>
       <!-- Benchmark banner -->
       <div class="multiplayer-banner" style="margin-top:12px">
@@ -400,7 +479,7 @@
           <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px">Engine Benchmarks</div>
           <div style="font-size:13px;color:var(--text-dim)">Compare nape-js vs Matter.js vs Planck.js vs Rapier — run benchmarks in your browser.</div>
         </div>
-        <a href="benchmark.html" class="btn btn-primary" style="white-space:nowrap" onclick="gtag('event','navigation',{event_category:'examples',event_label:'benchmarks'})">Run &rarr;</a>
+        <a href="../benchmark.html" class="btn btn-primary" style="white-space:nowrap" onclick="gtag('event','navigation',{event_category:'examples',event_label:'benchmarks'})">Run &rarr;</a>
       </div>
       <div class="examples-grid" id="examplesGrid"></div>
     </div>
@@ -409,16 +488,16 @@
   <footer class="footer">
     <div class="container">
       <p class="footer-links">
-        <a href="index.html">Home</a>
+        <a href="../">Home</a>
         &bull;
         <a href="https://github.com/NewKrok/nape-js" target="_blank" rel="noopener">GitHub</a>
         &bull;
         <a href="https://x.com/KSomoracz" target="_blank" rel="noopener">Twitter / X</a>
       </p>
       <p>
-        Original Haxe engine by <a href="https://github.com/deltaluca/nape">Luca Deltodesco</a>
-        &bull; JS compiler by <a href="https://github.com/cspotcode/nape-to-js">Andrew Bradley</a>
-        &bull; TypeScript wrapper by <a href="https://github.com/NewKrok">Istvan Krisztian Somoracz</a>
+        Based on the original Haxe engine by <a href="https://github.com/deltaluca/nape">Luca Deltodesco</a>
+        &bull; JS port scaffolded by <a href="https://github.com/cspotcode/nape-to-js">Andrew Bradley</a>
+        &bull; TypeScript rewrite &amp; ongoing development by <a href="https://github.com/NewKrok">Istvan Krisztian Somoracz</a>
       </p>
       <p>MIT License</p>
     </div>
@@ -440,6 +519,6 @@
       });
     })();
   </script>
-  <script type="module" src="examples.js?v=3.32.0"></script>
+  <script type="module" src="../examples.js?v=3.33.0"></script>
 </body>
 </html>

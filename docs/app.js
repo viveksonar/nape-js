@@ -3,26 +3,27 @@
  */
 import {
   Space, Body, BodyType, Vec2, Circle, Polygon, VERSION,
-} from "./nape-js.esm.js?v=3.32.0";
-import { installErrorOverlay } from "./renderer.js?v=3.32.0";
-import { DemoRunner } from "./demo-runner.js?v=3.32.0";
-import { Canvas2DAdapter } from "./renderers/canvas2d-adapter.js?v=3.32.0";
-import { ThreeJSAdapter, loadThree } from "./renderers/threejs-adapter.js?v=3.32.0";
-import { PixiJSAdapter, loadPixi } from "./renderers/pixijs-adapter.js?v=3.32.0";
-import { openInCodePen as _openInCodePen, getPreviewCode } from "./codepen-templates.js?v=3.32.0";
+} from "./nape-js.esm.js?v=3.33.0";
+import { installErrorOverlay } from "./renderer.js?v=3.33.0";
+import { DemoRunner } from "./demo-runner.js?v=3.33.0";
+import { Canvas2DAdapter } from "./renderers/canvas2d-adapter.js?v=3.33.0";
+import { ThreeJSAdapter, loadThree } from "./renderers/threejs-adapter.js?v=3.33.0";
+import { PixiJSAdapter, loadPixi } from "./renderers/pixijs-adapter.js?v=3.33.0";
+import { openInCodePen as _openInCodePen, getPreviewCode } from "./codepen-templates.js?v=3.33.0";
+
+import { categoryOf } from "./demo-categories.js?v=3.33.0";
 
 // Demo definitions — one file each
-import falling     from "./demos/falling.js?v=3.32.0";
-import pyramid     from "./demos/pyramid.js?v=3.32.0";
-import chain       from "./demos/chain.js?v=3.32.0";
-import explosion   from "./demos/explosion.js?v=3.32.0";
-import constraints from "./demos/constraints.js?v=3.32.0";
-import gravity     from "./demos/gravity.js?v=3.32.0";
-import stacking    from "./demos/stacking.js?v=3.32.0";
-import ragdoll     from "./demos/ragdoll.js?v=3.32.0";
-import strandbeast from "./demos/strandbeast.js?v=3.32.0";
-import softBody    from "./demos/soft-body.js?v=3.32.0";
-import towerDefense from "./demos/tower-defense.js?v=3.32.0";
+import falling     from "./demos/falling.js?v=3.33.0";
+import pyramid     from "./demos/pyramid.js?v=3.33.0";
+import chain       from "./demos/chain.js?v=3.33.0";
+import explosion   from "./demos/explosion.js?v=3.33.0";
+import constraints from "./demos/constraints.js?v=3.33.0";
+import gravity     from "./demos/gravity.js?v=3.33.0";
+import stacking    from "./demos/stacking.js?v=3.33.0";
+import ragdoll     from "./demos/ragdoll.js?v=3.33.0";
+import strandbeast from "./demos/strandbeast.js?v=3.33.0";
+import softBody    from "./demos/soft-body.js?v=3.33.0";
 
 // =========================================================================
 // Demo registry
@@ -30,7 +31,7 @@ import towerDefense from "./demos/tower-defense.js?v=3.32.0";
 
 const ALL_DEMOS = [
   falling, pyramid, chain, explosion, constraints,
-  gravity, stacking, ragdoll, strandbeast, softBody, towerDefense,
+  gravity, stacking, ragdoll, strandbeast, softBody,
 ];
 
 const FEATURED = ALL_DEMOS
@@ -118,9 +119,14 @@ function buildTabs() {
   const nav = document.getElementById("demoTabs");
   for (const demo of FEATURED) {
     const btn = document.createElement("button");
-    btn.className = "tab";
+    btn.className = "tab tab-cat-" + categoryOf(demo);
     btn.dataset.demo = demo.id;
-    btn.textContent = demo.label;
+    const cat = categoryOf(demo);
+    const dot = document.createElement("span");
+    dot.className = "tab-cat-dot tab-cat-dot-" + cat;
+    dot.title = cat === "game" ? "Game example" : "Physics example";
+    btn.appendChild(dot);
+    btn.appendChild(document.createTextNode(demo.label));
     nav.insertBefore(btn, nav.querySelector(".tab-more"));
   }
 }

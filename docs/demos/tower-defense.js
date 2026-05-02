@@ -719,8 +719,7 @@ export default {
   id: "tower-defense",
   label: "Tower Defense",
   tags: ["Gameplay", "Callbacks", "AOE", "Impulse", "Upgrades"],
-  featured: true,
-  featuredOrder: 4,
+  featured: false,
   desc:
     "Build <b>archer</b> (single-target) and <b>bomb</b> (AOE + knockback) towers to defend the base. Enemies are physics bodies — bombs scatter them against walls, and they fight their way back on track. <b>Click</b> empty spot to build, <b>click</b> tower to upgrade. Enemy HP scales with wave; every 3rd wave brings fast runners, every 5th wave is a horde that pours in 5-at-a-time.",
   walls: false,

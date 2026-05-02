@@ -26,7 +26,7 @@ function loadLogo() {
     img.onload = () => { _logoImg = img; done(); };
     img.onerror = done;
     setTimeout(done, 2000);
-    img.src = "./logo.svg";
+    img.src = "../logo.svg";
   });
 }
 

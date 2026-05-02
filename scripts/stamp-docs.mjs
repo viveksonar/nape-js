@@ -41,7 +41,7 @@ function stamp(file, patterns) {
 const stripV = (ref) => ref.replace(/\?v=[^"')]*/, "");
 
 // --- HTML files: stamp <link href="..."> and <script src="..."> ---
-for (const htmlFile of ["index.html", "examples.html"]) {
+for (const htmlFile of ["index.html", "examples/index.html"]) {
   stamp(resolve(docs, htmlFile), [
     // <link rel="stylesheet" href="style.css"> or href="style.css?v=old"
     [
