@@ -42,10 +42,10 @@ const H_DEFAULT = 500;
 const KEYFRAME_EVERY = 60;
 const THROW_SPEED = 280;
 
-function spawnBall(space, x, y, vx, vy) {
+function spawnBall(space, x, y, vx, vy, radius) {
   const mat = new Material(0.5, 0.6, 0.5, 1);
   const b = new Body(BodyType.DYNAMIC, new Vec2(x, y));
-  b.shapes.add(new Circle(8 + Math.random() * 4, undefined, mat));
+  b.shapes.add(new Circle(radius, undefined, mat));
   b.userData._colorIdx = (space.bodies.length * 3) | 0;
   b.space = space;
   b.velocity = new Vec2(vx, vy);
@@ -55,7 +55,7 @@ function spawnBall(space, x, y, vx, vy) {
 /** applyInput callback for the player: spawn a ball with the recorded click. */
 function applyInputToSpace(input, space) {
   if (input?.action === "throw") {
-    spawnBall(space, input.x, input.y, input.vx, input.vy);
+    spawnBall(space, input.x, input.y, input.vx, input.vy, input.radius);
   }
 }
 
@@ -183,6 +183,18 @@ export default {
   step(space) {
     const runner = this._runner;
 
+    // Take over physics stepping in both modes. The runner's fixed-step
+    // accumulator can fire 0, 1, or 2 space.step() calls per demo.step()
+    // depending on display rate / dropped frames — that decoupling breaks
+    // the recorder's frame counter (input frames drift from physics frames)
+    // and double-steps the player's space (replay looks 2× too fast). We
+    // pause the runner and drive exactly one fixed step per recorded frame.
+    if (mode === "recording" || mode === "replaying") {
+      runner.physicsPaused = true;
+    } else {
+      runner.physicsPaused = false;
+    }
+
     if (mode === "recording") {
       // Drain pending click into the input log AT this frame, then apply it.
       let payload = null;
@@ -192,13 +204,14 @@ export default {
       }
       recorder.recordFrame(payload);
       if (payload != null) applyInputToSpace(payload, space);
+      // Step the recorded space ourselves, in lockstep with recordFrame().
+      space.step(1 / 60, 8, 3);
       frameCounter++;
       // Auto-stop at 8 sec to keep blob size sane and the demo zippy.
       if (frameCounter >= 60 * 8) finishRecording();
     } else if (mode === "replaying") {
-      // Player owns its own space (we swapped it in via replaceSpace). Keep
-      // stepping until done, then return to idle and re-show the recorded
-      // initial state for clarity.
+      // Player owns its own space (we swapped it in via replaceSpace) and
+      // calls space.step() internally — exactly one step per player.step().
       if (!player.finished) {
         player.step();
       } else {
@@ -217,10 +230,14 @@ export default {
   click(x, y, space) {
     if (mode !== "recording") return;
     // Random throw direction biased downward + slight horizontal spread.
+    // The random angle and radius are baked into the payload so the replay
+    // can reproduce the same ball — without this, applyInput would call
+    // Math.random() again at replay time and diverge from the recording.
     const ang = (Math.random() - 0.5) * 1.2 - Math.PI / 2;
     const vx = Math.cos(ang) * THROW_SPEED;
     const vy = Math.sin(ang) * THROW_SPEED;
-    pendingClick = { action: "throw", x, y, vx, vy };
+    const radius = 8 + Math.random() * 4;
+    pendingClick = { action: "throw", x, y, vx, vy, radius };
   },
 
   init(container) {
