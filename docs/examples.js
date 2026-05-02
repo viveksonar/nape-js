@@ -24,7 +24,6 @@ import strandbeast from "./demos/strandbeast.js?v=3.33.0";
 import carSideview    from "./demos/car-sideview.js?v=3.33.0";
 import trackedVehicle from "./demos/tracked-vehicle.js?v=3.33.0";
 import carTopdown     from "./demos/car-topdown.js?v=3.33.0";
-import platformer     from "./demos/platformer.js?v=3.33.0";
 import ropeBridge     from "./demos/rope-bridge.js?v=3.33.0";
 import wreckingBall   from "./demos/wrecking-ball.js?v=3.33.0";
 import newtonsCradle  from "./demos/newtons-cradle.js?v=3.33.0";
@@ -67,7 +66,7 @@ import replayRecorder      from "./demos/replay-recorder.js?v=3.33.0";
 
 const ALL_DEMOS = [
   falling, pyramid, chain, explosion, constraints, gravity, stacking, ragdoll, strandbeast,
-  carSideview, carTopdown, platformer, ropeBridge, wreckingBall, newtonsCradle,
+  carSideview, carTopdown, ropeBridge, wreckingBall, newtonsCradle,
   dominos, conveyorBelts, trebuchet, seesaw, pinball, cloth, funnel,
   softBody, oneWayPlatforms, filteringInteractions, bodyFromGraphic, dropImageBody, capsule,
   destructibleTerrain,

@@ -9,7 +9,6 @@
  * Demos default to "physics" if not listed.
  */
 export const GAME_DEMO_IDS = new Set([
-  "platformer",
   "character-controller",
   "planet-platformer",
   "car-sideview",
