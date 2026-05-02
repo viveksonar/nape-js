@@ -12,9 +12,10 @@ A fully typed TypeScript 2D physics engine — modernized rewrite of the origina
 - **Callback system** — body/interaction/constraint listeners, pre-collision callbacks
 - **Fluid simulation** — buoyancy and drag via fluid-enabled shapes (unique among JS engines)
 - **Serialization** — JSON + binary for save/load/multiplayer rollback
+- **Replay** — `Recorder` + `Player` with input-log recording, keyframe scrub, binary encode/decode (`@newkrok/nape-js/replay`)
 - **Debug draw** — abstract `DebugDraw` interface, reference impls for Canvas/Three.js/PixiJS/p5.js
 - **Character controller** — geometric collide-and-slide (`CharacterController` class)
-- **~123 KB** minified ESM bundle (~27 KB gzip), TSDoc documented, 5632 engine tests + 71 pixi-adapter tests
+- **~123 KB** minified ESM bundle (~27 KB gzip), TSDoc documented, 5684 engine tests + 71 pixi-adapter tests
 
 ## Repo Layout (npm workspaces)
 
@@ -50,7 +51,7 @@ npm run format:check # prettier across both workspaces
 
 1. `npm run format:check` — must pass (Prettier code style, both packages)
 2. `npm run lint` — must pass (ESLint, both packages)
-3. `npm test` — all tests must pass (5632 + 71)
+3. `npm test` — all tests must pass (5684 + 71)
 4. `npm run build` — DTS generation must succeed (catches type errors vitest misses)
 
 ## Release (per-package, auto)
@@ -88,3 +89,4 @@ Engine bootstrap (packages/nape-js/src/core/engine.ts → ZPPRegistry.ts + boots
 | Testing | `docs/guides/testing.md` | Vitest config, test patterns, coverage metrics, best practices |
 | Workflow | `docs/guides/workflow.md` | Build system, CI/CD, linting, commit conventions, doc update matrix, all scripts |
 | Multiplayer | `docs/guides/multiplayer-guide.md` | Server-authoritative architecture, binary protocol, prediction, deployment |
+| Replay | `docs/guides/replay-guide.md` | `Recorder` / `Player` / `encodeReplay`, determinism contract, scrub, sizing |

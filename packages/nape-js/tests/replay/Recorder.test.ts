@@ -1,0 +1,166 @@
+import { describe, it, expect } from "vitest";
+import "../../src/core/engine";
+import { Space } from "../../src/space/Space";
+import { Body } from "../../src/phys/Body";
+import { BodyType } from "../../src/phys/BodyType";
+import { Vec2 } from "../../src/geom/Vec2";
+import { Circle } from "../../src/shape/Circle";
+import { Recorder, REPLAY_VERSION } from "../../src/replay/Recorder";
+
+function makeSpace(): Space {
+  const space = new Space(new Vec2(0, 600));
+  space.deterministic = true;
+  const body = new Body(BodyType.DYNAMIC, new Vec2(100, 100));
+  body.shapes.add(new Circle(10));
+  body.space = space;
+  return space;
+}
+
+describe("Recorder", () => {
+  describe("construction", () => {
+    it("captures initial snapshot from space", () => {
+      const space = makeSpace();
+      const r = new Recorder(space);
+      expect(r.frame).toBe(0);
+      expect(r.finished).toBe(false);
+    });
+
+    it("throws on null space", () => {
+      expect(() => new Recorder(null as unknown as Space)).toThrow(/space is required/);
+    });
+
+    it("throws on negative keyframeEvery", () => {
+      const space = makeSpace();
+      expect(() => new Recorder(space, { keyframeEvery: -1 })).toThrow(
+        /keyframeEvery must be a non-negative integer/,
+      );
+    });
+
+    it("throws on non-integer keyframeEvery", () => {
+      const space = makeSpace();
+      expect(() => new Recorder(space, { keyframeEvery: 1.5 })).toThrow(
+        /keyframeEvery must be a non-negative integer/,
+      );
+    });
+
+    it("accepts keyframeEvery: 0 (disables keyframes)", () => {
+      const space = makeSpace();
+      expect(() => new Recorder(space, { keyframeEvery: 0 })).not.toThrow();
+    });
+  });
+
+  describe("recordFrame", () => {
+    it("advances frame on each call", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 0 });
+      r.recordFrame(null);
+      expect(r.frame).toBe(1);
+      r.recordFrame(null);
+      expect(r.frame).toBe(2);
+    });
+
+    it("stores non-null payloads in input log", () => {
+      const space = makeSpace();
+      const r = new Recorder<{ jump: boolean }>(space, { keyframeEvery: 0 });
+      r.recordFrame({ jump: true });
+      r.recordFrame(null);
+      r.recordFrame({ jump: false });
+      const replay = r.finish();
+      expect(replay.inputs).toHaveLength(2);
+      expect(replay.inputs[0]).toEqual({ frame: 0, payload: { jump: true } });
+      expect(replay.inputs[1]).toEqual({ frame: 2, payload: { jump: false } });
+    });
+
+    it("deep-clones object payloads", () => {
+      const space = makeSpace();
+      const r = new Recorder<{ keys: string[] }>(space, { keyframeEvery: 0 });
+      const payload = { keys: ["a"] };
+      r.recordFrame(payload);
+      payload.keys.push("b"); // should not affect stored copy
+      const replay = r.finish();
+      expect(replay.inputs[0].payload).toEqual({ keys: ["a"] });
+    });
+
+    it("captures keyframe at every Nth frame", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 5 });
+      for (let i = 0; i < 12; i++) r.recordFrame(null);
+      const replay = r.finish();
+      // Keyframes at frames 5 and 10 (frame 0 is initialSnapshot)
+      expect(replay.keyframes.map((k) => k.frame)).toEqual([5, 10]);
+    });
+
+    it("captures no keyframes with keyframeEvery: 0", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 0 });
+      for (let i = 0; i < 100; i++) r.recordFrame(null);
+      const replay = r.finish();
+      expect(replay.keyframes).toEqual([]);
+    });
+
+    it("throws when called after finish()", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 0 });
+      r.finish();
+      expect(() => r.recordFrame(null)).toThrow(/cannot record after finish/);
+    });
+  });
+
+  describe("finish", () => {
+    it("returns Replay with current version", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 0 });
+      const replay = r.finish();
+      expect(replay.version).toBe(REPLAY_VERSION);
+    });
+
+    it("frameCount matches recorded frames", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 0 });
+      for (let i = 0; i < 7; i++) r.recordFrame(null);
+      const replay = r.finish();
+      expect(replay.frameCount).toBe(7);
+    });
+
+    it("returns initialSnapshot as Uint8Array", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 0 });
+      const replay = r.finish();
+      expect(replay.initialSnapshot).toBeInstanceOf(Uint8Array);
+      expect(replay.initialSnapshot.byteLength).toBeGreaterThan(0);
+    });
+
+    it("flips finished flag", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 0 });
+      expect(r.finished).toBe(false);
+      r.finish();
+      expect(r.finished).toBe(true);
+    });
+  });
+
+  describe("payload encoding", () => {
+    it("preserves primitive payloads (number, string, boolean, null)", () => {
+      const space = makeSpace();
+      const r = new Recorder<number | string | boolean>(space, { keyframeEvery: 0 });
+      r.recordFrame(42);
+      r.recordFrame("hello");
+      r.recordFrame(true);
+      const replay = r.finish();
+      expect(replay.inputs[0].payload).toBe(42);
+      expect(replay.inputs[1].payload).toBe("hello");
+      expect(replay.inputs[2].payload).toBe(true);
+    });
+
+    it("preserves nested object payloads", () => {
+      const space = makeSpace();
+      const r = new Recorder(space, { keyframeEvery: 0 });
+      r.recordFrame({ pos: { x: 1, y: 2 }, keys: ["a", "b"] });
+      const replay = r.finish();
+      expect(replay.inputs[0].payload).toEqual({
+        pos: { x: 1, y: 2 },
+        keys: ["a", "b"],
+      });
+    });
+  });
+});

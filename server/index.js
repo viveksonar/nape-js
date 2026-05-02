@@ -808,6 +808,7 @@ const httpServer = createServer((req, res) => {
 });
 
 const ALLOWED_ORIGINS = [
+  "https://napejs.org",
   "https://newkrok.github.io",
   "http://localhost:5500",
   "http://localhost:3000",

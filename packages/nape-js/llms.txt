@@ -6,10 +6,11 @@ Install: `npm install @newkrok/nape-js`
 
 - [GitHub Repository](https://github.com/NewKrok/nape-js): Source code, issues, contributing guide
 - [npm Package](https://www.npmjs.com/package/@newkrok/nape-js): Published package with TypeScript declarations
-- [API Reference](https://newkrok.github.io/nape-js/api/index.html): Full TypeDoc-generated API docs
-- [Interactive Demos](https://newkrok.github.io/nape-js/examples.html): Live physics demos with source code
+- [API Reference](https://napejs.org/api/index.html): Full TypeDoc-generated API docs
+- [Interactive Demos](https://napejs.org/examples.html): Live physics demos with source code
 - [Full LLM Documentation](https://raw.githubusercontent.com/NewKrok/nape-js/master/packages/nape-js/llms-full.txt): Complete API reference in a single file
-- [Cookbook](https://github.com/NewKrok/nape-js/blob/master/docs/guides/cookbook.md): Task-oriented recipes (platformer, ragdoll, fluid, serialization, etc.)
+- [Cookbook](https://github.com/NewKrok/nape-js/blob/master/docs/guides/cookbook.md): Task-oriented recipes (platformer, ragdoll, fluid, serialization, replay, etc.)
+- [Replay Guide](https://github.com/NewKrok/nape-js/blob/master/docs/guides/replay-guide.md): Recorder + Player + binary encode/decode + determinism contract
 - [Troubleshooting](https://github.com/NewKrok/nape-js/blob/master/docs/guides/troubleshooting.md): Common problems and solutions
 - [Anti-Patterns](https://github.com/NewKrok/nape-js/blob/master/docs/guides/anti-patterns.md): Common mistakes to avoid
 - [PixiJS Integration](https://www.npmjs.com/package/@newkrok/nape-pixi) (`@newkrok/nape-pixi`): Sibling package — body/sprite sync, fixed-step render interpolation, debug draw, and off-thread physics bridge. PIXI v8.
@@ -36,92 +37,92 @@ function update() {
 
 ## Core Classes
 
-- [Space](https://newkrok.github.io/nape-js/api/classes/Space.html): Physics world — create with gravity, add bodies, call `step(dt)` to simulate. `space.deterministic = true` for same-platform reproducibility (multiplayer rollback/prediction)
-- [Body](https://newkrok.github.io/nape-js/api/classes/Body.html): Rigid body with position, velocity, rotation, mass, shapes list
-- [Vec2](https://newkrok.github.io/nape-js/api/classes/Vec2.html): 2D vector with pooling (`Vec2.get()`, `Vec2.weak()`) and arithmetic methods
-- [AABB](https://newkrok.github.io/nape-js/api/classes/AABB.html): Axis-aligned bounding box for spatial queries
+- [Space](https://napejs.org/api/classes/Space.html): Physics world — create with gravity, add bodies, call `step(dt)` to simulate. `space.deterministic = true` for same-platform reproducibility (multiplayer rollback/prediction)
+- [Body](https://napejs.org/api/classes/Body.html): Rigid body with position, velocity, rotation, mass, shapes list
+- [Vec2](https://napejs.org/api/classes/Vec2.html): 2D vector with pooling (`Vec2.get()`, `Vec2.weak()`) and arithmetic methods
+- [AABB](https://napejs.org/api/classes/AABB.html): Axis-aligned bounding box for spatial queries
 
 ## Shapes
 
-- [Circle](https://newkrok.github.io/nape-js/api/classes/Circle.html): Circular collision shape with radius
-- [Polygon](https://newkrok.github.io/nape-js/api/classes/Polygon.html): Convex polygon with factories: `Polygon.box()`, `Polygon.rect()`, `Polygon.regular()`
-- [Shape](https://newkrok.github.io/nape-js/api/classes/Shape.html): Base class — material, filter, sensor support, cbTypes
-- [Edge](https://newkrok.github.io/nape-js/api/classes/Edge.html): Read-only polygon edge with normal and projection data
+- [Circle](https://napejs.org/api/classes/Circle.html): Circular collision shape with radius
+- [Polygon](https://napejs.org/api/classes/Polygon.html): Convex polygon with factories: `Polygon.box()`, `Polygon.rect()`, `Polygon.regular()`
+- [Shape](https://napejs.org/api/classes/Shape.html): Base class — material, filter, sensor support, cbTypes
+- [Edge](https://napejs.org/api/classes/Edge.html): Read-only polygon edge with normal and projection data
 
 ## Physics Properties
 
-- [Material](https://newkrok.github.io/nape-js/api/classes/Material.html): Elasticity, friction, density — presets: `wood()`, `steel()`, `ice()`, `rubber()`, `glass()`, `sand()`
-- [FluidProperties](https://newkrok.github.io/nape-js/api/classes/FluidProperties.html): Density, viscosity for fluid interaction shapes
-- [InteractionFilter](https://newkrok.github.io/nape-js/api/classes/InteractionFilter.html): Bit-mask collision/sensor/fluid filtering
-- [InteractionGroup](https://newkrok.github.io/nape-js/api/classes/InteractionGroup.html): Group-based interaction management
+- [Material](https://napejs.org/api/classes/Material.html): Elasticity, friction, density — presets: `wood()`, `steel()`, `ice()`, `rubber()`, `glass()`, `sand()`
+- [FluidProperties](https://napejs.org/api/classes/FluidProperties.html): Density, viscosity for fluid interaction shapes
+- [InteractionFilter](https://napejs.org/api/classes/InteractionFilter.html): Bit-mask collision/sensor/fluid filtering
+- [InteractionGroup](https://napejs.org/api/classes/InteractionGroup.html): Group-based interaction management
 
 ## Constraints (Joints)
 
-- [PivotJoint](https://newkrok.github.io/nape-js/api/classes/PivotJoint.html): Pin two bodies at a shared anchor point
-- [DistanceJoint](https://newkrok.github.io/nape-js/api/classes/DistanceJoint.html): Constrain distance between two anchors to [min, max]
-- [WeldJoint](https://newkrok.github.io/nape-js/api/classes/WeldJoint.html): Fix relative position and rotation angle
-- [AngleJoint](https://newkrok.github.io/nape-js/api/classes/AngleJoint.html): Constrain relative angle to [min, max] with optional ratio
-- [MotorJoint](https://newkrok.github.io/nape-js/api/classes/MotorJoint.html): Drive relative angular velocity to a target rate
-- [LineJoint](https://newkrok.github.io/nape-js/api/classes/LineJoint.html): Constrain anchor to slide along a line direction
-- [PulleyJoint](https://newkrok.github.io/nape-js/api/classes/PulleyJoint.html): Constrain weighted sum of two distances (pulley/rope)
-- [Constraint](https://newkrok.github.io/nape-js/api/classes/Constraint.html): Base class — stiff/soft, frequency, damping, breaking, maxForce
+- [PivotJoint](https://napejs.org/api/classes/PivotJoint.html): Pin two bodies at a shared anchor point
+- [DistanceJoint](https://napejs.org/api/classes/DistanceJoint.html): Constrain distance between two anchors to [min, max]
+- [WeldJoint](https://napejs.org/api/classes/WeldJoint.html): Fix relative position and rotation angle
+- [AngleJoint](https://napejs.org/api/classes/AngleJoint.html): Constrain relative angle to [min, max] with optional ratio
+- [MotorJoint](https://napejs.org/api/classes/MotorJoint.html): Drive relative angular velocity to a target rate
+- [LineJoint](https://napejs.org/api/classes/LineJoint.html): Constrain anchor to slide along a line direction
+- [PulleyJoint](https://napejs.org/api/classes/PulleyJoint.html): Constrain weighted sum of two distances (pulley/rope)
+- [Constraint](https://napejs.org/api/classes/Constraint.html): Base class — stiff/soft, frequency, damping, breaking, maxForce
 
 ## Callbacks & Events
 
-- [InteractionListener](https://newkrok.github.io/nape-js/api/classes/InteractionListener.html): Listen for BEGIN/ONGOING/END collision, sensor, or fluid events
-- [BodyListener](https://newkrok.github.io/nape-js/api/classes/BodyListener.html): Listen for WAKE/SLEEP body state changes
-- [ConstraintListener](https://newkrok.github.io/nape-js/api/classes/ConstraintListener.html): Listen for BREAK constraint events
-- [PreListener](https://newkrok.github.io/nape-js/api/classes/PreListener.html): Pre-collision handler — filter or modify collisions before solving
-- [CbType](https://newkrok.github.io/nape-js/api/classes/CbType.html): Tag bodies/shapes/constraints for selective callback filtering
-- [CbEvent](https://newkrok.github.io/nape-js/api/classes/CbEvent.html): Event types — BEGIN, ONGOING, END, WAKE, SLEEP, BREAK, PRE
+- [InteractionListener](https://napejs.org/api/classes/InteractionListener.html): Listen for BEGIN/ONGOING/END collision, sensor, or fluid events
+- [BodyListener](https://napejs.org/api/classes/BodyListener.html): Listen for WAKE/SLEEP body state changes
+- [ConstraintListener](https://napejs.org/api/classes/ConstraintListener.html): Listen for BREAK constraint events
+- [PreListener](https://napejs.org/api/classes/PreListener.html): Pre-collision handler — filter or modify collisions before solving
+- [CbType](https://napejs.org/api/classes/CbType.html): Tag bodies/shapes/constraints for selective callback filtering
+- [CbEvent](https://napejs.org/api/classes/CbEvent.html): Event types — BEGIN, ONGOING, END, WAKE, SLEEP, BREAK, PRE
 
 ## Collision & Dynamics
 
-- [Arbiter](https://newkrok.github.io/nape-js/api/classes/Arbiter.html): Interaction data between two shapes (base class)
-- [CollisionArbiter](https://newkrok.github.io/nape-js/api/classes/CollisionArbiter.html): Collision contacts, normal, impulses, kinetic energy
-- [FluidArbiter](https://newkrok.github.io/nape-js/api/classes/FluidArbiter.html): Fluid overlap, buoyancy/drag impulses
-- [Contact](https://newkrok.github.io/nape-js/api/classes/Contact.html): Single contact point — position, penetration, friction
+- [Arbiter](https://napejs.org/api/classes/Arbiter.html): Interaction data between two shapes (base class)
+- [CollisionArbiter](https://napejs.org/api/classes/CollisionArbiter.html): Collision contacts, normal, impulses, kinetic energy
+- [FluidArbiter](https://napejs.org/api/classes/FluidArbiter.html): Fluid overlap, buoyancy/drag impulses
+- [Contact](https://napejs.org/api/classes/Contact.html): Single contact point — position, penetration, friction
 
 ## Geometry Utilities
 
-- [Ray](https://newkrok.github.io/nape-js/api/classes/Ray.html): Ray for raycasting queries with origin, direction, maxDistance
-- [Mat23](https://newkrok.github.io/nape-js/api/classes/Mat23.html): 2x3 affine transform matrix — rotation, translation, scale
-- [Geom](https://newkrok.github.io/nape-js/api/classes/Geom.html): Static utilities — distance queries, ray tests, polygon operations
-- [MarchingSquares](https://newkrok.github.io/nape-js/api/classes/MarchingSquares.html): Contour extraction from scalar fields
+- [Ray](https://napejs.org/api/classes/Ray.html): Ray for raycasting queries with origin, direction, maxDistance
+- [Mat23](https://napejs.org/api/classes/Mat23.html): 2x3 affine transform matrix — rotation, translation, scale
+- [Geom](https://napejs.org/api/classes/Geom.html): Static utilities — distance queries, ray tests, polygon operations
+- [MarchingSquares](https://napejs.org/api/classes/MarchingSquares.html): Contour extraction from scalar fields
 
 ## Destruction / Fracture
 
-- [fractureBody](https://newkrok.github.io/nape-js/api/functions/fractureBody.html): Shatter a polygon body into Voronoi fragments — `fractureBody(body, impactPoint, { fragmentCount?, explosionImpulse?, random? })`
-- [computeVoronoi](https://newkrok.github.io/nape-js/api/functions/computeVoronoi.html): Raw Voronoi diagram computation from point set
-- [generateFractureSites](https://newkrok.github.io/nape-js/api/functions/generateFractureSites.html): Generate random fracture site points within a polygon
+- [fractureBody](https://napejs.org/api/functions/fractureBody.html): Shatter a polygon body into Voronoi fragments — `fractureBody(body, impactPoint, { fragmentCount?, explosionImpulse?, random? })`
+- [computeVoronoi](https://napejs.org/api/functions/computeVoronoi.html): Raw Voronoi diagram computation from point set
+- [generateFractureSites](https://napejs.org/api/functions/generateFractureSites.html): Generate random fracture site points within a polygon
 
 ## Helpers
 
 Higher-level building blocks layered on top of the engine — opt-in modules.
 
-- [CharacterController](https://newkrok.github.io/nape-js/api/classes/CharacterController.html): Velocity-based 2D platformer controller with ground/slope/wall raycasts, coyote-time, one-way platforms, moving-platform inheritance, and an overridable `down` direction (radial-gravity worlds)
-- [RadialGravityField](https://newkrok.github.io/nape-js/api/classes/RadialGravityField.html) / [RadialGravityFieldGroup](https://newkrok.github.io/nape-js/api/classes/RadialGravityFieldGroup.html): Point-source gravity field with `inverse-square` / `inverse` / `constant` / custom falloff, `maxRadius` / `softening` / `minRadius`, body filter, mass scaling — replaces hand-rolled `body.force = ...` loops for orbital, planet, and multi-body scenarios
-- [ParticleEmitter](https://newkrok.github.io/nape-js/api/classes/ParticleEmitter.html) / [ParticleEmitterGroup](https://newkrok.github.io/nape-js/api/classes/ParticleEmitterGroup.html): Physics-aware particle emitter — pooled `Body` swarm with continuous (`rate`) / periodic (`burstCount` + `burstInterval`) / manual (`emit(n)`) spawning, configurable spawn (`point` / `rect` / `circle` / `arc` / custom) and velocity (`fixed` / `cone` / `radial` / custom) patterns, deterministic RNG, world-space `bounds`, `selfCollision` toggle, lifecycle hooks (`onSpawn` / `onUpdate` / `onDeath` / `onCollide` with `requestKill`)
+- [CharacterController](https://napejs.org/api/classes/CharacterController.html): Velocity-based 2D platformer controller with ground/slope/wall raycasts, coyote-time, one-way platforms, moving-platform inheritance, and an overridable `down` direction (radial-gravity worlds)
+- [RadialGravityField](https://napejs.org/api/classes/RadialGravityField.html) / [RadialGravityFieldGroup](https://napejs.org/api/classes/RadialGravityFieldGroup.html): Point-source gravity field with `inverse-square` / `inverse` / `constant` / custom falloff, `maxRadius` / `softening` / `minRadius`, body filter, mass scaling — replaces hand-rolled `body.force = ...` loops for orbital, planet, and multi-body scenarios
+- [ParticleEmitter](https://napejs.org/api/classes/ParticleEmitter.html) / [ParticleEmitterGroup](https://napejs.org/api/classes/ParticleEmitterGroup.html): Physics-aware particle emitter — pooled `Body` swarm with continuous (`rate`) / periodic (`burstCount` + `burstInterval`) / manual (`emit(n)`) spawning, configurable spawn (`point` / `rect` / `circle` / `arc` / custom) and velocity (`fixed` / `cone` / `radial` / custom) patterns, deterministic RNG, world-space `bounds`, `selfCollision` toggle, lifecycle hooks (`onSpawn` / `onUpdate` / `onDeath` / `onCollide` with `requestKill`)
 - `buildTilemapBody` / `meshTilemap` / `tiledLayerToGrid` / `ldtkLayerToGrid`: Greedy-meshed collision body from a 2D tile grid (5–50× fewer shapes vs one-polygon-per-cell), with built-in parsers for Tiled JSON tile layers and LDtk IntGrid layers
-- [TriggerZone](https://newkrok.github.io/nape-js/api/classes/TriggerZone.html): Sensor zone with `onEnter` / `onExit` callbacks — wraps the BEGIN/END `InteractionListener` plumbing
-- [createConcaveBody](https://newkrok.github.io/nape-js/api/functions/createConcaveBody.html): Decomposes a concave outline into convex polygons and packs them into a single body
+- [TriggerZone](https://napejs.org/api/classes/TriggerZone.html): Sensor zone with `onEnter` / `onExit` callbacks — wraps the BEGIN/END `InteractionListener` plumbing
+- [createConcaveBody](https://napejs.org/api/functions/createConcaveBody.html): Decomposes a concave outline into convex polygons and packs them into a single body
 
 ## Enums
 
-- [BodyType](https://newkrok.github.io/nape-js/api/classes/BodyType.html): STATIC, DYNAMIC, KINEMATIC
-- [ShapeType](https://newkrok.github.io/nape-js/api/classes/ShapeType.html): CIRCLE, POLYGON
-- [Broadphase](https://newkrok.github.io/nape-js/api/classes/Broadphase.html): DYNAMIC_AABB_TREE (default), SWEEP_AND_PRUNE, SPATIAL_HASH
-- [InteractionType](https://newkrok.github.io/nape-js/api/classes/InteractionType.html): COLLISION, SENSOR, FLUID, ANY
-- [ArbiterType](https://newkrok.github.io/nape-js/api/classes/ArbiterType.html): COLLISION, SENSOR, FLUID
+- [BodyType](https://napejs.org/api/classes/BodyType.html): STATIC, DYNAMIC, KINEMATIC
+- [ShapeType](https://napejs.org/api/classes/ShapeType.html): CIRCLE, POLYGON
+- [Broadphase](https://napejs.org/api/classes/Broadphase.html): DYNAMIC_AABB_TREE (default), SWEEP_AND_PRUNE, SPATIAL_HASH
+- [InteractionType](https://napejs.org/api/classes/InteractionType.html): COLLISION, SENSOR, FLUID, ANY
+- [ArbiterType](https://napejs.org/api/classes/ArbiterType.html): COLLISION, SENSOR, FLUID
 
 ## Grouping & Hierarchy
 
-- [Compound](https://newkrok.github.io/nape-js/api/classes/Compound.html): Hierarchical grouping of bodies, constraints, and sub-compounds
-- [Interactor](https://newkrok.github.io/nape-js/api/classes/Interactor.html): Base class for Body, Shape, Compound — type casting, cbTypes
+- [Compound](https://napejs.org/api/classes/Compound.html): Hierarchical grouping of bodies, constraints, and sub-compounds
+- [Interactor](https://napejs.org/api/classes/Interactor.html): Base class for Body, Shape, Compound — type casting, cbTypes
 
 ## Collections
 
-- [NapeList](https://newkrok.github.io/nape-js/api/classes/NapeList.html): Generic iterable list with `for...of` support, add/remove/push/pop
+- [NapeList](https://napejs.org/api/classes/NapeList.html): Generic iterable list with `for...of` support, add/remove/push/pop
 
 ## Web Worker (`@newkrok/nape-js/worker`)
 
@@ -129,3 +130,14 @@ Higher-level building blocks layered on top of the engine — opt-in modules.
 - `buildWorkerScript(napeUrl)`: Generate self-contained worker script for inline Blob or hosted file
 - `BodyTransform`: `{ x, y, rotation }` per-body transform read from shared buffer
 - `FLOATS_PER_BODY`, `HEADER_FLOATS`: Buffer layout constants
+
+## Replay (`@newkrok/nape-js/replay`)
+
+Record a deterministic simulation and play it back. Built on `/serialization` + `space.deterministic = true`. Tree-shakeable; only loads when imported.
+
+- [Recorder](https://napejs.org/api/classes/Recorder.html)`<T>`: Captures the initial snapshot at construction, then `recordFrame(input)` logs an input payload per frame. Optional `keyframeEvery` (default 60) records intermediate snapshots for fast scrub. `finish()` returns an immutable `Replay<T>`.
+- [Player](https://napejs.org/api/classes/Player.html)`<T>`: Owns its own deserialised `Space`. `restore()` rewinds to frame 0; `step()` applies the next recorded input (via the user's `applyInput` callback) and steps physics; `stepTo(frame)` does random-access scrub (uses keyframes for backward jumps).
+- [encodeReplay](https://napejs.org/api/functions/encodeReplay.html) / [decodeReplay](https://napejs.org/api/functions/decodeReplay.html): Compact binary format (magic `RPLY`, versioned, length-prefixed snapshots, UTF-8 JSON payloads). Round-trips byte-for-byte.
+- [validateDeterministicConfig](https://napejs.org/api/functions/validateDeterministicConfig.html): Sanity-checks `space.deterministic = true` etc.; returns `{ ok, warnings }`.
+
+**Determinism contract** — replay matches recording when (a) `space.deterministic = true`, (b) fixed `dt` and matching iteration counts on both sides, (c) the user's `applyInput` is a pure function of `(input, space, frame)`. Same-platform soft determinism only (floating-point rounding differs across CPUs).

@@ -49,6 +49,16 @@
         "default": "./dist/serialization/index.cjs"
       }
     },
+    "./replay": {
+      "import": {
+        "types": "./dist/replay/index.d.ts",
+        "default": "./dist/replay/index.js"
+      },
+      "require": {
+        "types": "./dist/replay/index.d.cts",
+        "default": "./dist/replay/index.cjs"
+      }
+    },
     "./worker": {
       "import": {
         "types": "./dist/worker/index.d.ts",
@@ -70,8 +80,8 @@
       }
     }
   },
-  "llms": "https://newkrok.github.io/nape-js/llms.txt",
-  "llmsFull": "https://newkrok.github.io/nape-js/llms-full.txt",
+  "llms": "https://napejs.org/llms.txt",
+  "llmsFull": "https://napejs.org/llms-full.txt",
   "files": [
     "dist",
     "!dist/**/*.map",
@@ -119,5 +129,5 @@
   "bugs": {
     "url": "https://github.com/NewKrok/nape-js/issues"
   },
-  "homepage": "https://newkrok.github.io/nape-js/"
+  "homepage": "https://napejs.org/"
 }
