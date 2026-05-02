@@ -9,7 +9,7 @@
  *  2. Auto-generation from demo hooks (setup/step/click/drag/release) via .toString()
  */
 
-const NAPE_CDN = "https://cdn.jsdelivr.net/npm/@newkrok/nape-js@3.31.0/dist/index.js";
+const NAPE_CDN = "https://cdn.jsdelivr.net/npm/@newkrok/nape-js@3.32.0/dist/index.js";
 const NAPE_PIXI_CDN = "https://cdn.jsdelivr.net/npm/@newkrok/nape-pixi@0.1.0/dist/index.js";
 const THREE_CDN = "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js";
 
@@ -876,7 +876,7 @@ function fillRuntime(runtime, demo) {
  * Auto-generate CodePen code from demo hooks for a specific adapter.
  * Returns null if the demo's setup function cannot be extracted.
  */
-const ASSET_BASE_URL = "https://newkrok.github.io/nape-js/";
+const ASSET_BASE_URL = "https://napejs.org/";
 
 function autoGenerateCode(demo, adapterId, preamble = "") {
   let demoObj = extractDemoObject(demo, preamble);
@@ -913,7 +913,7 @@ function autoGenerateCode(demo, adapterId, preamble = "") {
 const TEMPLATES = {
   canvas2d: {
     html: `<canvas id="demoCanvas" width="900" height="500" style="background:#0a0e14;display:block;max-width:100%;border:1px solid #30363d;border-radius:8px"></canvas>
-<a class="nape-badge" href="https://newkrok.github.io/nape-js/index.html" target="_blank">made with Nape-JS</a>`,
+<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
 
     buildJS(code, auto = false) {
       const water = /\bdrawWaveSurface2D\b/.test(code) ? WATER_HELPERS : "";
@@ -945,7 +945,7 @@ ${water}${code}`;
 
   threejs: {
     html: `<div id="container" style="width:900px;max-width:100%;height:500px;border:1px solid #30363d;border-radius:8px;overflow:hidden"></div>
-<a class="nape-badge" href="https://newkrok.github.io/nape-js/index.html" target="_blank">made with Nape-JS</a>`,
+<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
 
     buildJS(code, auto = false) {
       const water = /\bcreateWater3D\b/.test(code) ? WATER_HELPERS_3D : "";
@@ -969,7 +969,7 @@ ${water}${code}`;
 
   pixijs: {
     html: `<div id="container" style="width:900px;max-width:100%;height:500px;border:1px solid #30363d;border-radius:8px;overflow:hidden"></div>
-<a class="nape-badge" href="https://newkrok.github.io/nape-js/index.html" target="_blank">made with Nape-JS</a>`,
+<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
 
     buildJS(code, auto = false) {
       const water = /\bdrawWaterPixi\b/.test(code) ? WATER_HELPERS_PIXI : "";

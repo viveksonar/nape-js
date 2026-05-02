@@ -36,7 +36,7 @@
   "bugs": {
     "url": "https://github.com/NewKrok/nape-js/issues"
   },
-  "homepage": "https://newkrok.github.io/nape-js/",
+  "homepage": "https://napejs.org/",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@vitest/coverage-v8": "^4.1.4",

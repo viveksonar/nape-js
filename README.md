@@ -9,12 +9,12 @@
 [![CI](https://github.com/NewKrok/nape-js/actions/workflows/ci.yml/badge.svg)](https://github.com/NewKrok/nape-js/actions/workflows/ci.yml)
 [![bundle size](https://img.shields.io/badge/gzip-27%20KB-blue.svg)](https://github.com/NewKrok/nape-js)
 [![license](https://img.shields.io/npm/l/@newkrok/nape-js.svg)](https://github.com/NewKrok/nape-js/blob/master/LICENSE)
-[![docs](https://img.shields.io/badge/docs-online-blue.svg)](https://newkrok.github.io/nape-js/)
+[![docs](https://img.shields.io/badge/docs-online-blue.svg)](https://napejs.org/)
 
 Fully typed, tree-shakeable 2D physics engine — a modern TypeScript rewrite of the
 [Nape](https://github.com/deltaluca/nape) Haxe physics engine.
 
-**[Homepage & Interactive Demos](https://newkrok.github.io/nape-js/)** | **[API Reference](https://newkrok.github.io/nape-js/api/)** | **[Examples](https://newkrok.github.io/nape-js/examples.html)** | **[Multiplayer Demo](https://newkrok.github.io/nape-js/multiplayer.html)**
+**[Homepage & Interactive Demos](https://napejs.org/)** | **[API Reference](https://napejs.org/api/)** | **[Examples](https://napejs.org/examples.html)** | **[Multiplayer Demo](https://napejs.org/multiplayer.html)**
 
 **[Cookbook](docs/guides/cookbook.md)** | **[Troubleshooting](docs/guides/troubleshooting.md)** | **[Anti-Patterns](docs/guides/anti-patterns.md)**
 
@@ -73,7 +73,7 @@ function update() {
 
 ## API Reference
 
-> Full API documentation: [TypeDoc Reference](https://newkrok.github.io/nape-js/api/)
+> Full API documentation: [TypeDoc Reference](https://napejs.org/api/)
 
 ### Core Classes
 

@@ -80,8 +80,8 @@
       }
     }
   },
-  "llms": "https://newkrok.github.io/nape-js/llms.txt",
-  "llmsFull": "https://newkrok.github.io/nape-js/llms-full.txt",
+  "llms": "https://napejs.org/llms.txt",
+  "llmsFull": "https://napejs.org/llms-full.txt",
   "files": [
     "dist",
     "!dist/**/*.map",
@@ -129,5 +129,5 @@
   "bugs": {
     "url": "https://github.com/NewKrok/nape-js/issues"
   },
-  "homepage": "https://newkrok.github.io/nape-js/"
+  "homepage": "https://napejs.org/"
 }

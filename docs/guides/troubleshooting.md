@@ -3,7 +3,7 @@
 <!-- Last verified: v3.21.4 -->
 
 Common problems, their causes, and solutions. If your issue isn't listed here,
-check the [API Reference](https://newkrok.github.io/nape-js/api/) or
+check the [API Reference](https://napejs.org/api/) or
 [open an issue on GitHub](https://github.com/NewKrok/nape-js/issues).
 
 ---
