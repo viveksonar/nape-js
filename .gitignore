@@ -11,6 +11,8 @@ docs/chunk-*.js
 docs/api/
 docs/llms.txt
 docs/llms-full.txt
+docs/replay/
+docs/serialization/
 
 # Tool configs
 .claude/
