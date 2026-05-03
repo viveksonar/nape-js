@@ -24,6 +24,7 @@ import stacking    from "./demos/stacking.js?v=3.33.0";
 import ragdoll     from "./demos/ragdoll.js?v=3.33.0";
 import strandbeast from "./demos/strandbeast.js?v=3.33.0";
 import softBody    from "./demos/soft-body.js?v=3.33.0";
+import destructibleArena from "./demos/destructible-arena.js?v=3.33.0";
 
 // =========================================================================
 // Demo registry
@@ -32,6 +33,7 @@ import softBody    from "./demos/soft-body.js?v=3.33.0";
 const ALL_DEMOS = [
   falling, pyramid, chain, explosion, constraints,
   gravity, stacking, ragdoll, strandbeast, softBody,
+  destructibleArena,
 ];
 
 const FEATURED = ALL_DEMOS
