@@ -503,9 +503,14 @@ function createCard(demo, { onTagClick } = {}) {
   card.appendChild(info);
   card.appendChild(codePanel);
 
-  // --- Preview ---
+  // --- Preview (lazy: rendered on first viewport approach via IntersectionObserver) ---
   let previewReady = false;
-  runner.renderPreviewAsync(demo).then(() => { previewReady = true; });
+  let previewPromise = null;
+  function ensurePreview() {
+    if (previewReady || previewPromise) return previewPromise ?? Promise.resolve();
+    previewPromise = runner.renderPreviewAsync(demo).then(() => { previewReady = true; });
+    return previewPromise;
+  }
 
   // --- Play ---
   let started = false;
@@ -518,7 +523,7 @@ function createCard(demo, { onTagClick } = {}) {
     if (activeCardEntry && activeCardEntry !== cardRef) stopActiveDemo();
     loading = true;
     if (!previewReady) {
-      await runner.renderPreviewAsync(demo);
+      await ensurePreview();
     } else {
       await runner.loadAsync(demo);
     }
@@ -542,6 +547,7 @@ function createCard(demo, { onTagClick } = {}) {
     card, runner, overlay, statsBar, cardRef,
     isStarted: () => started,
     startDemo,
+    ensurePreview,
     setExpanded,
     setMode: async (mode) => {
       const adapterId = modeMap[mode] ?? mode;
@@ -749,6 +755,7 @@ buildTagBar();
   const urlOutline = urlParams.get("outline");
 
   if (urlOutline === "0") entry.setOutline(false);
+  await entry.ensurePreview();
   if (urlMode === "3d") await entry.setMode("3d");
 
   entry.card.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -768,6 +775,22 @@ document.getElementById("gridSizeToggle").addEventListener("click", (e) => {
   grid.classList.toggle("size-small", size === "small");
   grid.classList.toggle("size-full",  size === "full");
 });
+
+// =========================================================================
+// IntersectionObserver — lazy preview render
+// =========================================================================
+
+const previewObserver = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    const match = cardEntries.find(c => c.card === entry.target);
+    if (!match) continue;
+    match.ensurePreview();
+    previewObserver.unobserve(entry.target);
+  }
+}, { rootMargin: "400px 0px" });
+
+for (const { card } of cardEntries) previewObserver.observe(card);
 
 // =========================================================================
 // IntersectionObserver — pause/resume
