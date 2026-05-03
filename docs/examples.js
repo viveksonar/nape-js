@@ -61,9 +61,14 @@ import tilemap             from "./demos/tilemap.js?v=3.33.0";
 import planetPlatformer    from "./demos/planet-platformer.js?v=3.33.0";
 import volcano             from "./demos/volcano.js?v=3.33.0";
 import destructibleArena   from "./demos/destructible-arena.js?v=3.33.0";
+import arenaDefense        from "./demos/arena-defense.js?v=3.33.0";
 import saveLoadRewind      from "./demos/save-load-rewind.js?v=3.33.0";
 import replayRecorder      from "./demos/replay-recorder.js?v=3.33.0";
 
+// Note on order: cardEntries reverses ALL_DEMOS, so the LAST tuple entry
+// becomes the TOP card in the grid. arenaDefense is the showcase demo
+// we want at the very top of the grid (above Deterministic Replay /
+// Save-Load), so it must be the LAST entry in this array.
 const ALL_DEMOS = [
   falling, pyramid, chain, explosion, constraints, gravity, stacking, ragdoll, strandbeast,
   carSideview, carTopdown, ropeBridge, wreckingBall, newtonsCradle,
@@ -93,6 +98,7 @@ const ALL_DEMOS = [
   destructibleArena,
   saveLoadRewind,
   replayRecorder,
+  arenaDefense,
 ];
 
 const gtag = window.gtag || function() {};

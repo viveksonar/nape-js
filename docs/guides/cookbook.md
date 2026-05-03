@@ -35,6 +35,9 @@ Each recipe shows the minimal working code and explains the "why" behind key dec
 - [Kinematic Moving Platform](#kinematic-moving-platform)
 - [Custom Material Presets](#custom-material-presets)
 - [Performance Profiling](#performance-profiling)
+- [Wave Spawner (Timer-Driven Cadence)](#wave-spawner-timer-driven-cadence)
+- [Viewport-Bounded Auto-Aim](#viewport-bounded-auto-aim)
+- [Homing Missile (Steered Projectile)](#homing-missile-steered-projectile)
 
 ---
 
@@ -1105,3 +1108,149 @@ function update() {
 - Metrics are **zero-allocation** (reused object, no GC pressure)
 - The overlay respects HiDPI (`devicePixelRatio`) automatically
 - When `profilerEnabled = false` (default), timing instrumentation is skipped — zero overhead in production
+
+---
+
+## Wave Spawner (Timer-Driven Cadence)
+
+A common arena-mode pattern: enemies spawn in waves, and the next wave
+starts on a fixed timer regardless of whether the previous one is
+finished. Pile-ups are part of the challenge.
+
+```js
+const WAVE_INTERVAL = 12 * 60;    // 12s @ 60fps between wave starts
+const FIRST_WAVE_DELAY = 3 * 60;  // 3s grace period before wave 1
+let waveTimer = FIRST_WAVE_DELAY;
+let wave = 0;
+let toSpawn = 0;
+let spawnTimer = 0;
+let spawnInterval = 60;
+let waveActive = false;
+
+function startWave() {
+  wave++;
+  waveActive = true;
+  toSpawn = 8 + Math.floor(wave / 2);
+  spawnInterval = Math.max(20, 70 - wave * 2);
+  spawnTimer = 30;
+}
+
+function spawnForWave(space) {
+  if (toSpawn <= 0) return;
+  spawnTimer--;
+  if (spawnTimer > 0) return;
+  spawnTimer = spawnInterval;
+  spawnEnemy(space);   // your function — body + shape + filter
+  toSpawn--;
+}
+
+// Inside your per-frame step():
+function tickWaves(space) {
+  waveTimer--;
+  if (waveTimer <= 0) {
+    startWave();
+    waveTimer = WAVE_INTERVAL;
+  }
+  if (waveActive) {
+    spawnForWave(space);
+    if (toSpawn <= 0) waveActive = false;
+  }
+}
+```
+
+**Key points:**
+- The timer keeps ticking even while a wave is active — slow waves don't delay the next one.
+- Within a wave, `spawnInterval` controls per-enemy spacing; tighter intervals on later waves create pressure.
+- The HUD can read `waveTimer / 60` for a "next wave in Ns" countdown.
+- Vary the wave shape (boss / speed / healer) by `wave % N` checks inside `startWave()`.
+
+---
+
+## Viewport-Bounded Auto-Aim
+
+When the camera follows the player, off-screen enemies shouldn't be
+auto-targetable — that lets the player snipe through walls they can't
+see. Constrain target search to the visible viewport rectangle:
+
+```js
+const VIEW_W = 900;       // canvas width
+const VIEW_H = 500;       // canvas height
+const AIM_INSET = 20;     // small inset so enemies near the screen edge don't pop in/out
+
+function findNearestVisibleEnemy(space, player) {
+  const px = player.position.x, py = player.position.y;
+  const halfW = VIEW_W / 2 - AIM_INSET;
+  const halfH = VIEW_H / 2 - AIM_INSET;
+  let best = null, bestD2 = Infinity;
+  for (const body of space.bodies) {
+    if (!body.userData?._enemy) continue;
+    const ex = body.position.x, ey = body.position.y;
+    if (Math.abs(ex - px) > halfW) continue;     // outside horizontally
+    if (Math.abs(ey - py) > halfH) continue;     // outside vertically
+    const dx = ex - px, dy = ey - py;
+    const d2 = dx * dx + dy * dy;
+    if (d2 < bestD2) { bestD2 = d2; best = body; }
+  }
+  return best;
+}
+```
+
+**Key points:**
+- A box check is cheaper than a distance check (no `sqrt`, just two `abs`).
+- This works because the camera follows the player — the player is roughly viewport-centered.
+- For a non-following camera, replace `(px, py)` with the actual camera-center world coords.
+- For a circular field-of-view instead of a rectangle, just use `distSq < range*range`.
+
+---
+
+## Homing Missile (Steered Projectile)
+
+A projectile that gradually turns toward the nearest target each frame.
+Constant speed + capped turn rate produces visible arcs (vs instant
+homing, which looks robotic).
+
+```js
+const HOMING_SPEED = 360;
+const HOMING_TURN_RATE = 0.18;        // radians per frame max
+const HOMING_ACQUIRE_RANGE = 520;     // px
+
+function spawnMissile(space, x, y, vx, vy) {
+  const body = new Body(BodyType.DYNAMIC, new Vec2(x, y));
+  body.shapes.add(new Circle(4, undefined, new Material(0.1, 0.1, 0.1, 0.05)));
+  body.isBullet = true;                // CCD — fast bodies tunnel otherwise
+  body.userData._homing = true;
+  body.userData._life = 150;
+  body.velocity = new Vec2(vx, vy);
+  body.space = space;
+}
+
+// Call once per frame for every active missile:
+function steerMissile(space, body) {
+  const px = body.position.x, py = body.position.y;
+  let best = null, bestD2 = HOMING_ACQUIRE_RANGE * HOMING_ACQUIRE_RANGE;
+  for (const e of space.bodies) {
+    if (!e.userData?._enemy) continue;
+    const dx = e.position.x - px, dy = e.position.y - py;
+    const d2 = dx * dx + dy * dy;
+    if (d2 < bestD2) { bestD2 = d2; best = e; }
+  }
+  if (!best) return;                   // no target — fly straight
+
+  const desired = Math.atan2(best.position.y - py, best.position.x - px);
+  const current = Math.atan2(body.velocity.y, body.velocity.x);
+  let diff = desired - current;
+  // Normalize to (-π, π) so we always turn the short way around
+  while (diff > Math.PI)  diff -= Math.PI * 2;
+  while (diff < -Math.PI) diff += Math.PI * 2;
+  const turn = Math.max(-HOMING_TURN_RATE, Math.min(HOMING_TURN_RATE, diff));
+  const ang = current + turn;
+  body.velocity = new Vec2(Math.cos(ang) * HOMING_SPEED, Math.sin(ang) * HOMING_SPEED);
+  body.rotation = ang;                 // optional — orient the sprite
+}
+```
+
+**Key points:**
+- **Constant speed** (re-set every frame) keeps the trajectory readable; varying speed makes missiles feel laggy.
+- **Cap the turn rate** — without it, the missile snaps to its target and looks like a teleport.
+- Use `body.isBullet = true` so the missile doesn't tunnel through enemies at high speed.
+- Pair with `Body.userData._life` (decremented each frame) to age the missile out if it never hits anything.

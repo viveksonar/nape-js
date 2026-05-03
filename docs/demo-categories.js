@@ -22,6 +22,7 @@ export const GAME_DEMO_IDS = new Set([
   "slingshot",
   "destructible-arena",
   "portals",
+  "arena-defense",
 ]);
 
 export const CATEGORIES = [
