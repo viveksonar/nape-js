@@ -467,6 +467,15 @@ a:hover { text-decoration: underline; }
   background: var(--green) !important;
   color: var(--bg) !important;
 }
+.btn-stackblitz {
+  background: var(--surface) !important;
+  color: #f4b400 !important;
+  border-color: #f4b400 !important;
+}
+.btn-stackblitz:hover {
+  background: #f4b400 !important;
+  color: var(--bg) !important;
+}
 .btn-share {
   background: var(--surface) !important;
   color: var(--text-dim) !important;

@@ -3,28 +3,29 @@
  */
 import {
   Space, Body, BodyType, Vec2, Circle, Polygon, VERSION,
-} from "./nape-js.esm.js?v=3.33.0";
-import { installErrorOverlay } from "./renderer.js?v=3.33.0";
-import { DemoRunner } from "./demo-runner.js?v=3.33.0";
-import { Canvas2DAdapter } from "./renderers/canvas2d-adapter.js?v=3.33.0";
-import { ThreeJSAdapter, loadThree } from "./renderers/threejs-adapter.js?v=3.33.0";
-import { PixiJSAdapter, loadPixi } from "./renderers/pixijs-adapter.js?v=3.33.0";
-import { openInCodePen as _openInCodePen, getPreviewCode } from "./codepen-templates.js?v=3.33.0";
+} from "./nape-js.esm.js?v=3.35.0";
+import { installErrorOverlay } from "./renderer.js?v=3.35.0";
+import { DemoRunner } from "./demo-runner.js?v=3.35.0";
+import { Canvas2DAdapter } from "./renderers/canvas2d-adapter.js?v=3.35.0";
+import { ThreeJSAdapter, loadThree } from "./renderers/threejs-adapter.js?v=3.35.0";
+import { PixiJSAdapter, loadPixi } from "./renderers/pixijs-adapter.js?v=3.35.0";
+import { openInCodePen as _openInCodePen, getPreviewCode } from "./codepen-templates.js?v=3.35.0";
+import { openInStackBlitz as _openInStackBlitz } from "./stackblitz-templates.js?v=3.35.0";
 
-import { categoryOf } from "./demo-categories.js?v=3.33.0";
+import { categoryOf } from "./demo-categories.js?v=3.35.0";
 
 // Demo definitions — one file each
-import falling     from "./demos/falling.js?v=3.33.0";
-import pyramid     from "./demos/pyramid.js?v=3.33.0";
-import chain       from "./demos/chain.js?v=3.33.0";
-import explosion   from "./demos/explosion.js?v=3.33.0";
-import constraints from "./demos/constraints.js?v=3.33.0";
-import gravity     from "./demos/gravity.js?v=3.33.0";
-import stacking    from "./demos/stacking.js?v=3.33.0";
-import ragdoll     from "./demos/ragdoll.js?v=3.33.0";
-import strandbeast from "./demos/strandbeast.js?v=3.33.0";
-import softBody    from "./demos/soft-body.js?v=3.33.0";
-import destructibleArena from "./demos/destructible-arena.js?v=3.33.0";
+import falling     from "./demos/falling.js?v=3.35.0";
+import pyramid     from "./demos/pyramid.js?v=3.35.0";
+import chain       from "./demos/chain.js?v=3.35.0";
+import explosion   from "./demos/explosion.js?v=3.35.0";
+import constraints from "./demos/constraints.js?v=3.35.0";
+import gravity     from "./demos/gravity.js?v=3.35.0";
+import stacking    from "./demos/stacking.js?v=3.35.0";
+import ragdoll     from "./demos/ragdoll.js?v=3.35.0";
+import strandbeast from "./demos/strandbeast.js?v=3.35.0";
+import softBody    from "./demos/soft-body.js?v=3.35.0";
+import destructibleArena from "./demos/destructible-arena.js?v=3.35.0";
 
 // =========================================================================
 // Demo registry
@@ -55,6 +56,7 @@ const codePreviewEl = document.getElementById("codePreview");
 const codeBodyEl    = codePreviewEl.closest(".code-panel-body") ?? codePreviewEl.parentElement;
 const copyCodeBtn   = document.getElementById("copyCodeBtn");
 const codepenBtn    = document.getElementById("codepenBtn");
+const stackblitzBtn = document.getElementById("stackblitzBtn");
 
 const W = canvas.width;
 const H = canvas.height;
@@ -147,6 +149,7 @@ async function startDemo(id) {
   updateCodePreview();
   updateWorkerBtnVisibility();
   codepenBtn.style.display = demo.noCodePen ? "none" : "";
+  stackblitzBtn.style.display = demo.noCodePen ? "none" : "";
 }
 
 document.getElementById("demoTabs").addEventListener("click", (e) => {
@@ -235,6 +238,12 @@ codepenBtn.addEventListener("click", () => {
   gtag("event", "click", { event_category: "code_action", event_label: "open_codepen", demo: currentDemoId });
   const demo = runner.currentDemo;
   if (demo && !demo.noCodePen) _openInCodePen(demo, runner.mode, { showOutlines: runner.debugDraw });
+});
+
+stackblitzBtn.addEventListener("click", () => {
+  gtag("event", "click", { event_category: "code_action", event_label: "open_stackblitz", demo: currentDemoId });
+  const demo = runner.currentDemo;
+  if (demo && !demo.noCodePen) _openInStackBlitz(demo, runner.mode, { showOutlines: runner.debugDraw });
 });
 
 
