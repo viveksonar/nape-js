@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nape-js — Project Templates</title>
+  <meta name="description" content="One-click project templates for @newkrok/nape-js. Run `npm create nape-game@latest` to scaffold a complete game starter — Canvas2D, Three.js, or PixiJS — with player, level, enemies, projectiles, destructibles, and moving platforms wired up." />
+  <link rel="canonical" href="https://napejs.org/templates.html" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .tmpl-page { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+    .tmpl-hero { text-align: center; margin-bottom: 36px; }
+    .tmpl-hero h1 { margin: 0 0 8px; font-size: 32px; }
+    .tmpl-hero p { color: #8b949e; margin: 0 auto; max-width: 640px; }
+    .tmpl-cli {
+      margin: 28px auto 0; max-width: 720px; background: #161b22; border: 1px solid #30363d;
+      border-radius: 8px; padding: 14px 20px; font-family: ui-monospace, monospace;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .tmpl-cli code { color: #e6edf3; font-size: 14px; }
+    .tmpl-cli button { background: #21262d; color: #e6edf3; border: 1px solid #30363d; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
+    .tmpl-cli button:hover { background: #30363d; }
+    .tmpl-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    .tmpl-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px 28px; }
+    .tmpl-card h2 { margin: 0 0 6px; font-size: 22px; }
+    .tmpl-card .subtitle { color: #8b949e; margin: 0 0 18px; font-size: 14px; }
+    .tmpl-features { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 16px; margin: 0 0 22px; padding: 0; list-style: none; font-size: 14px; color: #c9d1d9; }
+    .tmpl-features li::before { content: "✓ "; color: #3fb950; }
+    .tmpl-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tmpl-btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px;
+      border-radius: 6px; border: 1px solid #30363d; background: #21262d; color: #e6edf3;
+      text-decoration: none; font-size: 14px; cursor: pointer;
+    }
+    .tmpl-btn:hover { background: #30363d; text-decoration: none; }
+    .tmpl-btn.primary { background: #1f6feb; border-color: #1f6feb; }
+    .tmpl-btn.primary:hover { background: #388bfd; }
+    .tmpl-back { display: inline-block; margin-bottom: 24px; color: #8b949e; text-decoration: none; }
+    .tmpl-back:hover { color: #58a6ff; }
+    .tmpl-meta { font-size: 13px; color: #8b949e; margin-top: 18px; }
+    .tmpl-meta code { background: #0a0e14; padding: 1px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <main class="tmpl-page">
+    <a href="index.html" class="tmpl-back">&larr; Back to homepage</a>
+
+    <div class="tmpl-hero">
+      <h1>Project Templates</h1>
+      <p>Scaffold a complete game starter with a single command — Vite + nape-js + your renderer of choice. From <code>npm create</code> to playable game in &lt; 5 minutes.</p>
+
+      <div class="tmpl-cli">
+        <code id="cli-cmd">npm create nape-game@latest my-game</code>
+        <button id="cli-copy" type="button">Copy</button>
+      </div>
+    </div>
+
+    <div class="tmpl-grid">
+      <article class="tmpl-card">
+        <h2>Platformer</h2>
+        <p class="subtitle">Side-scrolling action with run / variable jump / double jump, enemies, shooting, and destructible blocks. Built around <code>CharacterController</code>, the tilemap helper, <code>fractureBody</code>, and a fixed-timestep accumulator.</p>
+
+        <ul class="tmpl-features">
+          <li>Run + variable-height jump + double jump</li>
+          <li>Coyote time + jump buffer</li>
+          <li>Greedy-meshed tilemap collision</li>
+          <li>Moving platforms (kinematic)</li>
+          <li>Stompable + spiky enemies (patrol AI)</li>
+          <li>Projectiles (pooled bullets)</li>
+          <li>Destructible blocks (<code>fractureBody</code>)</li>
+          <li>Spike hazards + 3-heart health</li>
+          <li>Coin pickups + goal flag</li>
+          <li>Smooth-follow camera + screen shake</li>
+          <li>Win / death / restart state machine</li>
+          <li>HUD overlay (health, coins, time)</li>
+        </ul>
+
+        <div class="tmpl-actions">
+          <a class="tmpl-btn primary" href="https://stackblitz.com/github/NewKrok/nape-js/tree/master/templates/platformer?file=src/main.js" target="_blank" rel="noopener" onclick="gtag('event','click',{event_category:'template',event_label:'stackblitz_platformer'})">
+            ▸ Open in StackBlitz
+          </a>
+          <a class="tmpl-btn" href="https://github.com/NewKrok/nape-js/tree/master/templates/platformer" target="_blank" rel="noopener" onclick="gtag('event','click',{event_category:'template',event_label:'github_platformer'})">
+            View on GitHub
+          </a>
+        </div>
+
+        <p class="tmpl-meta">
+          The StackBlitz button opens the Canvas2D variant. To pick a renderer (<code>canvas2d</code> / <code>threejs</code> / <code>pixi</code>) at scaffold time, use the CLI: <code>npm create nape-game@latest my-game -- --renderer=threejs</code>
+        </p>
+      </article>
+    </div>
+  </main>
+
+  <script>
+    const cliEl = document.getElementById("cli-cmd");
+    document.getElementById("cli-copy").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(cliEl.textContent);
+        const btn = document.getElementById("cli-copy");
+        const orig = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => { btn.textContent = orig; }, 1200);
+      } catch {}
+    });
+    // Analytics shim
+    window.gtag = window.gtag || function(){};
+  </script>
+</body>
+</html>

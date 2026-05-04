@@ -240,6 +240,19 @@ a:hover { text-decoration: underline; }
   color: var(--bg);
   text-decoration: none;
 }
+.tab-tmpl {
+  background: transparent;
+  color: #f0ce47;
+  border-color: #f0ce47;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.tab-tmpl:hover {
+  background: #f0ce47;
+  color: var(--bg);
+  text-decoration: none;
+}
 
 /* ---------- Canvas ---------- */
 .canvas-wrap {
