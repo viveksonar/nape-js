@@ -25,14 +25,22 @@ Fully typed, tree-shakeable 2D physics engine — a modern TypeScript rewrite of
 
 This repo is an npm-workspaces monorepo:
 
-| Package | What it is |
-|---------|------------|
-| [`@newkrok/nape-js`](packages/nape-js) | The physics engine itself — rigid bodies, constraints, collision, fluids, deterministic multiplayer. |
-| [`@newkrok/nape-pixi`](packages/nape-pixi) | PixiJS v8 integration — `BodySpriteBinding`, `FixedStepper` (render interpolation), `PixiDebugDraw`, `WorkerBridge`. |
+| Package                                         | What it is                                                                                                           |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`@newkrok/nape-js`](packages/nape-js)          | The physics engine itself — rigid bodies, constraints, collision, fluids, deterministic multiplayer.                 |
+| [`@newkrok/nape-pixi`](packages/nape-pixi)      | PixiJS v8 integration — `BodySpriteBinding`, `FixedStepper` (render interpolation), `PixiDebugDraw`, `WorkerBridge`. |
+| [`create-nape-game`](packages/create-nape-game) | Project scaffolder: `npm create nape-game@latest` → complete game starter (Canvas2D / Three.js / PixiJS).            |
+
+The `templates/` directory holds the source templates the CLI ships
+(currently: `platformer`).
 
 ## Installation
 
 ```bash
+# Scaffold a complete starter project (recommended for new games)
+npm create nape-game@latest my-game
+
+# Or add nape-js to an existing project
 npm install @newkrok/nape-js
 # optional: PixiJS v8 integration
 npm install @newkrok/nape-pixi pixi.js
@@ -77,77 +85,77 @@ function update() {
 
 ### Core Classes
 
-| Class | Description |
-|-------|-------------|
+| Class   | Description                                                                               |
+| ------- | ----------------------------------------------------------------------------------------- |
 | `Space` | Physics world — add bodies, step simulation, `deterministic` mode for rollback/prediction |
-| `Body` | Rigid body with position, velocity, mass |
-| `Vec2` | 2D vector — pooling, `clone()`, `equals()`, `lerp()`, `fromAngle()` |
-| `Vec3` | 3D vector for constraint impulses — `clone()`, `equals()` |
-| `AABB` | Axis-aligned bounding box — `clone()`, `equals()`, `fromPoints()` |
-| `Mat23` | 2×3 affine matrix — `clone()`, `equals()`, transform, inverse |
-| `Ray` | Raycasting — `clone()`, `fromSegment()`, spatial queries |
+| `Body`  | Rigid body with position, velocity, mass                                                  |
+| `Vec2`  | 2D vector — pooling, `clone()`, `equals()`, `lerp()`, `fromAngle()`                       |
+| `Vec3`  | 3D vector for constraint impulses — `clone()`, `equals()`                                 |
+| `AABB`  | Axis-aligned bounding box — `clone()`, `equals()`, `fromPoints()`                         |
+| `Mat23` | 2×3 affine matrix — `clone()`, `equals()`, transform, inverse                             |
+| `Ray`   | Raycasting — `clone()`, `fromSegment()`, spatial queries                                  |
 
 ### Shapes
 
-| Class | Description |
-|-------|-------------|
-| `Circle` | Circular shape |
+| Class     | Description                                                                  |
+| --------- | ---------------------------------------------------------------------------- |
+| `Circle`  | Circular shape                                                               |
 | `Polygon` | Convex polygon (with `Polygon.box()`, `Polygon.rect()`, `Polygon.regular()`) |
-| `Capsule` | Capsule shape (`Capsule.create()`, `Capsule.createVertical()`) |
-| `Shape` | Base class with material, filter, sensor support |
+| `Capsule` | Capsule shape (`Capsule.create()`, `Capsule.createVertical()`)               |
+| `Shape`   | Base class with material, filter, sensor support                             |
 
 ### Physics Properties
 
-| Class | Description |
-|-------|-------------|
-| `Material` | Elasticity, friction, density |
-| `BodyType` | `STATIC`, `DYNAMIC`, `KINEMATIC` |
+| Class               | Description                               |
+| ------------------- | ----------------------------------------- |
+| `Material`          | Elasticity, friction, density             |
+| `BodyType`          | `STATIC`, `DYNAMIC`, `KINEMATIC`          |
 | `InteractionFilter` | Bit-mask collision/sensor/fluid filtering |
-| `FluidProperties` | Density, viscosity for fluid shapes |
+| `FluidProperties`   | Density, viscosity for fluid shapes       |
 
 ### Constraints
 
-| Class | Description |
-|-------|-------------|
-| `PivotJoint` | Pin two bodies at a shared point |
+| Class           | Description                        |
+| --------------- | ---------------------------------- |
+| `PivotJoint`    | Pin two bodies at a shared point   |
 | `DistanceJoint` | Constrain distance between anchors |
-| `WeldJoint` | Fix relative position and angle |
-| `AngleJoint` | Constrain relative angle |
-| `MotorJoint` | Apply angular velocity |
-| `LineJoint` | Slide along a line |
-| `PulleyJoint` | Constrain combined distances |
+| `WeldJoint`     | Fix relative position and angle    |
+| `AngleJoint`    | Constrain relative angle           |
+| `MotorJoint`    | Apply angular velocity             |
+| `LineJoint`     | Slide along a line                 |
+| `PulleyJoint`   | Constrain combined distances       |
 
 ### Callbacks
 
-| Class | Description |
-|-------|-------------|
-| `InteractionListener` | Collision/sensor/fluid events |
-| `BodyListener` | Body wake/sleep events |
-| `ConstraintListener` | Constraint events |
-| `PreListener` | Pre-collision filtering |
-| `CbType` | Tag interactors for filtering |
-| `CbEvent` | `BEGIN`, `ONGOING`, `END`, `WAKE`, `SLEEP`, `BREAK` |
+| Class                 | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| `InteractionListener` | Collision/sensor/fluid events                       |
+| `BodyListener`        | Body wake/sleep events                              |
+| `ConstraintListener`  | Constraint events                                   |
+| `PreListener`         | Pre-collision filtering                             |
+| `CbType`              | Tag interactors for filtering                       |
+| `CbEvent`             | `BEGIN`, `ONGOING`, `END`, `WAKE`, `SLEEP`, `BREAK` |
 
 ### Utilities
 
-| Class | Description |
-|-------|-------------|
-| `NapeList<T>` | Iterable list with `for...of` support |
-| `MatMN` | Variable-sized M×N matrix — `clone()`, `equals()`, multiply, transpose |
+| Class         | Description                                                            |
+| ------------- | ---------------------------------------------------------------------- |
+| `NapeList<T>` | Iterable list with `for...of` support                                  |
+| `MatMN`       | Variable-sized M×N matrix — `clone()`, `equals()`, multiply, transpose |
 
 ### Helpers
 
 Higher-level building blocks layered on top of the engine — opt-in modules.
 
-| Helper | Description |
-|--------|-------------|
-| `CharacterController` | Velocity-based 2D platformer controller — ground / slope / wall raycasts, coyote-time, one-way platforms, moving-platform inheritance, runtime-mutable `down` for radial-gravity worlds |
-| `RadialGravityField` / `RadialGravityFieldGroup` | Point-source gravity well — `inverse-square` / `inverse` / `constant` / custom falloff, `maxRadius` / `softening`, body filter, mass scaling. Replaces hand-rolled `body.force = ...` loops |
-| `ParticleEmitter` / `ParticleEmitterGroup` | Physics-aware particle emitter — pooled bodies, continuous / periodic / manual spawning, configurable spawn / velocity patterns, deterministic RNG, lifecycle hooks (`onSpawn` / `onUpdate` / `onDeath` / `onCollide`), self-excluding filter generation |
-| `buildTilemapBody` / `meshTilemap` | Greedy-meshed collision body from a 2D tile grid. 5–50× fewer shapes than one-polygon-per-cell. Includes `tiledLayerToGrid` and `ldtkLayerToGrid` parsers |
-| `TriggerZone` | Sensor zone with `onEnter` / `onStay` / `onExit` callbacks — wraps the BEGIN/ONGOING/END `InteractionListener` plumbing |
-| `fractureBody` | Voronoi-based polygon shatter — `fragmentCount`, `explosionImpulse`, deterministic via `random` |
-| `createConcaveBody` | Decompose a concave outline into convex polygons and pack them into a single body |
+| Helper                                           | Description                                                                                                                                                                                                                                              |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CharacterController`                            | Velocity-based 2D platformer controller — ground / slope / wall raycasts, coyote-time, one-way platforms, moving-platform inheritance, runtime-mutable `down` for radial-gravity worlds                                                                  |
+| `RadialGravityField` / `RadialGravityFieldGroup` | Point-source gravity well — `inverse-square` / `inverse` / `constant` / custom falloff, `maxRadius` / `softening`, body filter, mass scaling. Replaces hand-rolled `body.force = ...` loops                                                              |
+| `ParticleEmitter` / `ParticleEmitterGroup`       | Physics-aware particle emitter — pooled bodies, continuous / periodic / manual spawning, configurable spawn / velocity patterns, deterministic RNG, lifecycle hooks (`onSpawn` / `onUpdate` / `onDeath` / `onCollide`), self-excluding filter generation |
+| `buildTilemapBody` / `meshTilemap`               | Greedy-meshed collision body from a 2D tile grid. 5–50× fewer shapes than one-polygon-per-cell. Includes `tiledLayerToGrid` and `ldtkLayerToGrid` parsers                                                                                                |
+| `TriggerZone`                                    | Sensor zone with `onEnter` / `onStay` / `onExit` callbacks — wraps the BEGIN/ONGOING/END `InteractionListener` plumbing                                                                                                                                  |
+| `fractureBody`                                   | Voronoi-based polygon shatter — `fragmentCount`, `explosionImpulse`, deterministic via `random`                                                                                                                                                          |
+| `createConcaveBody`                              | Decompose a concave outline into convex polygons and pack them into a single body                                                                                                                                                                        |
 
 ### Serialization
 
@@ -186,7 +194,7 @@ space.deterministic = true;
 const recorder = new Recorder<MyInput>(space, { keyframeEvery: 60 });
 for (let f = 0; f < 600; f++) {
   recorder.recordFrame(readUserInput()); // null = no input this frame
-  applyUserInput(space);                  // user's own logic
+  applyUserInput(space); // user's own logic
   space.step(1 / 60);
 }
 const replay = recorder.finish();

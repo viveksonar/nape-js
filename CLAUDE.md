@@ -25,6 +25,11 @@ packages/
   nape-pixi/      # @newkrok/nape-pixi — PixiJS v8 integration
                   #   BodySpriteBinding, FixedStepper, PixiDebugDraw,
                   #   WorkerBridge + transform protocol. 0.1.0 ready to ship.
+  create-nape-game/ # `npm create nape-game@latest` scaffolder — copies
+                  #   templates/<name>/, snips unused renderer files,
+                  #   patches main.js + package.json. 0.1.0 ready.
+templates/        # source templates the CLI ships (canonical copy)
+  platformer/     # multi-renderer platformer starter (canvas2d/threejs/pixi)
 benchmarks/       # cross-package perf suite
 docs/             # GitHub Pages site + demos
 scripts/          # repo-wide tooling
@@ -32,9 +37,11 @@ scripts/          # repo-wide tooling
 ```
 
 Root `package.json` is a private workspaces manifest. Scripts fan out with
-`npm run <x> --workspaces --if-present`. Each published package (nape-js,
-nape-pixi) owns its own `package.json`, `tsconfig.json`, build config, and
-test suite.
+`npm run <x> --workspaces --if-present`. Each published package
+(nape-js, nape-pixi, create-nape-game) owns its own `package.json` and
+build config. The `templates/` tree is git-tracked and copied into
+`packages/create-nape-game/templates/` by its `prepare`/`prepublishOnly`
+hook.
 
 ## Build & Test
 
@@ -82,11 +89,11 @@ Engine bootstrap (packages/nape-js/src/core/engine.ts → ZPPRegistry.ts + boots
 
 ## Detailed Guides
 
-| Guide | Path | Content |
-|-------|------|---------|
-| Architecture | `docs/guides/architecture.md` | Internal patterns, registration flow, factory callbacks, `any` rules, ESM constraints |
-| Roadmap | `ROADMAP.md` | Priority table, status, competitive analysis, feature details |
-| Testing | `docs/guides/testing.md` | Vitest config, test patterns, coverage metrics, best practices |
-| Workflow | `docs/guides/workflow.md` | Build system, CI/CD, linting, commit conventions, doc update matrix, all scripts |
-| Multiplayer | `docs/guides/multiplayer-guide.md` | Server-authoritative architecture, binary protocol, prediction, deployment |
-| Replay | `docs/guides/replay-guide.md` | `Recorder` / `Player` / `encodeReplay`, determinism contract, scrub, sizing |
+| Guide        | Path                               | Content                                                                               |
+| ------------ | ---------------------------------- | ------------------------------------------------------------------------------------- |
+| Architecture | `docs/guides/architecture.md`      | Internal patterns, registration flow, factory callbacks, `any` rules, ESM constraints |
+| Roadmap      | `ROADMAP.md`                       | Priority table, status, competitive analysis, feature details                         |
+| Testing      | `docs/guides/testing.md`           | Vitest config, test patterns, coverage metrics, best practices                        |
+| Workflow     | `docs/guides/workflow.md`          | Build system, CI/CD, linting, commit conventions, doc update matrix, all scripts      |
+| Multiplayer  | `docs/guides/multiplayer-guide.md` | Server-authoritative architecture, binary protocol, prediction, deployment            |
+| Replay       | `docs/guides/replay-guide.md`      | `Recorder` / `Player` / `encodeReplay`, determinism contract, scrub, sizing           |
