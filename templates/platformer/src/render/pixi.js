@@ -142,9 +142,11 @@ export class PixiRenderer {
     const g = new PIXI.Graphics();
     switch (kind) {
       case "player": {
-        g.rect(-11, -18, 22, 36).fill(COLORS.player);
+        // Visual capsule (22 wide × 36 tall) anchored so its bottom edge
+        // aligns with the bottom of the 18-radius physics circle.
+        g.roundRect(-11, -18, 22, 36, 11).fill(COLORS.player);
         // direction marker (eye) — we redraw on facing change in renderEye()
-        g.rect(3, -8, 3, 4).fill(0x0a0e14);
+        g.rect(3, -4, 3, 4).fill(0x0a0e14);
         break;
       }
       case "goal": {
@@ -162,21 +164,21 @@ export class PixiRenderer {
         break;
       }
       case "enemy": {
-        const sz = 26,
-          half = 13;
+        const r = owner?.radius ?? 13;
         if (owner?.kind === "goomba") {
-          g.rect(-half, -half, sz, sz).fill(COLORS.goomba);
-          g.rect(-half, half - 6, sz, 6).fill(0x3a1f0e);
-          g.rect(-7, -6, 4, 5).fill(0xffffff);
-          g.rect(3, -6, 4, 5).fill(0xffffff);
+          g.circle(0, 0, r).fill(COLORS.goomba);
+          g.rect(-6, -5, 4, 5).fill(0xffffff);
+          g.rect(2, -5, 4, 5).fill(0xffffff);
+          g.rect(-5, -3, 2, 3).fill(0x000000);
+          g.rect(3, -3, 2, 3).fill(0x000000);
         } else {
-          g.rect(-half, -half, sz, sz).fill(COLORS.spiky);
-          // top spikes
+          g.circle(0, 0, r).fill(COLORS.spiky);
           for (let i = -2; i <= 2; i++) {
-            g.poly([i * 6 - 3, -half, i * 6 + 3, -half, i * 6, -half - 6]).fill(0x1d0a2c);
+            const sx = i * 5;
+            g.poly([sx - 2, -r + 1, sx + 2, -r + 1, sx, -r - 5]).fill(0x1d0a2c);
           }
-          g.circle(0, 2, 5).fill(0xffffff);
-          g.circle(2, 2, 2).fill(0x000);
+          g.circle(0, 2, 4).fill(0xffffff);
+          g.circle(1, 2, 2).fill(0x000000);
         }
         break;
       }

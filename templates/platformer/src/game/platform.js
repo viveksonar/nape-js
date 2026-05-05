@@ -33,12 +33,12 @@ export class MovingPlatform {
     this._segLen = segLen;
 
     const body = new Body(BodyType.KINEMATIC, this.from.copy());
-    body.shapes.add(
-      new Polygon(
-        Polygon.box(length, HEIGHT),
-        new Material(0, 2, 2, 1, 0.001), // high friction = player rides instead of sliding off
-      ),
+    const shape = new Polygon(
+      Polygon.box(length, HEIGHT),
+      new Material(0, 2, 2, 1, 0.001), // high friction = player rides instead of sliding off
     );
+    shape.cbTypes.add(cbTypes.MOVING_PLATFORM);
+    body.shapes.add(shape);
     body.cbTypes.add(cbTypes.MOVING_PLATFORM);
     body.userData.movingPlatform = this;
     body.space = space;

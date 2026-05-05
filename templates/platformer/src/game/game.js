@@ -1,4 +1,11 @@
-import { Space, Vec2, InteractionListener, InteractionType, CbEvent } from "@newkrok/nape-js";
+import {
+  Space,
+  Vec2,
+  InteractionListener,
+  InteractionType,
+  CbEvent,
+  CbType,
+} from "@newkrok/nape-js";
 
 import { createCbTypes } from "./callbacks.js";
 import { parseLevel, buildLevelBody, TILE_SIZE } from "./level.js";
@@ -102,116 +109,133 @@ export class Game {
     const { space } = this;
     const t = this.cbTypes;
     const bodyOf = (interactor) => interactor.castBody ?? interactor.castShape?.body ?? null;
+    // Tags live on the SHAPE in nape 3.35.0, not on the Body — so check the
+    // shape's cbTypes (falling back to the body's for legacy compatibility).
+    const hasCb = (interactor, tag) => {
+      const s = interactor.castShape ?? null;
+      if (s?.cbTypes?.has(tag)) return true;
+      const b = bodyOf(interactor);
+      return !!b?.cbTypes?.has?.(tag);
+    };
     const otherOf = (cb, ownerCb) => {
       const i1 = cb.int1,
         i2 = cb.int2;
       const b1 = bodyOf(i1),
         b2 = bodyOf(i2);
-      const owner = b1?.cbTypes?.has(ownerCb) ? b1 : b2?.cbTypes?.has(ownerCb) ? b2 : null;
+      const owner = hasCb(i1, ownerCb) ? b1 : hasCb(i2, ownerCb) ? b2 : null;
       return { owner, other: b1 === owner ? b2 : b1 };
     };
 
-    // Coin pickup
-    new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, t.PLAYER, t.COIN, (cb) => {
-      const { other } = otherOf(cb, t.COIN);
-      const coin = other?.userData.coin;
-      if (coin?.collect()) {
-        this.player.coins += 1;
-      }
-    }).space = space;
-
-    // Goal
-    new InteractionListener(CbEvent.BEGIN, InteractionType.SENSOR, t.PLAYER, t.GOAL, () => {
-      if (this.state === STATE.PLAYING) this._onWin();
-    }).space = space;
-
-    // Spike hazard
-    new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, t.PLAYER, t.HAZARD, (cb) => {
-      const { other } = otherOf(cb, t.HAZARD);
-      if (other) this.player.takeDamage(other.position.x);
-    }).space = space;
-
-    // Stompable enemy: check whether player came from above
+    // Player ↔ anything: dispatch by what the other body is. Tag-paired
+    // listeners (PLAYER × COIN, PLAYER × HAZARD, ...) don't reliably fire in
+    // nape-js 3.35.0; ANY_BODY-paired listeners do.
     new InteractionListener(
       CbEvent.BEGIN,
-      InteractionType.COLLISION,
+      InteractionType.SENSOR,
       t.PLAYER,
-      t.ENEMY_STOMPABLE,
-      (cb) => {
-        const { other } = otherOf(cb, t.ENEMY_STOMPABLE);
-        const enemy = other?.userData.enemy;
-        if (!enemy || enemy.dead) return;
-        const playerBottom = this.player.body.position.y + Player.HEIGHT / 2;
-        const enemyTop = enemy.body.position.y - enemy.size / 2;
-        const fromAbove = playerBottom < enemyTop + 8 && this.player.body.velocity.y > 50;
-        if (fromAbove) {
-          this._deferredKills.push(() => enemy.kill());
-          this.player.bounceStomp();
-        } else {
-          this.player.takeDamage(enemy.body.position.x);
-        }
-      },
-    ).space = space;
-
-    // Spiky enemy: always damages
-    new InteractionListener(
-      CbEvent.BEGIN,
-      InteractionType.COLLISION,
-      t.PLAYER,
-      t.ENEMY_SPIKY,
-      (cb) => {
-        const { other } = otherOf(cb, t.ENEMY_SPIKY);
-        if (other) this.player.takeDamage(other.position.x);
-      },
-    ).space = space;
-
-    // Bullet hits enemy (either kind)
-    const onBulletHitEnemy = (cb, enemyTag) => {
-      const i1 = cb.int1,
-        i2 = cb.int2;
-      const b1 = bodyOf(i1),
-        b2 = bodyOf(i2);
-      const bullet = b1?.userData.bullet ?? b2?.userData.bullet;
-      const enemyBody = b1?.cbTypes?.has(enemyTag) ? b1 : b2?.cbTypes?.has(enemyTag) ? b2 : null;
-      const enemy = enemyBody?.userData.enemy;
-      if (bullet) this._deferredKills.push(() => this.projectiles.recycle(bullet));
-      if (enemy && !enemy.dead) {
-        this._deferredKills.push(() => enemy.kill());
-        this.camera.shake(4, 30);
-      }
-    };
-    new InteractionListener(
-      CbEvent.BEGIN,
-      InteractionType.COLLISION,
-      t.PROJECTILE,
-      t.ENEMY_STOMPABLE,
-      (cb) => onBulletHitEnemy(cb, t.ENEMY_STOMPABLE),
-    ).space = space;
-    new InteractionListener(
-      CbEvent.BEGIN,
-      InteractionType.COLLISION,
-      t.PROJECTILE,
-      t.ENEMY_SPIKY,
-      (cb) => onBulletHitEnemy(cb, t.ENEMY_SPIKY),
-    ).space = space;
-
-    // Bullet hits destructible: shatter
-    new InteractionListener(
-      CbEvent.BEGIN,
-      InteractionType.COLLISION,
-      t.PROJECTILE,
-      t.DESTRUCTIBLE,
+      CbType.ANY_BODY,
       (cb) => {
         const i1 = cb.int1,
           i2 = cb.int2;
         const b1 = bodyOf(i1),
           b2 = bodyOf(i2);
-        const bullet = b1?.userData.bullet ?? b2?.userData.bullet;
-        const destBody = b1?.userData.destructible ? b1 : b2?.userData.destructible ? b2 : null;
-        const dest = destBody?.userData.destructible;
+        const otherBody = b1?.userData.coin || b1?.userData.goal ? b1 : b2;
+        if (!otherBody) return;
+        const coin = otherBody.userData.coin;
+        if (coin?.collect()) {
+          this.player.coins += 1;
+          return;
+        }
+        if (otherBody.userData.goal && this.state === STATE.PLAYING) {
+          this._onWin();
+        }
+      },
+    ).space = space;
+    new InteractionListener(
+      CbEvent.BEGIN,
+      InteractionType.COLLISION,
+      t.PLAYER,
+      CbType.ANY_BODY,
+      (cb) => {
+        const i1 = cb.int1,
+          i2 = cb.int2;
+        const b1 = bodyOf(i1),
+          b2 = bodyOf(i2);
+        const otherBody = b1?.userData.hazard ? b1 : b2?.userData.hazard ? b2 : null;
+        if (otherBody) {
+          this.player.takeDamage(otherBody.position.x);
+        }
+      },
+    ).space = space;
+
+    // Stompable enemy: route every player↔enemy collision through one
+    // listener and dispatch by enemy `kind` from userData. This avoids
+    // depending on per-tag (PLAYER × ENEMY_STOMPABLE / ENEMY_SPIKY) listener
+    // resolution, which doesn't reliably fire in nape-js 3.35.0 — the
+    // ANY_BODY-paired listener (probe) does fire reliably though.
+    const handlePlayerEnemy = (cb) => {
+      const i1 = cb.int1,
+        i2 = cb.int2;
+      const b1 = bodyOf(i1),
+        b2 = bodyOf(i2);
+      const enemyBody = b1?.userData.enemy ? b1 : b2?.userData.enemy ? b2 : null;
+      const enemy = enemyBody?.userData.enemy;
+      if (!enemy || enemy.dead) return;
+      if (enemy.kind === "spiky") {
+        this.player.takeDamage(enemy.body.position.x);
+        return;
+      }
+      // goomba: stomp if the player is clearly *above* the enemy and moving
+      // downward. We require playerBottom (y + RADIUS) to be above the enemy's
+      // mid-line — that way a side hit (where the player's bottom is roughly
+      // at the enemy's mid-line) damages, while a top hit stomps.
+      const PLAYER_R = 18;
+      const playerBottom = this.player.body.position.y + PLAYER_R;
+      const enemyMid = enemy.body.position.y;
+      const stomp = playerBottom < enemyMid && this.player.body.velocity.y > 80;
+      if (stomp) {
+        this._deferredKills.push(() => enemy.kill());
+        this.player.bounceStomp();
+        this.player._iFrames = Math.max(this.player._iFrames, 0.2);
+      } else {
+        this.player.takeDamage(enemy.body.position.x);
+      }
+    };
+    new InteractionListener(
+      CbEvent.BEGIN,
+      InteractionType.COLLISION,
+      t.PLAYER,
+      CbType.ANY_BODY,
+      handlePlayerEnemy,
+    ).space = space;
+
+    // (Spiky enemy damage is handled inside handlePlayerEnemy above.)
+
+    // Bullet hits anything: dispatch by what the other body actually is.
+    new InteractionListener(
+      CbEvent.BEGIN,
+      InteractionType.COLLISION,
+      t.PROJECTILE,
+      CbType.ANY_BODY,
+      (cb) => {
+        const i1 = cb.int1,
+          i2 = cb.int2;
+        const b1 = bodyOf(i1),
+          b2 = bodyOf(i2);
+        const bullet = b1?.userData.bullet ?? b2?.userData.bullet ?? null;
+        const otherBody = b1?.userData.bullet ? b2 : b1;
+        // Always recycle the bullet on any impact — projectiles never bounce.
         if (bullet) this._deferredKills.push(() => this.projectiles.recycle(bullet));
+        if (!otherBody) return;
+        const enemy = otherBody.userData.enemy;
+        if (enemy && !enemy.dead) {
+          this._deferredKills.push(() => enemy.kill());
+          this.camera.shake(4, 30);
+          return;
+        }
+        const dest = otherBody.userData.destructible;
         if (dest && !dest.broken) {
-          const impact = bullet?.body.position ?? destBody.position;
+          const impact = bullet?.body.position ?? otherBody.position;
           this._deferredKills.push(() => dest.shatter(impact));
           this.camera.shake(6, 40);
         }

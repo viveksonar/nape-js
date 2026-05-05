@@ -14,6 +14,7 @@ export class Hazard {
     const shape = new Polygon(verts);
     shape.cbTypes.add(cbTypes.HAZARD);
     body.shapes.add(shape);
+    body.cbTypes.add(cbTypes.HAZARD);
     body.userData.hazard = this;
     body.space = space;
     this.body = body;

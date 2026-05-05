@@ -21,8 +21,10 @@ export class ProjectilePool {
     /** @type {Bullet[]} */
     this.idle = [];
 
-    // Self-excluding bit so bullets ignore each other but hit everything else
+    // Self-excluding bit so bullets ignore each other but hit everything else.
+    // Bit 11 is FRAGMENT_GROUP (destructible debris) — bullets pass through too.
     this._bulletGroup = 1 << 10;
+    this._fragmentBit = 1 << 11;
   }
 
   fire(origin, dirX, dirY) {
@@ -39,11 +41,12 @@ export class ProjectilePool {
 
   _allocate() {
     const body = new Body(BodyType.DYNAMIC, new Vec2(0, 0));
-    const shape = new Circle(RADIUS, new Material(0, 0, 0, 0.05, 0.001));
+    const shape = new Circle(RADIUS, undefined, new Material(0, 0, 0, 0.05, 0.001));
     shape.filter.collisionGroup = this._bulletGroup;
-    shape.filter.collisionMask = ~this._bulletGroup;
+    shape.filter.collisionMask = ~(this._bulletGroup | this._fragmentBit);
     shape.cbTypes.add(this.cbTypes.PROJECTILE);
     body.shapes.add(shape);
+    body.cbTypes.add(this.cbTypes.PROJECTILE);
     body.allowRotation = false;
     body.isBullet = true;
     body.gravMassScale = 0; // bullets fly in a straight line, ignore gravity

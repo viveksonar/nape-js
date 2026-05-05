@@ -1,15 +1,24 @@
-import { Body, BodyType, Vec2, Polygon, Material, CharacterController } from "@newkrok/nape-js";
+import {
+  Body,
+  BodyType,
+  Vec2,
+  Circle,
+  Material,
+  InteractionFilter,
+  CharacterController,
+} from "@newkrok/nape-js";
 
 const WIDTH = 22;
 const HEIGHT = 36;
+const RADIUS = 18; // circle hitbox — close to half the visual height (36/2)
 
 // Tunables — every magic number lives here so you can feel out the controls
 // without scrolling. Defaults are tuned for a snappy, Meatboy-ish feel.
 const RUN_SPEED = 240; // px/s horizontal max speed
-const RUN_ACCEL = 1800; // px/s² ground acceleration
-const AIR_ACCEL = 1100; // px/s² horizontal acceleration in air (less than ground)
-const JUMP_VELOCITY = 460; // initial upward velocity (px/s)
-const DOUBLE_JUMP_VELOCITY = 380;
+const RUN_ACCEL = 4800; // px/s² ground acceleration (~0.05s to full speed)
+const AIR_ACCEL = 2800; // px/s² horizontal acceleration in air
+const JUMP_VELOCITY = 552; // initial upward velocity (px/s) — was 460 (+20%)
+const DOUBLE_JUMP_VELOCITY = 456; // was 380 (+20%)
 const COYOTE_TIME = 0.1; // grace period after walking off a ledge (s)
 const JUMP_BUFFER = 0.1; // grace period for early jump press before landing (s)
 const JUMP_CUT_FACTOR = 0.45; // velocity multiplier when releasing jump early (var-height)
@@ -41,22 +50,25 @@ export class Player {
     this._iFrames = 0;
     this._dead = false;
 
-    // Body
+    // Body — Circle hitbox. Polygon + explicit Material triggers a
+    // tunneling bug against static-Polygon floors; Circle is unaffected
+    // and is the shape the CharacterController has best support for.
+    // `allowRotation = false` keeps the visual upright (no rolling).
     const body = new Body(BodyType.DYNAMIC, spawnPos);
-    body.shapes.add(
-      new Polygon(
-        Polygon.box(WIDTH, HEIGHT),
-        new Material(0, 0.4, 0.4, 1, 0.001), // 0 elasticity = no bouncy player
-      ),
-    );
+    const shape = new Circle(RADIUS, undefined, new Material(0, 0.4, 0.4, 1, 0.001));
+    shape.cbTypes.add(cbTypes.PLAYER);
+    // Mask out FRAGMENT_GROUP (bit 11) so destructible debris flies past us.
+    shape.filter = new InteractionFilter(1, ~(1 << 11));
+    body.shapes.add(shape);
+    body.cbTypes.add(cbTypes.PLAYER); // also on body — both paths covered
     body.allowRotation = false;
     body.isBullet = true; // CCD prevents tunneling at high jump speeds
-    body.cbTypes.add(cbTypes.PLAYER);
     body.space = space;
     this.body = body;
 
     this.cc = new CharacterController(space, body, {
       maxSlopeAngle: Math.PI / 3,
+      down: new Vec2(0, 1),
       oneWayPlatformTag: cbTypes.ONE_WAY,
       characterTag: cbTypes.PLAYER,
     });

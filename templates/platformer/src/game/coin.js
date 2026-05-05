@@ -18,6 +18,7 @@ export class Coin {
     shape.sensorEnabled = true;
     shape.cbTypes.add(cbTypes.COIN);
     body.shapes.add(shape);
+    body.cbTypes.add(cbTypes.COIN);
     body.userData.coin = this;
     body.space = space;
     this.body = body;

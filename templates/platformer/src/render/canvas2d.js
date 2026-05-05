@@ -226,41 +226,52 @@ export class Canvas2DRenderer {
       if (e.dead) continue;
       const cx = e.body.position.x;
       const cy = e.body.position.y;
-      const half = e.size / 2;
+      const r = e.radius;
       if (e.kind === "goomba") {
         ctx.fillStyle = COLORS.goomba;
-        ctx.fillRect(cx - half, cy - half, e.size, e.size);
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fill();
+        // shoe band — clip to the circle so the strip hugs the bottom
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.clip();
         ctx.fillStyle = COLORS.goombaShoes;
-        ctx.fillRect(cx - half, cy + half - 6, e.size, 6);
+        ctx.fillRect(cx - r, cy + r - 5, r * 2, 5);
+        ctx.restore();
         // eyes
         ctx.fillStyle = "#fff";
-        ctx.fillRect(cx - 7, cy - 6, 4, 5);
-        ctx.fillRect(cx + 3, cy - 6, 4, 5);
+        ctx.fillRect(cx - 6, cy - 5, 4, 5);
+        ctx.fillRect(cx + 2, cy - 5, 4, 5);
         ctx.fillStyle = "#000";
-        ctx.fillRect(cx - 6, cy - 4, 2, 3);
-        ctx.fillRect(cx + 4, cy - 4, 2, 3);
+        ctx.fillRect(cx - 5, cy - 3, 2, 3);
+        ctx.fillRect(cx + 3, cy - 3, 2, 3);
       } else {
         // spiky
         ctx.fillStyle = COLORS.spiky;
-        ctx.fillRect(cx - half, cy - half, e.size, e.size);
-        // spikes around the top
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fill();
+        // top spikes
         ctx.fillStyle = COLORS.spikySpike;
         for (let i = -2; i <= 2; i++) {
+          const sx = cx + i * 5;
           ctx.beginPath();
-          ctx.moveTo(cx + i * 6 - 3, cy - half);
-          ctx.lineTo(cx + i * 6 + 3, cy - half);
-          ctx.lineTo(cx + i * 6, cy - half - 6);
+          ctx.moveTo(sx - 2, cy - r + 1);
+          ctx.lineTo(sx + 2, cy - r + 1);
+          ctx.lineTo(sx, cy - r - 5);
           ctx.closePath();
           ctx.fill();
         }
         // eye
         ctx.fillStyle = COLORS.spikyEye;
         ctx.beginPath();
-        ctx.arc(cx, cy + 2, 5, 0, Math.PI * 2);
+        ctx.arc(cx, cy + 2, 4, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = "#000";
         ctx.beginPath();
-        ctx.arc(cx + 2, cy + 2, 2, 0, Math.PI * 2);
+        ctx.arc(cx + 1, cy + 2, 2, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -285,16 +296,30 @@ export class Canvas2DRenderer {
     const p = game.player;
     if (p.isDead()) return;
     const x = p.body.position.x;
-    const y = p.body.position.y;
-    const w = 22,
-      h = 36;
-    // Flicker on i-frames
+    const yPhys = p.body.position.y;
+    // Visual capsule — 22 wide × 36 tall. Anchor the visual so its bottom
+    // edge aligns with the bottom of the physics circle (radius 18), then
+    // draw the capsule extending upward from that line.
+    const PHYS_R = 18;
+    const w = 22;
+    const h = 36;
+    const r = w / 2;
+    const bottomY = yPhys + PHYS_R;
+    const topY = bottomY - h;
+    const cy = (topY + bottomY) / 2;
+    const halfSpine = h / 2 - r;
     const blink = p.isInvulnerable() && Math.floor(performance.now() / 80) % 2 === 0;
     ctx.fillStyle = blink ? COLORS.playerInvuln : COLORS.player;
-    ctx.fillRect(x - w / 2, y - h / 2, w, h);
+    ctx.beginPath();
+    ctx.moveTo(x - r, cy - halfSpine);
+    ctx.arc(x, cy - halfSpine, r, Math.PI, 0);
+    ctx.lineTo(x + r, cy + halfSpine);
+    ctx.arc(x, cy + halfSpine, r, 0, Math.PI);
+    ctx.closePath();
+    ctx.fill();
     // direction marker (eye)
     ctx.fillStyle = "#0a0e14";
     const eyeX = x + p.facing * 4;
-    ctx.fillRect(eyeX - 1, y - 8, 3, 4);
+    ctx.fillRect(eyeX - 1, cy - 6, 3, 4);
   }
 }

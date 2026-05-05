@@ -14,6 +14,7 @@ export class Goal {
     shape.sensorEnabled = true;
     shape.cbTypes.add(cbTypes.GOAL);
     body.shapes.add(shape);
+    body.cbTypes.add(cbTypes.GOAL);
     body.userData.goal = this;
     body.space = space;
     this.body = body;

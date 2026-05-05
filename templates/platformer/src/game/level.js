@@ -1,4 +1,4 @@
-import { Vec2, Material } from "@newkrok/nape-js";
+import { Vec2, Material, BodyType, Body, Polygon } from "@newkrok/nape-js";
 import { buildTilemapBody } from "@newkrok/nape-js";
 
 export const TILE_SIZE = 32;
@@ -33,7 +33,7 @@ const LEVEL_ROWS = [
   "..........$$$.....======.........................=====..D.D.D..",
   "..........===.................................G............===.",
   "..............M----M.................==============............",
-  "...G.................................................G......F.",
+  ".P.G.................................................G......F.",
   "==========.....s.s....======...DDDDDDD......s.s.s......========",
   "===========================================.===================",
   "================================================================",
@@ -117,6 +117,7 @@ export function parseLevel() {
   if (!playerSpawn) {
     // Fallback: bottom-left, two tiles up from floor
     playerSpawn = new Vec2(2 * TILE_SIZE, (h - 3) * TILE_SIZE);
+    console.warn("[level] no P found — using fallback spawn", playerSpawn.x, playerSpawn.y);
   }
   if (!goalPos) {
     goalPos = new Vec2((w - 2) * TILE_SIZE, (h - 3) * TILE_SIZE);
@@ -139,11 +140,29 @@ export function parseLevel() {
  * one-polygon-per-cell).
  */
 export function buildLevelBody(space, solidGrid) {
-  const body = buildTilemapBody(solidGrid, {
-    tileSize: TILE_SIZE,
-    position: new Vec2(0, 0),
-    material: new Material(0.45, 0.55, 0.55, 1, 0.001),
-  });
+  // MANUAL build — buildTilemapBody seems to produce a body whose shape
+  // list is unreadable (length=1, but no iterable shapes), so collisions
+  // never happen. One Polygon per solid cell; slow on huge maps but fine
+  // for our small grid.
+  const h = solidGrid.length;
+  const w = solidGrid[0].length;
+  const body = new Body(BodyType.STATIC);
+  let shapesAdded = 0;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (!solidGrid[y][x]) continue;
+      const cx = (x + 0.5) * TILE_SIZE;
+      const cy = (y + 0.5) * TILE_SIZE;
+      const verts = [
+        new Vec2(cx - TILE_SIZE / 2, cy - TILE_SIZE / 2),
+        new Vec2(cx + TILE_SIZE / 2, cy - TILE_SIZE / 2),
+        new Vec2(cx + TILE_SIZE / 2, cy + TILE_SIZE / 2),
+        new Vec2(cx - TILE_SIZE / 2, cy + TILE_SIZE / 2),
+      ];
+      body.shapes.add(new Polygon(verts));
+      shapesAdded++;
+    }
+  }
   body.space = space;
   return body;
 }
