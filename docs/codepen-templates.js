@@ -9,9 +9,22 @@
  *  2. Auto-generation from demo hooks (setup/step/click/drag/release) via .toString()
  */
 
-const NAPE_CDN = "https://cdn.jsdelivr.net/npm/@newkrok/nape-js@3.33.0/dist/index.js";
-const NAPE_PIXI_CDN = "https://cdn.jsdelivr.net/npm/@newkrok/nape-pixi@0.1.0/dist/index.js";
-const THREE_CDN = "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js";
+const NAPE_VERSION = "3.35.0";
+const NAPE_PIXI_VERSION = "0.1.0";
+const THREE_VERSION = "0.170.0";
+const PIXI_VERSION = "8";
+
+const NAPE_CDN = `https://cdn.jsdelivr.net/npm/@newkrok/nape-js@3.35.0/dist/index.js`;
+const NAPE_PIXI_CDN = `https://cdn.jsdelivr.net/npm/@newkrok/nape-pixi@0.1.0/dist/index.js`;
+const THREE_CDN = `https://cdn.jsdelivr.net/npm/three@${THREE_VERSION}/build/three.module.js`;
+const PIXI_CDN = `https://cdn.jsdelivr.net/npm/pixi.js@${PIXI_VERSION}/dist/pixi.min.mjs`;
+
+export const PACKAGE_VERSIONS = {
+  nape: NAPE_VERSION,
+  napePixi: NAPE_PIXI_VERSION,
+  three: THREE_VERSION,
+  pixi: PIXI_VERSION,
+};
 
 // =========================================================================
 // Shared embedded helpers — common to multiple templates
@@ -722,16 +735,18 @@ app.canvas.addEventListener("wheel", (e) => {
 // Auto-generation: extract demo hooks via .toString()
 // =========================================================================
 
-const NAPE_IMPORTS = `import {
-  Space, Body, BodyType, Vec2, Circle, Polygon, Capsule,
+const NAPE_IMPORT_NAMES = `Space, Body, BodyType, Vec2, Circle, Polygon, Capsule,
   PivotJoint, DistanceJoint, AngleJoint, WeldJoint, MotorJoint, LineJoint, PulleyJoint, SpringJoint,
   Material, FluidProperties, InteractionFilter, InteractionGroup, AABB, MarchingSquares,
   CbType, CbEvent, InteractionType, InteractionListener, PreListener, PreFlag,
   CharacterController, fractureBody, UserConstraint, TriggerZone,
   Ray, RayResult,
   buildTilemapBody, meshTilemap, RadialGravityField, RadialGravityFieldGroup,
-  ParticleEmitter, ParticleEmitterGroup,
-} from "${NAPE_CDN}";`;
+  ParticleEmitter, ParticleEmitterGroup`;
+
+const napeImports = (specifier) => `import {\n  ${NAPE_IMPORT_NAMES},\n} from "${specifier}";`;
+const NAPE_IMPORTS = napeImports(NAPE_CDN);
+const NAPE_IMPORTS_BARE = napeImports("@newkrok/nape-js");
 
 /**
  * Convert a method-shorthand .toString() result to a standalone function.
@@ -747,8 +762,10 @@ function toFunction(fnStr, name) {
 
 /**
  * Extract module-level preamble (variables, constants, functions) from demo
- * source text. Returns the code between the last import block and the
- * `export default {` line, with import statements stripped.
+ * source text. Returns the code BEFORE the `export default {` line plus any
+ * top-level declarations that appear AFTER the export-default block (helper
+ * functions, late constants), with import statements stripped.
+ *
  * Returns empty string if nothing is found.
  */
 function extractModulePreamble(sourceText) {
@@ -781,10 +798,8 @@ function extractModulePreamble(sourceText) {
 
     if (trimmed.startsWith("import ") || trimmed.startsWith("import{")) {
       if (trimmed.endsWith(";")) {
-        // Single-line import
         lastImportEndIdx = i;
       } else {
-        // Start of multiline import
         inMultilineImport = true;
       }
     }
@@ -793,11 +808,97 @@ function extractModulePreamble(sourceText) {
   if (exportIdx <= 0) return "";
 
   const startIdx = lastImportEndIdx + 1;
-  if (startIdx >= exportIdx) return "";
+  const beforeExport = startIdx < exportIdx ? lines.slice(startIdx, exportIdx).join("\n").trim() : "";
 
-  // Extract lines between imports and export default, trim blank edges
-  const preamble = lines.slice(startIdx, exportIdx).join("\n").trim();
-  return preamble;
+  // Walk the export-default object literal with brace counting to find where
+  // it ends, then collect everything after it as additional preamble.
+  // Strings and template literals are skipped to avoid counting braces inside them.
+  const afterExport = extractAfterExport(sourceText, lines, exportIdx);
+
+  if (!beforeExport && !afterExport) return "";
+  if (!beforeExport) return afterExport;
+  if (!afterExport) return beforeExport;
+  return `${beforeExport}\n\n${afterExport}`;
+}
+
+/**
+ * Find the closing brace of `export default { ... }` and return the
+ * trailing source (helper functions, late constants) trimmed. Returns an
+ * empty string if the export block isn't a balanced object literal or if
+ * nothing meaningful follows it.
+ */
+function extractAfterExport(sourceText, lines, exportIdx) {
+  // Compute character offset of the start of the export-default line.
+  let charOffset = 0;
+  for (let i = 0; i < exportIdx; i++) charOffset += lines[i].length + 1;
+
+  const src = sourceText;
+  const openIdx = src.indexOf("{", charOffset);
+  if (openIdx < 0) return "";
+
+  let depth = 0;
+  let i = openIdx;
+  let inStr = null; // null | '"' | "'" | '`'
+  let inLineComment = false;
+  let inBlockComment = false;
+
+  while (i < src.length) {
+    const ch = src[i];
+    const next = src[i + 1];
+
+    if (inLineComment) {
+      if (ch === "\n") inLineComment = false;
+      i++;
+      continue;
+    }
+    if (inBlockComment) {
+      if (ch === "*" && next === "/") {
+        inBlockComment = false;
+        i += 2;
+        continue;
+      }
+      i++;
+      continue;
+    }
+    if (inStr) {
+      if (ch === "\\") {
+        i += 2;
+        continue;
+      }
+      if (ch === inStr) inStr = null;
+      i++;
+      continue;
+    }
+
+    if (ch === "/" && next === "/") {
+      inLineComment = true;
+      i += 2;
+      continue;
+    }
+    if (ch === "/" && next === "*") {
+      inBlockComment = true;
+      i += 2;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === "`") {
+      inStr = ch;
+      i++;
+      continue;
+    }
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        // Skip the closing brace and an optional trailing semicolon
+        let after = i + 1;
+        while (after < src.length && /\s/.test(src[after])) after++;
+        if (src[after] === ";") after++;
+        return src.slice(after).trim();
+      }
+    }
+    i++;
+  }
+  return "";
 }
 
 // Cache of fetched demo source preambles (keyed by demo id)
@@ -807,16 +908,19 @@ const _preambleCache = new Map();
  * Fetch the demo source file and extract its module-level preamble.
  * Returns the preamble string or empty string on failure.
  * Results are cached by demo id.
+ *
+ * The path is resolved relative to *this module's* URL (not the document
+ * URL), so it works whether the consumer page is at `/`, `/examples/`,
+ * or any other depth — `import.meta.url` always points at
+ * `/codepen-templates.js`, which sits next to `/demos/`.
  */
 async function fetchModulePreamble(demo) {
   if (!demo.id) return "";
   if (_preambleCache.has(demo.id)) return _preambleCache.get(demo.id);
 
-  // Determine the source file path from the demo id
-  // Convention: demos live at ./demos/<id>.js (relative to the page)
-  const path = `./demos/${demo.id}.js`;
+  const url = new URL(`./demos/${demo.id}.js`, import.meta.url).href;
   try {
-    const resp = await fetch(path);
+    const resp = await fetch(url);
     if (!resp.ok) throw new Error(resp.status);
     const text = await resp.text();
     const preamble = extractModulePreamble(text);
@@ -911,100 +1015,99 @@ function autoGenerateCode(demo, adapterId, preamble = "") {
 // Template definitions by adapter ID
 // =========================================================================
 
+// Build the canvas2d body. `napeImport` is the nape-js import line. `wrap` is
+// true for the legacy explicit-code path (extra `canvasWrap` alias).
+function buildCanvas2dBody(code, { napeImport, auto, wrap }) {
+  const water = /\bdrawWaveSurface2D\b/.test(code) ? WATER_HELPERS : "";
+  const canvasWrapLine = wrap && !auto ? `\nconst canvasWrap = canvas;` : "";
+  return `${napeImport}
+
+const canvas = document.getElementById("demoCanvas");${canvasWrapLine}
+const ctx = canvas.getContext("2d");
+
+${RENDERER_2D}
+${SPAWN_RANDOM}
+${WALLS_HELPER}
+${water}${code}`;
+}
+
+function buildThreeBody(code, { napeImport, threeImport, auto }) {
+  const water = /\bcreateWater3D\b/.test(code) ? WATER_HELPERS_3D : "";
+  const renderer = auto ? `${RENDERER_3D}\n` : "";
+  return `${threeImport}
+${napeImport}
+
+${renderer}${SPAWN_RANDOM}
+${WALLS_HELPER}
+${water}${code}`;
+}
+
+function buildPixiBody(code, { napeImport, pixiImport, napePixiImport }) {
+  const water = /\bdrawWaterPixi\b/.test(code) ? WATER_HELPERS_PIXI : "";
+  return `${pixiImport}
+${napePixiImport}
+${napeImport}
+
+const container = document.getElementById("container");
+const W = 900, H = 500;
+const app = new PIXI.Application();
+await app.init({ width: W, height: H, backgroundColor: 0x0d1117, antialias: true });
+container.appendChild(app.canvas);
+
+${RENDERER_PIXI}
+${SPAWN_RANDOM}
+${WALLS_HELPER}
+${water}${code}`;
+}
+
+const SHARED_HTML = {
+  canvas2d: `<canvas id="demoCanvas" width="900" height="500" style="background:#0a0e14;display:block;max-width:100%;border:1px solid #30363d;border-radius:8px"></canvas>
+<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
+  threejs: `<div id="container" style="width:900px;max-width:100%;height:500px;border:1px solid #30363d;border-radius:8px;overflow:hidden"></div>
+<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
+  pixijs: `<div id="container" style="width:900px;max-width:100%;height:500px;border:1px solid #30363d;border-radius:8px;overflow:hidden"></div>
+<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
+};
+
 const TEMPLATES = {
   canvas2d: {
-    html: `<canvas id="demoCanvas" width="900" height="500" style="background:#0a0e14;display:block;max-width:100%;border:1px solid #30363d;border-radius:8px"></canvas>
-<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
-
-    buildJS(code, auto = false) {
-      const water = /\bdrawWaveSurface2D\b/.test(code) ? WATER_HELPERS : "";
-      if (auto) {
-        // Auto-generated: code already contains the _demo object + runtime
-        return `${NAPE_IMPORTS}
-
-const canvas = document.getElementById("demoCanvas");
-const ctx = canvas.getContext("2d");
-
-${RENDERER_2D}
-${SPAWN_RANDOM}
-${WALLS_HELPER}
-${water}${code}`;
-      }
-      // Legacy explicit code string
-      return `${NAPE_IMPORTS}
-
-const canvas = document.getElementById("demoCanvas");
-const canvasWrap = canvas;
-const ctx = canvas.getContext("2d");
-
-${RENDERER_2D}
-${SPAWN_RANDOM}
-${WALLS_HELPER}
-${water}${code}`;
-    },
+    html: SHARED_HTML.canvas2d,
+    buildJS: (code, auto = false) =>
+      buildCanvas2dBody(code, { napeImport: NAPE_IMPORTS, auto, wrap: true }),
+    buildJSBare: (code, auto = false) =>
+      buildCanvas2dBody(code, { napeImport: NAPE_IMPORTS_BARE, auto, wrap: false }),
   },
 
   threejs: {
-    html: `<div id="container" style="width:900px;max-width:100%;height:500px;border:1px solid #30363d;border-radius:8px;overflow:hidden"></div>
-<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
-
-    buildJS(code, auto = false) {
-      const water = /\bcreateWater3D\b/.test(code) ? WATER_HELPERS_3D : "";
-      if (auto) {
-        return `import * as THREE from "${THREE_CDN}";
-${NAPE_IMPORTS}
-
-${RENDERER_3D}
-${SPAWN_RANDOM}
-${WALLS_HELPER}
-${water}${code}`;
-      }
-      return `import * as THREE from "${THREE_CDN}";
-${NAPE_IMPORTS}
-
-${SPAWN_RANDOM}
-${WALLS_HELPER}
-${water}${code}`;
-    },
+    html: SHARED_HTML.threejs,
+    buildJS: (code, auto = false) =>
+      buildThreeBody(code, {
+        napeImport: NAPE_IMPORTS,
+        threeImport: `import * as THREE from "${THREE_CDN}";`,
+        auto,
+      }),
+    buildJSBare: (code, auto = false) =>
+      buildThreeBody(code, {
+        napeImport: NAPE_IMPORTS_BARE,
+        threeImport: `import * as THREE from "three";`,
+        auto,
+      }),
   },
 
   pixijs: {
-    html: `<div id="container" style="width:900px;max-width:100%;height:500px;border:1px solid #30363d;border-radius:8px;overflow:hidden"></div>
-<a class="nape-badge" href="https://napejs.org/index.html" target="_blank">made with Nape-JS</a>`,
-
-    buildJS(code, auto = false) {
-      const water = /\bdrawWaterPixi\b/.test(code) ? WATER_HELPERS_PIXI : "";
-      if (auto) {
-        return `import * as PIXI from "https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.mjs";
-import { PixiDebugDraw } from "${NAPE_PIXI_CDN}";
-${NAPE_IMPORTS}
-
-const container = document.getElementById("container");
-const W = 900, H = 500;
-const app = new PIXI.Application();
-await app.init({ width: W, height: H, backgroundColor: 0x0d1117, antialias: true });
-container.appendChild(app.canvas);
-
-${RENDERER_PIXI}
-${SPAWN_RANDOM}
-${WALLS_HELPER}
-${water}${code}`;
-      }
-      return `import * as PIXI from "https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.mjs";
-import { PixiDebugDraw } from "${NAPE_PIXI_CDN}";
-${NAPE_IMPORTS}
-
-const container = document.getElementById("container");
-const W = 900, H = 500;
-const app = new PIXI.Application();
-await app.init({ width: W, height: H, backgroundColor: 0x0d1117, antialias: true });
-container.appendChild(app.canvas);
-
-${RENDERER_PIXI}
-${SPAWN_RANDOM}
-${WALLS_HELPER}
-${water}${code}`;
-    },
+    html: SHARED_HTML.pixijs,
+    buildJS: (code) =>
+      buildPixiBody(code, {
+        napeImport: NAPE_IMPORTS,
+        pixiImport: `import * as PIXI from "${PIXI_CDN}";`,
+        napePixiImport: `import { PixiDebugDraw } from "${NAPE_PIXI_CDN}";`,
+      }),
+    buildJSBare: (code) =>
+      buildPixiBody(code, {
+        napeImport: NAPE_IMPORTS_BARE,
+        pixiImport: `import * as PIXI from "pixi.js";`,
+        napePixiImport: `import { PixiDebugDraw } from "@newkrok/nape-pixi";`,
+      }),
   },
 };
 
@@ -1134,4 +1237,32 @@ export async function getPreviewCode(demo, adapterId, { showOutlines = true } = 
 
   const template = TEMPLATES[adapterId] ?? TEMPLATES.canvas2d;
   return template.buildJS(result.code, result.auto).replaceAll("__OUTLINES__", String(showOutlines));
+}
+
+/**
+ * Same as getPreviewCode, but emits bare-specifier imports (`@newkrok/nape-js`,
+ * `three`, `pixi.js`, `@newkrok/nape-pixi`) instead of CDN URLs — suitable for
+ * embedding in a bundler-driven sandbox (StackBlitz, CodeSandbox, local Vite).
+ *
+ * @returns {Promise<string | null>} JS source, or null if the demo has no extractable code.
+ */
+export async function getDemoSourceForBundler(demo, adapterId, { showOutlines = true } = {}) {
+  const preamble = await fetchModulePreamble(demo);
+  const result = getDemoCode(demo, adapterId, preamble);
+  if (!result) return null;
+
+  const template = TEMPLATES[adapterId] ?? TEMPLATES.canvas2d;
+  return template.buildJSBare(result.code, result.auto).replaceAll("__OUTLINES__", String(showOutlines));
+}
+
+/**
+ * Return the small HTML body for the host page of the given adapter — a
+ * canvas (2D) or div container (Three.js / PixiJS) that the demo source
+ * mounts to. Used when assembling a bundler project (e.g. StackBlitz).
+ *
+ * @param {string} adapterId — "canvas2d" | "threejs" | "pixijs"
+ * @returns {string}
+ */
+export function getAdapterHostHtml(adapterId) {
+  return SHARED_HTML[adapterId] ?? SHARED_HTML.canvas2d;
 }

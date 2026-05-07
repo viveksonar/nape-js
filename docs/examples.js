@@ -2,73 +2,74 @@
  * nape-js Examples Page — grid of interactive physics demos with play overlay,
  * per-card stats, search/tag filtering, size toggle, outline toggle, and View Code.
  */
-import { VERSION } from "./nape-js.esm.js?v=3.33.0";
-import { installErrorOverlay } from "./renderer.js?v=3.33.0";
-import { DemoRunner } from "./demo-runner.js?v=3.33.0";
-import { Canvas2DAdapter } from "./renderers/canvas2d-adapter.js?v=3.33.0";
-import { ThreeJSAdapter, loadThree } from "./renderers/threejs-adapter.js?v=3.33.0";
-import { PixiJSAdapter, loadPixi } from "./renderers/pixijs-adapter.js?v=3.33.0";
-import { openInCodePen as _openInCodePen, getPreviewCode } from "./codepen-templates.js?v=3.33.0";
-import { CATEGORIES, categoryOf } from "./demo-categories.js?v=3.33.0";
+import { VERSION } from "./nape-js.esm.js?v=3.35.0";
+import { installErrorOverlay } from "./renderer.js?v=3.35.0";
+import { DemoRunner } from "./demo-runner.js?v=3.35.0";
+import { Canvas2DAdapter } from "./renderers/canvas2d-adapter.js?v=3.35.0";
+import { ThreeJSAdapter, loadThree } from "./renderers/threejs-adapter.js?v=3.35.0";
+import { PixiJSAdapter, loadPixi } from "./renderers/pixijs-adapter.js?v=3.35.0";
+import { openInCodePen as _openInCodePen, getPreviewCode } from "./codepen-templates.js?v=3.35.0";
+import { openInStackBlitz as _openInStackBlitz } from "./stackblitz-templates.js?v=3.35.0";
+import { CATEGORIES, categoryOf } from "./demo-categories.js?v=3.35.0";
 
 // All demos
-import falling     from "./demos/falling.js?v=3.33.0";
-import pyramid     from "./demos/pyramid.js?v=3.33.0";
-import chain       from "./demos/chain.js?v=3.33.0";
-import explosion   from "./demos/explosion.js?v=3.33.0";
-import constraints from "./demos/constraints.js?v=3.33.0";
-import gravity     from "./demos/gravity.js?v=3.33.0";
-import stacking    from "./demos/stacking.js?v=3.33.0";
-import ragdoll     from "./demos/ragdoll.js?v=3.33.0";
-import strandbeast from "./demos/strandbeast.js?v=3.33.0";
-import carSideview    from "./demos/car-sideview.js?v=3.33.0";
-import trackedVehicle from "./demos/tracked-vehicle.js?v=3.33.0";
-import carTopdown     from "./demos/car-topdown.js?v=3.33.0";
-import ropeBridge     from "./demos/rope-bridge.js?v=3.33.0";
-import wreckingBall   from "./demos/wrecking-ball.js?v=3.33.0";
-import newtonsCradle  from "./demos/newtons-cradle.js?v=3.33.0";
-import dominos        from "./demos/dominos.js?v=3.33.0";
-import conveyorBelts  from "./demos/conveyor-belts.js?v=3.33.0";
-import trebuchet      from "./demos/trebuchet.js?v=3.33.0";
-import seesaw         from "./demos/seesaw.js?v=3.33.0";
-import pinball        from "./demos/pinball.js?v=3.33.0";
-import cloth          from "./demos/cloth.js?v=3.33.0";
-import funnel         from "./demos/funnel.js?v=3.33.0";
-import softBody       from "./demos/soft-body.js?v=3.33.0";
-import oneWayPlatforms from "./demos/one-way-platforms.js?v=3.33.0";
-import filteringInteractions from "./demos/filtering-interactions.js?v=3.33.0";
-import bodyFromGraphic    from "./demos/body-from-graphic.js?v=3.33.0";
-import dropImageBody     from "./demos/drop-image-body.js?v=3.33.0";
-import capsule           from "./demos/capsule.js?v=3.33.0";
-import destructibleTerrain from "./demos/destructible-terrain.js?v=3.33.0";
-import webWorker           from "./demos/web-worker.js?v=3.33.0";
-import asteroidField       from "./demos/asteroid-field.js?v=3.33.0";
-import fluidBuoyancy       from "./demos/fluid-buoyancy.js?v=3.33.0";
-import deterministic       from "./demos/deterministic.js?v=3.33.0";
-import subStepping         from "./demos/sub-stepping.js?v=3.33.0";
-import characterController from "./demos/character-controller.js?v=3.33.0";
-import triggerZones        from "./demos/trigger-zones.js?v=3.33.0";
-import fracture            from "./demos/fracture.js?v=3.33.0";
-import slingshot           from "./demos/slingshot.js?v=3.33.0";
-import springJoint         from "./demos/spring-joint.js?v=3.33.0";
-import portals             from "./demos/portals.js?v=3.33.0";
-import towerDefense        from "./demos/tower-defense.js?v=3.33.0";
-import topDownShooter      from "./demos/top-down-shooter.js?v=3.33.0";
-import mobaLite            from "./demos/moba-lite.js?v=3.33.0";
-import plinko              from "./demos/plinko.js?v=3.33.0";
-import threeBody           from "./demos/three-body.js?v=3.33.0";
-import tilemap             from "./demos/tilemap.js?v=3.33.0";
-import planetPlatformer    from "./demos/planet-platformer.js?v=3.33.0";
-import volcano             from "./demos/volcano.js?v=3.33.0";
-import destructibleArena   from "./demos/destructible-arena.js?v=3.33.0";
-import arenaDefense        from "./demos/arena-defense.js?v=3.33.0";
-import saveLoadRewind      from "./demos/save-load-rewind.js?v=3.33.0";
-import replayRecorder      from "./demos/replay-recorder.js?v=3.33.0";
+import falling     from "./demos/falling.js?v=3.35.0";
+import pyramid     from "./demos/pyramid.js?v=3.35.0";
+import chain       from "./demos/chain.js?v=3.35.0";
+import explosion   from "./demos/explosion.js?v=3.35.0";
+import constraints from "./demos/constraints.js?v=3.35.0";
+import gravity     from "./demos/gravity.js?v=3.35.0";
+import stacking    from "./demos/stacking.js?v=3.35.0";
+import ragdoll     from "./demos/ragdoll.js?v=3.35.0";
+import strandbeast from "./demos/strandbeast.js?v=3.35.0";
+import carSideview    from "./demos/car-sideview.js?v=3.35.0";
+import trackedVehicle from "./demos/tracked-vehicle.js?v=3.35.0";
+import carTopdown     from "./demos/car-topdown.js?v=3.35.0";
+import ropeBridge     from "./demos/rope-bridge.js?v=3.35.0";
+import wreckingBall   from "./demos/wrecking-ball.js?v=3.35.0";
+import newtonsCradle  from "./demos/newtons-cradle.js?v=3.35.0";
+import dominos        from "./demos/dominos.js?v=3.35.0";
+import conveyorBelts  from "./demos/conveyor-belts.js?v=3.35.0";
+import trebuchet      from "./demos/trebuchet.js?v=3.35.0";
+import seesaw         from "./demos/seesaw.js?v=3.35.0";
+import pinball        from "./demos/pinball.js?v=3.35.0";
+import cloth          from "./demos/cloth.js?v=3.35.0";
+import funnel         from "./demos/funnel.js?v=3.35.0";
+import softBody       from "./demos/soft-body.js?v=3.35.0";
+import oneWayPlatforms from "./demos/one-way-platforms.js?v=3.35.0";
+import filteringInteractions from "./demos/filtering-interactions.js?v=3.35.0";
+import bodyFromGraphic    from "./demos/body-from-graphic.js?v=3.35.0";
+import dropImageBody     from "./demos/drop-image-body.js?v=3.35.0";
+import capsule           from "./demos/capsule.js?v=3.35.0";
+import destructibleTerrain from "./demos/destructible-terrain.js?v=3.35.0";
+import webWorker           from "./demos/web-worker.js?v=3.35.0";
+import asteroidField       from "./demos/asteroid-field.js?v=3.35.0";
+import fluidBuoyancy       from "./demos/fluid-buoyancy.js?v=3.35.0";
+import deterministic       from "./demos/deterministic.js?v=3.35.0";
+import subStepping         from "./demos/sub-stepping.js?v=3.35.0";
+import characterController from "./demos/character-controller.js?v=3.35.0";
+import triggerZones        from "./demos/trigger-zones.js?v=3.35.0";
+import fracture            from "./demos/fracture.js?v=3.35.0";
+import slingshot           from "./demos/slingshot.js?v=3.35.0";
+import springJoint         from "./demos/spring-joint.js?v=3.35.0";
+import portals             from "./demos/portals.js?v=3.35.0";
+import towerDefense        from "./demos/tower-defense.js?v=3.35.0";
+import topDownShooter      from "./demos/top-down-shooter.js?v=3.35.0";
+import mobaLite            from "./demos/moba-lite.js?v=3.35.0";
+import plinko              from "./demos/plinko.js?v=3.35.0";
+import threeBody           from "./demos/three-body.js?v=3.35.0";
+import tilemap             from "./demos/tilemap.js?v=3.35.0";
+import planetPlatformer    from "./demos/planet-platformer.js?v=3.35.0";
+import volcano             from "./demos/volcano.js?v=3.35.0";
+import destructibleArena   from "./demos/destructible-arena.js?v=3.35.0";
+import arenaDefense        from "./demos/arena-defense.js?v=3.35.0";
+import saveLoadRewind      from "./demos/save-load-rewind.js?v=3.35.0";
+import replayRecorder      from "./demos/replay-recorder.js?v=3.35.0";
+import popcorn             from "./demos/popcorn.js?v=3.35.0";
 
 // Note on order: cardEntries reverses ALL_DEMOS, so the LAST tuple entry
-// becomes the TOP card in the grid. arenaDefense is the showcase demo
-// we want at the very top of the grid (above Deterministic Replay /
-// Save-Load), so it must be the LAST entry in this array.
+// becomes the TOP card in the grid. New demos go at the end so they take
+// the top slot in the grid.
 const ALL_DEMOS = [
   falling, pyramid, chain, explosion, constraints, gravity, stacking, ragdoll, strandbeast,
   carSideview, carTopdown, ropeBridge, wreckingBall, newtonsCradle,
@@ -99,6 +100,7 @@ const ALL_DEMOS = [
   saveLoadRewind,
   replayRecorder,
   arenaDefense,
+  popcorn,
 ];
 
 const gtag = window.gtag || function() {};
@@ -441,14 +443,36 @@ function createCard(demo, { onTagClick } = {}) {
 
   if (!demo.noCodePen) {
     const codepenBtn = document.createElement("button");
-    codepenBtn.className = "btn btn-small btn-codepen";
-    codepenBtn.textContent = "CodePen";
+    codepenBtn.className = "btn btn-small btn-icon btn-codepen";
+    codepenBtn.title = "Open in CodePen";
+    codepenBtn.setAttribute("aria-label", "Open in CodePen");
+    codepenBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+      <line x1="12" y1="22" x2="12" y2="15.5"/>
+      <polyline points="22 8.5 12 15.5 2 8.5"/>
+      <polyline points="2 15.5 12 8.5 22 15.5"/>
+      <line x1="12" y1="2" x2="12" y2="8.5"/>
+    </svg>`;
     codepenBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       gtag("event", "click", { event_category: "code_action", event_label: "open_codepen", demo: demo.id });
       openInCodePen(demo, modeMap[cardMode] ?? "canvas2d", { showOutlines: runner.debugDraw });
     });
     btnGroup.appendChild(codepenBtn);
+
+    const stackblitzBtn = document.createElement("button");
+    stackblitzBtn.className = "btn btn-small btn-icon btn-stackblitz";
+    stackblitzBtn.title = "Open in StackBlitz (real npm install)";
+    stackblitzBtn.setAttribute("aria-label", "Open in StackBlitz");
+    stackblitzBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M10.797 14.182H3.635L16.728 0l-3.525 9.818h7.162L7.272 24l3.525-9.818z"/>
+    </svg>`;
+    stackblitzBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      gtag("event", "click", { event_category: "code_action", event_label: "open_stackblitz", demo: demo.id });
+      _openInStackBlitz(demo, modeMap[cardMode] ?? "canvas2d", { showOutlines: runner.debugDraw });
+    });
+    btnGroup.appendChild(stackblitzBtn);
   }
 
   const shareBtn = document.createElement("button");

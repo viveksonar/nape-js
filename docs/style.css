@@ -240,6 +240,19 @@ a:hover { text-decoration: underline; }
   color: var(--bg);
   text-decoration: none;
 }
+.tab-tmpl {
+  background: transparent;
+  color: #f0ce47;
+  border-color: #f0ce47;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.tab-tmpl:hover {
+  background: #f0ce47;
+  color: var(--bg);
+  text-decoration: none;
+}
 
 /* ---------- Canvas ---------- */
 .canvas-wrap {
@@ -467,6 +480,23 @@ a:hover { text-decoration: underline; }
   background: var(--green) !important;
   color: var(--bg) !important;
 }
+.btn-stackblitz {
+  background: var(--surface) !important;
+  color: #f4b400 !important;
+  border-color: #f4b400 !important;
+}
+.btn-stackblitz:hover {
+  background: #f4b400 !important;
+  color: var(--bg) !important;
+}
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 7px !important;
+  line-height: 0;
+}
+.btn-icon svg { display: block; }
 .btn-share {
   background: var(--surface) !important;
   color: var(--text-dim) !important;

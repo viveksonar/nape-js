@@ -44,10 +44,7 @@ const stripV = (ref) => ref.replace(/\?v=[^"')]*/, "");
 for (const htmlFile of ["index.html", "examples/index.html"]) {
   stamp(resolve(docs, htmlFile), [
     // <link rel="stylesheet" href="style.css"> or href="style.css?v=old"
-    [
-      /href="([^"]+\.css)(\?v=[^"]*)?"/g,
-      (_m, ref) => `href="${stripV(ref)}?${v}"`,
-    ],
+    [/href="([^"]+\.css)(\?v=[^"]*)?"/g, (_m, ref) => `href="${stripV(ref)}?${v}"`],
     // <script ... src="app.js"> or src="examples.js?v=old"
     [
       /src="([^"]+\.js)(\?v=[^"]*)?"/g,
@@ -61,18 +58,24 @@ for (const htmlFile of ["index.html", "examples/index.html"]) {
 }
 
 // --- JS files: stamp ES import paths for local modules ---
-for (const jsFile of ["app.js", "examples.js", "renderers/pixijs-adapter.js"]) {
+for (const jsFile of [
+  "app.js",
+  "examples.js",
+  "stackblitz-templates.js",
+  "renderers/pixijs-adapter.js",
+]) {
   stamp(resolve(docs, jsFile), [
     // from "./nape-js.esm.js" or from "../nape-pixi.esm.js" or from "./renderer.js"
-    [
-      /from\s+"(\.\.?\/[^"]+\.js)(\?v=[^"]*)?"/g,
-      (_m, ref) => `from "${stripV(ref)}?${v}"`,
-    ],
+    [/from\s+"(\.\.?\/[^"]+\.js)(\?v=[^"]*)?"/g, (_m, ref) => `from "${stripV(ref)}?${v}"`],
   ]);
 }
 
-// --- codepen-templates.js: stamp CDN URL with explicit version ---
+// --- codepen-templates.js: stamp version constants + CDN URLs ---
 stamp(resolve(docs, "codepen-templates.js"), [
+  // Version constants drive both the CDN URLs (CodePen) and the
+  // package.json deps (StackBlitz). Keep them in lockstep with package.json.
+  [/const NAPE_VERSION = "[^"]*";/, `const NAPE_VERSION = "${version}";`],
+  [/const NAPE_PIXI_VERSION = "[^"]*";/, `const NAPE_PIXI_VERSION = "${pixiVersion}";`],
   [
     /https:\/\/cdn\.jsdelivr\.net\/npm\/@newkrok\/nape-js(@[^/]*)?\/dist\/index\.js/g,
     `https://cdn.jsdelivr.net/npm/@newkrok/nape-js@${version}/dist/index.js`,

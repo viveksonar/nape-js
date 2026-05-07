@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>my-platformer</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #0d1117;
+        color: #e6edf3;
+        font-family: system-ui, sans-serif;
+        overflow: hidden;
+      }
+      #game {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      #game canvas,
+      #game > div {
+        background: #0a0e14;
+        box-shadow: 0 0 0 1px #30363d;
+        max-width: 100%;
+        max-height: 100%;
+      }
+      #hud {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+        font-variant-numeric: tabular-nums;
+        font-size: 14px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+      }
+      #hud .left,
+      #hud .right {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      #overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        background: rgba(13, 17, 23, 0.85);
+        backdrop-filter: blur(4px);
+      }
+      #overlay.show {
+        display: grid;
+      }
+      #overlay .panel {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 28px 36px;
+        text-align: center;
+      }
+      #overlay h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+      #overlay p {
+        margin: 4px 0 16px;
+        color: #8b949e;
+      }
+      #overlay button {
+        background: #238636;
+        color: white;
+        border: 0;
+        padding: 10px 24px;
+        border-radius: 6px;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      #overlay button:hover {
+        background: #2ea043;
+      }
+      .help {
+        position: fixed;
+        bottom: 12px;
+        left: 12px;
+        font-size: 12px;
+        color: #8b949e;
+      }
+      .help kbd {
+        background: #21262d;
+        border: 1px solid #30363d;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-family: ui-monospace, monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <div id="hud">
+      <div class="left">
+        <span id="hud-health">♥ ♥ ♥</span>
+        <span id="hud-coins">★ 0</span>
+      </div>
+      <div class="right">
+        <span id="hud-time">0.0s</span>
+      </div>
+    </div>
+    <div class="help">
+      <kbd>←</kbd> <kbd>→</kbd> move &nbsp; <kbd>Space</kbd> jump (double-tap = double jump) &nbsp;
+      <kbd>X</kbd> shoot &nbsp; <kbd>R</kbd> restart
+    </div>
+    <div id="overlay">
+      <div class="panel">
+        <h1 id="overlay-title">Game Over</h1>
+        <p id="overlay-msg">Press R or click to restart</p>
+        <button id="overlay-btn">Restart</button>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
