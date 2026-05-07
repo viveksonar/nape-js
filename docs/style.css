@@ -489,6 +489,14 @@ a:hover { text-decoration: underline; }
   background: #f4b400 !important;
   color: var(--bg) !important;
 }
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 7px !important;
+  line-height: 0;
+}
+.btn-icon svg { display: block; }
 .btn-share {
   background: var(--surface) !important;
   color: var(--text-dim) !important;
