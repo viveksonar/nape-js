@@ -762,8 +762,10 @@ function toFunction(fnStr, name) {
 
 /**
  * Extract module-level preamble (variables, constants, functions) from demo
- * source text. Returns the code between the last import block and the
- * `export default {` line, with import statements stripped.
+ * source text. Returns the code BEFORE the `export default {` line plus any
+ * top-level declarations that appear AFTER the export-default block (helper
+ * functions, late constants), with import statements stripped.
+ *
  * Returns empty string if nothing is found.
  */
 function extractModulePreamble(sourceText) {
@@ -796,10 +798,8 @@ function extractModulePreamble(sourceText) {
 
     if (trimmed.startsWith("import ") || trimmed.startsWith("import{")) {
       if (trimmed.endsWith(";")) {
-        // Single-line import
         lastImportEndIdx = i;
       } else {
-        // Start of multiline import
         inMultilineImport = true;
       }
     }
@@ -808,11 +808,97 @@ function extractModulePreamble(sourceText) {
   if (exportIdx <= 0) return "";
 
   const startIdx = lastImportEndIdx + 1;
-  if (startIdx >= exportIdx) return "";
+  const beforeExport = startIdx < exportIdx ? lines.slice(startIdx, exportIdx).join("\n").trim() : "";
 
-  // Extract lines between imports and export default, trim blank edges
-  const preamble = lines.slice(startIdx, exportIdx).join("\n").trim();
-  return preamble;
+  // Walk the export-default object literal with brace counting to find where
+  // it ends, then collect everything after it as additional preamble.
+  // Strings and template literals are skipped to avoid counting braces inside them.
+  const afterExport = extractAfterExport(sourceText, lines, exportIdx);
+
+  if (!beforeExport && !afterExport) return "";
+  if (!beforeExport) return afterExport;
+  if (!afterExport) return beforeExport;
+  return `${beforeExport}\n\n${afterExport}`;
+}
+
+/**
+ * Find the closing brace of `export default { ... }` and return the
+ * trailing source (helper functions, late constants) trimmed. Returns an
+ * empty string if the export block isn't a balanced object literal or if
+ * nothing meaningful follows it.
+ */
+function extractAfterExport(sourceText, lines, exportIdx) {
+  // Compute character offset of the start of the export-default line.
+  let charOffset = 0;
+  for (let i = 0; i < exportIdx; i++) charOffset += lines[i].length + 1;
+
+  const src = sourceText;
+  const openIdx = src.indexOf("{", charOffset);
+  if (openIdx < 0) return "";
+
+  let depth = 0;
+  let i = openIdx;
+  let inStr = null; // null | '"' | "'" | '`'
+  let inLineComment = false;
+  let inBlockComment = false;
+
+  while (i < src.length) {
+    const ch = src[i];
+    const next = src[i + 1];
+
+    if (inLineComment) {
+      if (ch === "\n") inLineComment = false;
+      i++;
+      continue;
+    }
+    if (inBlockComment) {
+      if (ch === "*" && next === "/") {
+        inBlockComment = false;
+        i += 2;
+        continue;
+      }
+      i++;
+      continue;
+    }
+    if (inStr) {
+      if (ch === "\\") {
+        i += 2;
+        continue;
+      }
+      if (ch === inStr) inStr = null;
+      i++;
+      continue;
+    }
+
+    if (ch === "/" && next === "/") {
+      inLineComment = true;
+      i += 2;
+      continue;
+    }
+    if (ch === "/" && next === "*") {
+      inBlockComment = true;
+      i += 2;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === "`") {
+      inStr = ch;
+      i++;
+      continue;
+    }
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        // Skip the closing brace and an optional trailing semicolon
+        let after = i + 1;
+        while (after < src.length && /\s/.test(src[after])) after++;
+        if (src[after] === ";") after++;
+        return src.slice(after).trim();
+      }
+    }
+    i++;
+  }
+  return "";
 }
 
 // Cache of fetched demo source preambles (keyed by demo id)
@@ -822,16 +908,19 @@ const _preambleCache = new Map();
  * Fetch the demo source file and extract its module-level preamble.
  * Returns the preamble string or empty string on failure.
  * Results are cached by demo id.
+ *
+ * The path is resolved relative to *this module's* URL (not the document
+ * URL), so it works whether the consumer page is at `/`, `/examples/`,
+ * or any other depth — `import.meta.url` always points at
+ * `/codepen-templates.js`, which sits next to `/demos/`.
  */
 async function fetchModulePreamble(demo) {
   if (!demo.id) return "";
   if (_preambleCache.has(demo.id)) return _preambleCache.get(demo.id);
 
-  // Determine the source file path from the demo id
-  // Convention: demos live at ./demos/<id>.js (relative to the page)
-  const path = `./demos/${demo.id}.js`;
+  const url = new URL(`./demos/${demo.id}.js`, import.meta.url).href;
   try {
-    const resp = await fetch(path);
+    const resp = await fetch(url);
     if (!resp.ok) throw new Error(resp.status);
     const text = await resp.text();
     const preamble = extractModulePreamble(text);
