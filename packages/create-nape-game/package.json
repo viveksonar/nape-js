@@ -1,7 +1,8 @@
 {
   "name": "create-nape-game",
   "version": "0.1.0",
-  "description": "Scaffold a new game project using @newkrok/nape-js. Run with `npm create nape-game@latest`.",
+  "private": true,
+  "description": "Scaffold a new game project using @newkrok/nape-js. Run with `npm create nape-game@latest`. NOTE: on hold, not currently published to npm.",
   "type": "module",
   "bin": {
     "create-nape-game": "bin/create-nape-game.js"

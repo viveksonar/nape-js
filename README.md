@@ -25,22 +25,18 @@ Fully typed, tree-shakeable 2D physics engine — a modern TypeScript rewrite of
 
 This repo is an npm-workspaces monorepo:
 
-| Package                                         | What it is                                                                                                           |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| [`@newkrok/nape-js`](packages/nape-js)          | The physics engine itself — rigid bodies, constraints, collision, fluids, deterministic multiplayer.                 |
-| [`@newkrok/nape-pixi`](packages/nape-pixi)      | PixiJS v8 integration — `BodySpriteBinding`, `FixedStepper` (render interpolation), `PixiDebugDraw`, `WorkerBridge`. |
-| [`create-nape-game`](packages/create-nape-game) | Project scaffolder: `npm create nape-game@latest` → complete game starter (Canvas2D / Three.js / PixiJS).            |
+| Package                                    | What it is                                                                                                           |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| [`@newkrok/nape-js`](packages/nape-js)     | The physics engine itself — rigid bodies, constraints, collision, fluids, deterministic multiplayer.                 |
+| [`@newkrok/nape-pixi`](packages/nape-pixi) | PixiJS v8 integration — `BodySpriteBinding`, `FixedStepper` (render interpolation), `PixiDebugDraw`, `WorkerBridge`. |
 
-The `templates/` directory holds the source templates the CLI ships
-(currently: `platformer`).
+The [`templates/platformer/`](templates/platformer/) directory holds a
+runnable multi-renderer starter (Canvas2D / Three.js / PixiJS) — clone
+or download it as a starting point for new projects.
 
 ## Installation
 
 ```bash
-# Scaffold a complete starter project (recommended for new games)
-npm create nape-game@latest my-game
-
-# Or add nape-js to an existing project
 npm install @newkrok/nape-js
 # optional: PixiJS v8 integration
 npm install @newkrok/nape-pixi pixi.js

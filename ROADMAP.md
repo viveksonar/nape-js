@@ -2,7 +2,8 @@
 
 ## Completed Items
 
-Done: P21-P28, P30-P33, P35, P37-P43, P44, P45-P48, P50-P57, P60, P62, P63, P64, P65, P66-P68, P69, P70, P71.
+Done: P21-P28, P30-P33, P35, P37-P43, P44, P45-P48, P50-P57, P60, P62, P63, P64, P66-P68, P69, P70, P71.
+Done (partial): P65 — platformer template + `/templates` page shipped; the `create-nape-game` CLI is implemented but **on hold** (kept private, not published) until adoption signal justifies the maintenance surface.
 Cancelled: P34 (tree shaking — architectural limit), P36 (server demos — superseded by P52), P49 (ECS adapter — trivial pattern).
 
 Reference docs for shipped features (don't duplicate here):
@@ -16,7 +17,7 @@ Reference docs for shipped features (don't duplicate here):
 | Replay system (P69)           | [`docs/guides/replay-guide.md`](docs/guides/replay-guide.md) · [Cookbook](docs/guides/cookbook.md#replay--recording-deterministic-playback)                       |
 | Save/Load + Rewind demo (P71) | [Cookbook](docs/guides/cookbook.md#serialization-save--load) · `docs/demos/save-load-rewind.js`                                                                   |
 | StackBlitz playground (P56)   | `docs/stackblitz-templates.js` · the StackBlitz button next to CodePen on every demo                                                                              |
-| Game templates + CLI (P65)    | [`templates/platformer/`](templates/platformer/) · [`packages/create-nape-game/`](packages/create-nape-game/) · [`/templates`](https://napejs.org/templates.html) |
+| Game templates (P65)          | [`templates/platformer/`](templates/platformer/) · [`/templates`](https://napejs.org/templates.html) — CLI under `packages/create-nape-game/` is on hold (private)  |
 
 ---
 
@@ -36,12 +37,12 @@ already saturated.
 
 ## Active Priorities
 
-| #   | Priority                  | Effort | Impact          | Notes                                                                                                                                                                     |
-| --- | ------------------------- | ------ | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| P75 | **More game templates**   | M      | :fire: adoption | Follow-ups to the platformer: top-down car, pinball, ragdoll fighter, top-down shooter. Each adds another card on `/templates` and a `--template=<name>` value to the CLI |
+| #   | Priority                  | Effort | Impact          | Notes                                                                                                                                                                                                                                                              |
+| --- | ------------------------- | ------ | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P75 | **More game templates**   | M      | :fire: adoption | Follow-ups to the platformer: top-down car, pinball, ragdoll fighter, top-down shooter. Each adds another card on `/templates`. **Follow-up:** re-surface the `Templates` tab on the homepage (currently removed — only one starter justified hiding it) and decide whether to revive `create-nape-game` (currently `private: true`, parked) once template count grows |
 | P72 | **`convexCast` demo**     | S      | docs            | `Space.convexCast` / `convexMultiCast` is public API but invisible in the demo grid. A swept-shape hit-prediction demo (e.g. swung sword) makes it discoverable           |
 | P61 | **Bundle size reduction** | S-M    | competitiveness | 123 KB vs Phaser Box2D 65 KB, gap is widening (+~36 KB from recent helpers). Real adoption blocker. Dead-code audit, hot-path review, helper opt-in re-export plan        |
-| P58 | **Phaser plugin/adapter** | M      | :fire: adoption | #1 JS game framework. Worth doing now that templates + CLI are live — adapters need a working onboarding story to demo against                                            |
+| P58 | **Phaser plugin/adapter** | M      | :fire: adoption | #1 JS game framework. Worth doing now that the platformer template is live — adapters need a working onboarding story to demo against                                     |
 | P59 | **React/R3F integration** | M      | adoption        | `@react-three/rapier`-style package for the React gamedev community. After P58                                                                                            |
 | P29 | Test coverage → 80%       | L      | safety          | :diamonds: ~72% statements (5684 tests). Background work, not blocking anything                                                                                           |
 
@@ -60,7 +61,7 @@ Not blocking anything; revisit only when a concrete user request justifies the c
 
 ## Recommended Execution Order
 
-1. **P75** — More game templates (top-down car, pinball, ragdoll fighter); reuses the platformer's CLI scaffolding pipeline
+1. **P75** — More game templates (top-down car, pinball, ragdoll fighter); reuses the platformer pipeline (the CLI stays parked until template count or user demand justifies it)
 2. **P72** — `convexCast` demo (small, ships the visibility win quickly)
 3. **P61** — Bundle size reduction
 4. **P58** — Phaser plugin/adapter

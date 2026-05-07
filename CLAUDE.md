@@ -25,10 +25,10 @@ packages/
   nape-pixi/      # @newkrok/nape-pixi — PixiJS v8 integration
                   #   BodySpriteBinding, FixedStepper, PixiDebugDraw,
                   #   WorkerBridge + transform protocol. 0.1.0 ready to ship.
-  create-nape-game/ # `npm create nape-game@latest` scaffolder — copies
-                  #   templates/<name>/, snips unused renderer files,
-                  #   patches main.js + package.json. 0.1.0 ready.
-templates/        # source templates the CLI ships (canonical copy)
+  create-nape-game/ # ON HOLD — scaffolder CLI implementation. `private: true`
+                  #   so release.mjs/npm publish skip it. Code preserved
+                  #   for future revival; do not advertise in docs/README.
+templates/        # canonical runnable starters — clone or open in StackBlitz
   platformer/     # multi-renderer platformer starter (canvas2d/threejs/pixi)
 benchmarks/       # cross-package perf suite
 docs/             # GitHub Pages site + demos
@@ -38,10 +38,11 @@ scripts/          # repo-wide tooling
 
 Root `package.json` is a private workspaces manifest. Scripts fan out with
 `npm run <x> --workspaces --if-present`. Each published package
-(nape-js, nape-pixi, create-nape-game) owns its own `package.json` and
-build config. The `templates/` tree is git-tracked and copied into
-`packages/create-nape-game/templates/` by its `prepare`/`prepublishOnly`
-hook.
+(currently nape-js, nape-pixi) owns its own `package.json` and build
+config. The `create-nape-game` workspace is `private: true` and parked.
+The `templates/` tree is git-tracked; if/when the CLI is revived, its
+`prepare`/`prepublishOnly` hook copies it into
+`packages/create-nape-game/templates/` for the published tarball.
 
 ## Build & Test
 

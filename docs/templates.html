@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>nape-js — Project Templates</title>
-  <meta name="description" content="One-click project templates for @newkrok/nape-js. Run `npm create nape-game@latest` to scaffold a complete game starter — Canvas2D, Three.js, or PixiJS — with player, level, enemies, projectiles, destructibles, and moving platforms wired up." />
+  <meta name="description" content="Project templates for @newkrok/nape-js. Open in StackBlitz or clone from GitHub to get a complete game starter — Canvas2D, Three.js, or PixiJS — with player, level, enemies, projectiles, destructibles, and moving platforms wired up." />
   <link rel="canonical" href="https://napejs.org/templates.html" />
   <link rel="icon" type="image/svg+xml" href="logo.svg" />
   <link rel="stylesheet" href="style.css" />
@@ -13,14 +13,6 @@
     .tmpl-hero { text-align: center; margin-bottom: 36px; }
     .tmpl-hero h1 { margin: 0 0 8px; font-size: 32px; }
     .tmpl-hero p { color: #8b949e; margin: 0 auto; max-width: 640px; }
-    .tmpl-cli {
-      margin: 28px auto 0; max-width: 720px; background: #161b22; border: 1px solid #30363d;
-      border-radius: 8px; padding: 14px 20px; font-family: ui-monospace, monospace;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    }
-    .tmpl-cli code { color: #e6edf3; font-size: 14px; }
-    .tmpl-cli button { background: #21262d; color: #e6edf3; border: 1px solid #30363d; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
-    .tmpl-cli button:hover { background: #30363d; }
     .tmpl-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
     .tmpl-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px 28px; }
     .tmpl-card h2 { margin: 0 0 6px; font-size: 22px; }
@@ -48,12 +40,7 @@
 
     <div class="tmpl-hero">
       <h1>Project Templates</h1>
-      <p>Scaffold a complete game starter with a single command — Vite + nape-js + your renderer of choice. From <code>npm create</code> to playable game in &lt; 5 minutes.</p>
-
-      <div class="tmpl-cli">
-        <code id="cli-cmd">npm create nape-game@latest my-game</code>
-        <button id="cli-copy" type="button">Copy</button>
-      </div>
+      <p>Complete game starters — Vite + nape-js + your renderer of choice. Open in StackBlitz to play instantly, or clone from GitHub.</p>
     </div>
 
     <div class="tmpl-grid">
@@ -86,23 +73,13 @@
         </div>
 
         <p class="tmpl-meta">
-          The StackBlitz button opens the Canvas2D variant. To pick a renderer (<code>canvas2d</code> / <code>threejs</code> / <code>pixi</code>) at scaffold time, use the CLI: <code>npm create nape-game@latest my-game -- --renderer=threejs</code>
+          The StackBlitz button opens the Canvas2D variant. The Three.js and PixiJS variants live side-by-side under <code>src/render/</code> — clone the repo and swap the import in <code>src/main.js</code> to pick a renderer.
         </p>
       </article>
     </div>
   </main>
 
   <script>
-    const cliEl = document.getElementById("cli-cmd");
-    document.getElementById("cli-copy").addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(cliEl.textContent);
-        const btn = document.getElementById("cli-copy");
-        const orig = btn.textContent;
-        btn.textContent = "Copied!";
-        setTimeout(() => { btn.textContent = orig; }, 1200);
-      } catch {}
-    });
     // Analytics shim
     window.gtag = window.gtag || function(){};
   </script>
