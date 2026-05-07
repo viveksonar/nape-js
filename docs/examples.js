@@ -65,11 +65,11 @@ import destructibleArena   from "./demos/destructible-arena.js?v=3.35.0";
 import arenaDefense        from "./demos/arena-defense.js?v=3.35.0";
 import saveLoadRewind      from "./demos/save-load-rewind.js?v=3.35.0";
 import replayRecorder      from "./demos/replay-recorder.js?v=3.35.0";
+import popcorn             from "./demos/popcorn.js?v=3.35.0";
 
 // Note on order: cardEntries reverses ALL_DEMOS, so the LAST tuple entry
-// becomes the TOP card in the grid. arenaDefense is the showcase demo
-// we want at the very top of the grid (above Deterministic Replay /
-// Save-Load), so it must be the LAST entry in this array.
+// becomes the TOP card in the grid. New demos go at the end so they take
+// the top slot in the grid.
 const ALL_DEMOS = [
   falling, pyramid, chain, explosion, constraints, gravity, stacking, ragdoll, strandbeast,
   carSideview, carTopdown, ropeBridge, wreckingBall, newtonsCradle,
@@ -100,6 +100,7 @@ const ALL_DEMOS = [
   saveLoadRewind,
   replayRecorder,
   arenaDefense,
+  popcorn,
 ];
 
 const gtag = window.gtag || function() {};
