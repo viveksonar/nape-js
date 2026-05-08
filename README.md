@@ -239,9 +239,12 @@ present, with automatic `postMessage` fallback otherwise.
 
 ## Known Issues
 
-- **Zero-friction tunneling** — Bodies with zero-friction material and horizontal
-  velocity may tunnel through floors. This affects all shape types (circles,
-  polygons, capsules). **Workaround:** use small friction values (e.g. `0.01`).
+See the [open bug tracker](https://github.com/newkrok/nape-js/issues?q=is%3Aopen+label%3Abug) for the current list.
+
+- **Zero-friction tunneling** ([#150](https://github.com/newkrok/nape-js/issues/150)) —
+  Bodies with zero-friction material and horizontal velocity may tunnel through
+  floors. This affects all shape types (circles, polygons, capsules).
+  **Workaround:** use small friction values (e.g. `0.01`).
 
 ## Development
 
