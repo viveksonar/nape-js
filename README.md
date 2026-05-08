@@ -237,21 +237,12 @@ render();
 Uses SharedArrayBuffer for zero-copy transform sharing when COOP/COEP headers are
 present, with automatic `postMessage` fallback otherwise.
 
-## Known Issues
-
-See the [open bug tracker](https://github.com/newkrok/nape-js/issues?q=is%3Aopen+label%3Abug) for the current list.
-
-- **Zero-friction tunneling** ([#150](https://github.com/newkrok/nape-js/issues/150)) —
-  Bodies with zero-friction material and horizontal velocity may tunnel through
-  floors. This affects all shape types (circles, polygons, capsules).
-  **Workaround:** use small friction values (e.g. `0.01`).
-
 ## Development
 
 ```bash
 npm install
 npm run build      # tsup → packages/*/dist/ (ESM + CJS + DTS)
-npm test           # vitest — 5684 engine tests + 71 pixi-adapter tests
+npm test           # vitest — 5692 engine tests + 71 pixi-adapter tests
 npm run benchmark  # Performance benchmarks
 ```
 
