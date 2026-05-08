@@ -20,9 +20,7 @@ async function main() {
   const space = new Space(new Vec2(0, 400));
 
   // Low-friction, slightly bouncy material for dynamic bodies so the
-  // stacks slump and slide instead of welding together. (Materials are
-  // applied only to non-Polygon dynamic shapes here — dynamic Polygon +
-  // explicit Material has a known tunneling bug in the engine.)
+  // stacks slump and slide instead of welding together.
   const bouncy = new Material(0.4, 0.2, 0.3, 1);
 
   // Static floor + walls (all rectangles).

@@ -34,8 +34,8 @@ class BaseEnemy {
     this.dead = false;
     this._dirX = -1; // -1 left, +1 right
 
-    // Circle hitbox — Polygon + explicit Material triggers a tunneling
-    // bug against static-Polygon floors; Circle is unaffected.
+    // Circle hitbox — keeps the AABB matched to the visual sprite radius
+    // and rolls smoothly along uneven ground without snagging on edges.
     const body = new Body(BodyType.DYNAMIC, position);
     const shape = new Circle(RADIUS, undefined, new Material(0, 0.4, 0.5, 1.2, 0.001));
     const tag = kind === "goomba" ? cbTypes.ENEMY_STOMPABLE : cbTypes.ENEMY_SPIKY;

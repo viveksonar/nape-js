@@ -50,10 +50,9 @@ export class Player {
     this._iFrames = 0;
     this._dead = false;
 
-    // Body — Circle hitbox. Polygon + explicit Material triggers a
-    // tunneling bug against static-Polygon floors; Circle is unaffected
-    // and is the shape the CharacterController has best support for.
-    // `allowRotation = false` keeps the visual upright (no rolling).
+    // Body — Circle hitbox; the shape the CharacterController has best
+    // support for. `allowRotation = false` keeps the visual upright (no
+    // rolling).
     const body = new Body(BodyType.DYNAMIC, spawnPos);
     const shape = new Circle(RADIUS, undefined, new Material(0, 0.4, 0.4, 1, 0.001));
     shape.cbTypes.add(cbTypes.PLAYER);

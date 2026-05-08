@@ -44,7 +44,7 @@ already saturated.
 | P61 | **Bundle size reduction** | S-M    | competitiveness | 123 KB vs Phaser Box2D 65 KB, gap is widening (+~36 KB from recent helpers). Real adoption blocker. Dead-code audit, hot-path review, helper opt-in re-export plan        |
 | P58 | **Phaser plugin/adapter** | M      | :fire: adoption | #1 JS game framework. Worth doing now that the platformer template is live — adapters need a working onboarding story to demo against                                     |
 | P59 | **React/R3F integration** | M      | adoption        | `@react-three/rapier`-style package for the React gamedev community. After P58                                                                                            |
-| P29 | Test coverage → 80%       | L      | safety          | :diamonds: ~72% statements (5684 tests). Background work, not blocking anything                                                                                           |
+| P29 | Test coverage → 80%       | L      | safety          | :diamonds: ~72% statements (5761 tests). Background work, not blocking anything                                                                                           |
 
 ---
 
