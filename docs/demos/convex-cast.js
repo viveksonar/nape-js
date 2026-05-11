@@ -8,6 +8,8 @@ const BLADE_THICK = 10;   // capsule diameter, px
 const SWING_SPEED = 1.8;  // rad/s  (one full revolution every ~3.5 s)
 const OBSTACLE_R  = 65;   // ring radius where the static obstacles sit
 const CAST_DT     = 0.35; // seconds ahead for convexMultiCast
+const GHOSTS      = 10;   // number of ghost outlines in the swept-arc visualisation
+const NORMAL_LEN  = 20;   // length of hit-normal arrows, px
 
 // ── Module-level state (reset in setup) ────────────────────────────────────
 let _sword     = null;  // kinematic Body
@@ -29,8 +31,8 @@ function spawnObstacle(space, x, y, colorIdx) {
   return body;
 }
 
-// Draw a capsule outline in the 2D overlay context (no fill, transform applied
-// externally via ctx.save/translate/rotate).
+// Draw a capsule outline in the 2D overlay context (no fill).
+// Applies its own save/translate/rotate/restore internally.
 function drawCapsuleOutline(ctx, cx, cy, angle, halfLen, radius) {
   ctx.save();
   ctx.translate(cx, cy);
@@ -158,15 +160,14 @@ export default {
   },
 
   render3dOverlay(ctx, space, W, H) {
-    const cx   = W / 2;
-    const cy   = H / 2;
-    const GHOSTS     = 10;            // number of ghost outlines in the sweep arc
-    const NORMAL_LEN = 20;            // pixels for hit-normal arrows
+    const cx = W / 2;
+    const cy = H / 2;
 
     // ── Swept-arc ghost outlines ───────────────────────────────────────────
     // Draw GHOSTS semi-transparent capsule outlines from the current angle
     // forward through the convexMultiCast window (CAST_DT * SWING_SPEED rad).
     const sweepSpan = SWING_SPEED * CAST_DT;
+    ctx.save();
     for (let i = 1; i <= GHOSTS; i++) {
       const t     = i / GHOSTS;
       const a     = _angle + t * sweepSpan;
@@ -175,6 +176,7 @@ export default {
       ctx.lineWidth   = 1;
       drawCapsuleOutline(ctx, cx, cy, a, BLADE_HALF, BLADE_THICK / 2);
     }
+    ctx.restore();
 
     // ── Multi-hit markers — yellow ─────────────────────────────────────────
     for (const h of _multiHits) {
