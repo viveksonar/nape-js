@@ -128,24 +128,44 @@ export function drawBody(ctx, body, showOutlines = true) {
  */
 export function drawConstraints(ctx, space) {
   try {
+    // The static "world body" anchor used by joints like
+    // AngleJoint(space.world, body, ...) sits at the world origin (0,0).
+    // Drawing a line from every participating body to (0,0) is visual
+    // noise — a fan-out toward the top-left of the viewport — so skip
+    // those joints. We compare on the internal zpp inner reference
+    // (rather than the public wrapper identity) because some constraint
+    // accessors may return a freshly-wrapped Body wrapper while the
+    // underlying inner pointer remains stable.
+    const world = space.world;
+    const worldInner = world?.zpp_inner ?? world;
     const rawConstraints = space.constraints;
     const cLen = rawConstraints.length;
     for (let i = 0; i < cLen; i++) {
       const c = rawConstraints.at(i);
-      if (c.body1 != null && c.body2 != null) {
-        try {
-          const b1 = c.body1;
-          const b2 = c.body2;
-          if (b1 && b2) {
-            ctx.beginPath();
-            ctx.moveTo(b1.position.x, b1.position.y);
-            ctx.lineTo(b2.position.x, b2.position.y);
-            ctx.strokeStyle = "#d2992233";
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        } catch (_) {}
-      }
+      const b1 = c.body1;
+      const b2 = c.body2;
+      if (!b1 || !b2) continue;
+      const b1Inner = b1.zpp_inner ?? b1;
+      const b2Inner = b2.zpp_inner ?? b2;
+      if (b1 === world || b2 === world) continue;
+      if (worldInner && (b1Inner === worldInner || b2Inner === worldInner)) continue;
+      // Last-ditch: any static body anchored exactly at the world
+      // origin produces the same visual noise; treat it the same.
+      // `isStatic` is a method on the real Body API; some fakes/wraps
+      // may expose it as a property, so accept either form.
+      const b1Static = typeof b1.isStatic === "function" ? b1.isStatic() : !!b1.isStatic;
+      const b2Static = typeof b2.isStatic === "function" ? b2.isStatic() : !!b2.isStatic;
+      const b1AtOrigin = b1Static && b1.position.x === 0 && b1.position.y === 0;
+      const b2AtOrigin = b2Static && b2.position.x === 0 && b2.position.y === 0;
+      if (b1AtOrigin || b2AtOrigin) continue;
+      try {
+        ctx.beginPath();
+        ctx.moveTo(b1.position.x, b1.position.y);
+        ctx.lineTo(b2.position.x, b2.position.y);
+        ctx.strokeStyle = "#d2992233";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      } catch (_) {}
     }
   } catch (_) {}
 }

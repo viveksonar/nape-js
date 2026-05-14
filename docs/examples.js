@@ -66,6 +66,7 @@ import arenaDefense        from "./demos/arena-defense.js?v=3.35.0";
 import saveLoadRewind      from "./demos/save-load-rewind.js?v=3.35.0";
 import replayRecorder      from "./demos/replay-recorder.js?v=3.35.0";
 import popcorn             from "./demos/popcorn.js?v=3.35.0";
+import rollercoaster       from "./demos/rollercoaster.js?v=3.35.0";
 
 // Note on order: cardEntries reverses ALL_DEMOS, so the LAST tuple entry
 // becomes the TOP card in the grid. New demos go at the end so they take
@@ -101,6 +102,7 @@ const ALL_DEMOS = [
   replayRecorder,
   arenaDefense,
   popcorn,
+  rollercoaster,
 ];
 
 const gtag = window.gtag || function() {};
@@ -546,11 +548,13 @@ function createCard(demo, { onTagClick } = {}) {
     if (loading) return;
     if (activeCardEntry && activeCardEntry !== cardRef) stopActiveDemo();
     loading = true;
-    if (!previewReady) {
-      await ensurePreview();
-    } else {
-      await runner.loadAsync(demo);
-    }
+    // Always do a fresh load before starting. ensurePreview() runs one
+    // physics step to produce the thumbnail; if we relied on it here the
+    // first play would start from a state that's already advanced by 1/60s
+    // (visibly different from every subsequent reset, which does its own
+    // fresh loadAsync).
+    if (!previewReady) await ensurePreview();
+    await runner.loadAsync(demo);
     started = true;
     cardRef._started = true;
     loading = false;

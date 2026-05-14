@@ -105,7 +105,10 @@ export class Canvas2DAdapter {
       ctx.translate(-camX, -camY);
       drawGrid(ctx, W, H, camX, camY);
       drawConstraints(ctx, space);
-      for (const body of space.bodies) drawBody(ctx, body, showOutlines);
+      for (const body of space.bodies) {
+        if (body.userData?._hidden) continue;
+        drawBody(ctx, body, showOutlines);
+      }
       ctx.restore();
     }
 
