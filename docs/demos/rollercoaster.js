@@ -418,6 +418,30 @@ export default {
 
     buildTrain(space);
 
+    // Settle pass — let the suspension and contact graph reach a
+    // stable resting state BEFORE the kick. Nape's contact/arbiter
+    // pools are global, so two consecutive setup() calls (preview +
+    // play, or reset → preview + play) can inherit warm-start impulses
+    // from a previous space, making the very first frame's solver
+    // diverge slightly between runs. A few short zero-velocity steps
+    // give the new train a moment to find equilibrium against the
+    // fresh track geometry, so every run starts from the same state.
+    for (let i = 0; i < 6; i++) {
+      space.step(1 / 60, 8, 3);
+      for (const car of _cars) {
+        car.chassis.velocity = new Vec2(0, 0);
+        car.chassis.angularVel = 0;
+        car.frontWheel.velocity = new Vec2(0, 0);
+        car.frontWheel.angularVel = 0;
+        car.rearWheel.velocity = new Vec2(0, 0);
+        car.rearWheel.angularVel = 0;
+        for (const p of car.passengers) {
+          p.body.velocity = new Vec2(0, 0);
+          p.body.angularVel = 0;
+        }
+      }
+    }
+
     // Kick-start: the staging is dead flat so the train would just
     // sit there. A one-shot forward velocity on every chassis + wheel
     // + passenger gets it rolling toward the lift-hill crest, after
@@ -468,7 +492,17 @@ export default {
     // sees a much larger spike. Threshold ~0.8 g catches both the
     // sustained near-free-fall of the lift-hill plunge AND the sharp
     // direction-change spikes at the bottom of each drop.
-    const ACCEL_THRESHOLD = 750;
+    const ACCEL_THRESHOLD = 900;
+    // Limit how many passengers may scream simultaneously across the
+    // whole train. 18 passengers all triggering on the same drop is
+    // visual noise; capping at 3 keeps the "few scared riders" vibe.
+    const MAX_CONCURRENT_SCREAMS = 3;
+    let activeScreams = 0;
+    for (const car of _cars) {
+      for (const p of car.passengers) {
+        if (p.scream) activeScreams++;
+      }
+    }
     for (const car of _cars) {
       for (const p of car.passengers) {
         const v = p.body.velocity;
@@ -481,15 +515,27 @@ export default {
         if (p.screamUntil && now > p.screamUntil) {
           p.scream = null;
           p.screamUntil = 0;
+          activeScreams = Math.max(0, activeScreams - 1);
         }
         if (p.screamCooldown > 0) p.screamCooldown -= dt;
 
-        if (accel > ACCEL_THRESHOLD && p.screamCooldown <= 0) {
+        if (
+          accel > ACCEL_THRESHOLD &&
+          p.screamCooldown <= 0 &&
+          activeScreams < MAX_CONCURRENT_SCREAMS &&
+          // Probabilistic trigger so the same drop doesn't fire every
+          // passenger at once — scales gently with acceleration so harder
+          // jerks are more likely to scare someone, but never certain.
+          Math.random() < Math.min(0.35, (accel - ACCEL_THRESHOLD) / 4000 + 0.08)
+        ) {
           p.scream = SCREAMS[(Math.random() * SCREAMS.length) | 0];
           // Stronger acceleration → longer display, up to 1.4s.
           const lifetime = Math.min(1.4, 0.5 + (accel - ACCEL_THRESHOLD) / 2000);
           p.screamUntil = now + lifetime;
-          p.screamCooldown = lifetime + 0.25;
+          // Long per-passenger cooldown — the same rider shouldn't
+          // shout twice in quick succession even on a wavy section.
+          p.screamCooldown = lifetime + 1.2 + Math.random() * 0.8;
+          activeScreams++;
         }
       }
     }
@@ -583,21 +629,6 @@ export default {
       }
     }
 
-    ctx.restore();
-
-    // HUD
-    ctx.save();
-    ctx.fillStyle = "rgba(20,28,40,0.7)";
-    ctx.fillRect(12, 12, 200, 42);
-    ctx.fillStyle = "#cdd9e5";
-    ctx.font = "12px monospace";
-    if (_cars.length) {
-      const head = _cars[0].chassis;
-      const v = head.velocity;
-      const speed = Math.hypot(v.x, v.y);
-      ctx.fillText("Speed: " + speed.toFixed(0) + " px/s", 22, 32);
-      ctx.fillText("X: " + head.position.x.toFixed(0), 22, 50);
-    }
     ctx.restore();
   },
 };

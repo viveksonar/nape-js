@@ -643,13 +643,16 @@ export class DemoRunner {
           }
         }
 
-        // Update camera every frame (not just on physics steps) so that on
-        // displays where the physics rate differs from the refresh rate (e.g.
-        // 120 Hz monitor + 60 Hz physics), the camera lerp stays smooth
-        // instead of stepping in chunks.
-        this.#updateCamera();
-        // Compute shake offset for this frame (decoupled from the smoothed
-        // camera position so lerp doesn't fight the shake).
+        // Update camera only on physics steps. On a 120/144 Hz monitor with
+        // 60 Hz physics, frames where the accumulator hadn't reached FIXED_DT
+        // were rendering the previous body snapshot while the camera (lerping
+        // every frame toward the follow target) kept moving — producing a
+        // visible mismatch where the background slid while the followed body
+        // appeared to stutter. Locking camera lerp to the physics tick keeps
+        // both in lockstep.
+        if (stepped) this.#updateCamera();
+        // Shake stays per-frame so its decay reads smoothly regardless of
+        // physics rate; it's an additive offset, not tied to body positions.
         this.#updateShake(Math.min(dt / 1000, DemoRunner.MAX_FRAME_TIME));
 
         const renderStart = performance.now();

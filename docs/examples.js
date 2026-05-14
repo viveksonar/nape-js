@@ -548,11 +548,13 @@ function createCard(demo, { onTagClick } = {}) {
     if (loading) return;
     if (activeCardEntry && activeCardEntry !== cardRef) stopActiveDemo();
     loading = true;
-    if (!previewReady) {
-      await ensurePreview();
-    } else {
-      await runner.loadAsync(demo);
-    }
+    // Always do a fresh load before starting. ensurePreview() runs one
+    // physics step to produce the thumbnail; if we relied on it here the
+    // first play would start from a state that's already advanced by 1/60s
+    // (visibly different from every subsequent reset, which does its own
+    // fresh loadAsync).
+    if (!previewReady) await ensurePreview();
+    await runner.loadAsync(demo);
     started = true;
     cardRef._started = true;
     loading = false;
