@@ -416,19 +416,34 @@ export class ThreeJSAdapter {
       const len = constraints.length;
       if (len === 0) return;
 
+      // The static "world body" anchor used by joints like
+      // AngleJoint(space.world, body, ...) sits at the world origin
+      // (0,0). Drawing a line from every participating body to (0,0)
+      // is visual noise — fan-out toward the world origin — so skip
+      // those joints. We check wrapper identity, internal zpp_inner
+      // identity, and finally any static body at exactly (0,0) — the
+      // last is a defensive fallback for cases where the wrapper
+      // accessor returns a freshly-wrapped Body each access.
       const world = space.world;
+      const worldInner = world?.zpp_inner ?? world;
       const points = [];
       for (let i = 0; i < len; i++) {
         const c = constraints.at(i);
-        if (!c.body1 || !c.body2) continue;
-        // Skip joints anchored to space.world — its position is (0,0)
-        // (the world origin), so the line is visual noise. Common case:
-        // AngleJoint(space.world, body, ...) used as a world-rotation
-        // spring.
-        if (c.body1 === world || c.body2 === world) continue;
+        const b1 = c.body1;
+        const b2 = c.body2;
+        if (!b1 || !b2) continue;
+        if (b1 === world || b2 === world) continue;
+        const b1Inner = b1.zpp_inner ?? b1;
+        const b2Inner = b2.zpp_inner ?? b2;
+        if (worldInner && (b1Inner === worldInner || b2Inner === worldInner)) continue;
+        const b1Static = typeof b1.isStatic === "function" ? b1.isStatic() : !!b1.isStatic;
+        const b2Static = typeof b2.isStatic === "function" ? b2.isStatic() : !!b2.isStatic;
+        const b1AtOrigin = b1Static && b1.position.x === 0 && b1.position.y === 0;
+        const b2AtOrigin = b2Static && b2.position.x === 0 && b2.position.y === 0;
+        if (b1AtOrigin || b2AtOrigin) continue;
         points.push(
-          c.body1.position.x, -c.body1.position.y, 0,
-          c.body2.position.x, -c.body2.position.y, 0,
+          b1.position.x, -b1.position.y, 0,
+          b2.position.x, -b2.position.y, 0,
         );
       }
       if (points.length === 0) return;

@@ -151,8 +151,12 @@ export function drawConstraints(ctx, space) {
       if (worldInner && (b1Inner === worldInner || b2Inner === worldInner)) continue;
       // Last-ditch: any static body anchored exactly at the world
       // origin produces the same visual noise; treat it the same.
-      const b1AtOrigin = b1.isStatic && b1.position.x === 0 && b1.position.y === 0;
-      const b2AtOrigin = b2.isStatic && b2.position.x === 0 && b2.position.y === 0;
+      // `isStatic` is a method on the real Body API; some fakes/wraps
+      // may expose it as a property, so accept either form.
+      const b1Static = typeof b1.isStatic === "function" ? b1.isStatic() : !!b1.isStatic;
+      const b2Static = typeof b2.isStatic === "function" ? b2.isStatic() : !!b2.isStatic;
+      const b1AtOrigin = b1Static && b1.position.x === 0 && b1.position.y === 0;
+      const b2AtOrigin = b2Static && b2.position.x === 0 && b2.position.y === 0;
       if (b1AtOrigin || b2AtOrigin) continue;
       try {
         ctx.beginPath();

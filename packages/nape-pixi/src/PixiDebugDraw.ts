@@ -372,18 +372,31 @@ export class PixiDebugDraw {
     const constraints = space.constraints as any;
     const len: number = constraints.length;
     if (len === 0) return;
+    // The static "world body" anchor used by joints like
+    // AngleJoint(space.world, body, ...) sits at the world origin
+    // (0,0). Drawing a line from every participating body to (0,0)
+    // is visual noise, so skip those joints. We check wrapper
+    // identity, internal zpp_inner identity, and finally any static
+    // body at exactly (0,0) — the last is a defensive fallback for
+    // cases where the constraint accessor returns a freshly-wrapped
+    // Body each access.
     const world = (space as any).world;
+    const worldInner = world?.zpp_inner ?? world;
     let drew = false;
     for (let i = 0; i < len; i++) {
       const c = constraints.at(i) as LinkedJoint;
-      const a = c.body1;
-      const b = c.body2;
+      const a = c.body1 as any;
+      const b = c.body2 as any;
       if (!a || !b) continue;
-      // Skip joints anchored to space.world (position at the world
-      // origin) — drawing a line from each body to (0,0) is visual
-      // noise and is the common case for AngleJoint world-rotation
-      // springs.
       if (a === world || b === world) continue;
+      const aInner = a.zpp_inner ?? a;
+      const bInner = b.zpp_inner ?? b;
+      if (worldInner && (aInner === worldInner || bInner === worldInner)) continue;
+      const aStatic = typeof a.isStatic === "function" ? a.isStatic() : !!a.isStatic;
+      const bStatic = typeof b.isStatic === "function" ? b.isStatic() : !!b.isStatic;
+      const aAtOrigin = aStatic && a.position.x === 0 && a.position.y === 0;
+      const bAtOrigin = bStatic && b.position.x === 0 && b.position.y === 0;
+      if (aAtOrigin || bAtOrigin) continue;
       gfx.moveTo(a.position.x, a.position.y);
       gfx.lineTo(b.position.x, b.position.y);
       drew = true;
