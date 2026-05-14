@@ -453,22 +453,28 @@ export default {
       car.chassis.force = new Vec2(0, 0);
     }
 
-    // Per-passenger jerk detection: if a passenger's frame-to-frame
-    // velocity delta exceeds a threshold, fire a random scream. A
-    // cooldown keeps the same passenger from spamming every frame.
+    // Per-passenger acceleration detection: fire a random scream when
+    // the magnitude of acceleration crosses a threshold. Acceleration
+    // (not raw velocity delta) catches BOTH brief hard yanks AND the
+    // sustained ~1 g of a long steep descent, so screams already show
+    // up on the first big lift-hill drop — real rollercoasters scream
+    // through the whole plunge, not just the final pull-out.
     const now = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
     const dt = _lastStepTime ? Math.max(1 / 240, now - _lastStepTime) : 1 / 60;
     _lastStepTime = now;
-    // Threshold tuned for ~900 px/s² gravity: a free-fall frame at
-    // 60 Hz changes velocity by 15 px/s, so anything beyond ~80 px/s
-    // delta within one step means a hard yank.
-    const JERK_THRESHOLD = 80;
+    // Gravity is 900 px/s² ≈ 1 g. A passenger pinned firmly to a flat
+    // chassis sees ~0 net acceleration in the world frame; one going
+    // briefly weightless over a crest, or yanked sideways into a hump,
+    // sees a much larger spike. Threshold ~0.8 g catches both the
+    // sustained near-free-fall of the lift-hill plunge AND the sharp
+    // direction-change spikes at the bottom of each drop.
+    const ACCEL_THRESHOLD = 750;
     for (const car of _cars) {
       for (const p of car.passengers) {
         const v = p.body.velocity;
-        const dvx = v.x - p.prevVx;
-        const dvy = v.y - p.prevVy;
-        const jerk = Math.hypot(dvx, dvy);
+        const ax = (v.x - p.prevVx) / dt;
+        const ay = (v.y - p.prevVy) / dt;
+        const accel = Math.hypot(ax, ay);
         p.prevVx = v.x;
         p.prevVy = v.y;
 
@@ -478,10 +484,10 @@ export default {
         }
         if (p.screamCooldown > 0) p.screamCooldown -= dt;
 
-        if (jerk > JERK_THRESHOLD && p.screamCooldown <= 0) {
+        if (accel > ACCEL_THRESHOLD && p.screamCooldown <= 0) {
           p.scream = SCREAMS[(Math.random() * SCREAMS.length) | 0];
-          // Stronger jerk → longer display, up to 1.4s.
-          const lifetime = Math.min(1.4, 0.5 + (jerk - JERK_THRESHOLD) / 200);
+          // Stronger acceleration → longer display, up to 1.4s.
+          const lifetime = Math.min(1.4, 0.5 + (accel - ACCEL_THRESHOLD) / 2000);
           p.screamUntil = now + lifetime;
           p.screamCooldown = lifetime + 0.25;
         }
@@ -582,16 +588,15 @@ export default {
     // HUD
     ctx.save();
     ctx.fillStyle = "rgba(20,28,40,0.7)";
-    ctx.fillRect(12, 12, 200, 60);
+    ctx.fillRect(12, 12, 200, 42);
     ctx.fillStyle = "#cdd9e5";
     ctx.font = "12px monospace";
     if (_cars.length) {
       const head = _cars[0].chassis;
       const v = head.velocity;
       const speed = Math.hypot(v.x, v.y);
-      ctx.fillText("Cars: " + CAR_COUNT, 22, 32);
-      ctx.fillText("Speed: " + speed.toFixed(0) + " px/s", 22, 50);
-      ctx.fillText("X: " + head.position.x.toFixed(0), 22, 68);
+      ctx.fillText("Speed: " + speed.toFixed(0) + " px/s", 22, 32);
+      ctx.fillText("X: " + head.position.x.toFixed(0), 22, 50);
     }
     ctx.restore();
   },
