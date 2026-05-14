@@ -7,8 +7,8 @@ import {
 import { drawBody, drawGrid } from "../renderer.js";
 
 // ── Constants ──────────────────────────────────────────────────────────────
-const WORLD_W = 5600;
-const WORLD_H = 1400;
+const WORLD_W = 10000;
+const WORLD_H = 2600;
 const CAR_COUNT = 6;
 const CAR_W = 60;
 const CAR_H = 30;
@@ -16,7 +16,7 @@ const CAR_WALL = 4;
 const CAR_GAP = 12;
 const PASSENGERS_PER_CAR = 3;
 const PASSENGER_R = 5.5;      // capsule radius (half-width)
-const PASSENGER_LEN = 18;     // capsule total length (head-to-toe)
+const PASSENGER_LEN = 25;     // capsule total length (head-to-toe) — 40% taller passengers for more visible swaying
 const WHEEL_R = 10;
 const WHEEL_DX = CAR_W * 0.32;
 
@@ -33,6 +33,15 @@ const SUSP_REST = 6;
 let _cars = [];
 let _trackPoints = []; // [{ x, y, tan, side, s }]
 let _space = null;
+let _lastStepTime = 0;
+
+// Funny scream lines. Picked at random when a passenger experiences
+// a large lateral/vertical jerk — drops, sudden direction changes,
+// hard couplings into a hump.
+const SCREAMS = [
+  "yaaay!", "waaaa!", "aaaah!", "wheee!", "oh no!",
+  "noooo!", "yipee!", "wooo!", "help!", "weeee!",
+];
 
 // ── Centerline construction ──────────────────────────────────────────────
 // Hermite key points with smoothstep interpolation. Tangent is
@@ -46,24 +55,43 @@ function buildCenterline() {
   const stageStartX = -CAR_COUNT * (CAR_W + CAR_GAP) - 80;
   const startY = 350;
 
-  // Big lift-hill drop, then a series of progressively-smaller humps,
-  // each tall enough to be visible but shallow enough that residual
-  // kinetic energy from the previous drop carries the train over.
+  // Staging is dead flat AND coincident with the lift-hill crest —
+  // no initial uphill section that would make gravity roll the cars
+  // backward into the wall. All six cars spawn at the same height,
+  // a one-shot forward velocity in setup() launches them over the
+  // crest, and gravity takes over for the big drop. Each subsequent
+  // hump sits well below the previous crest so residual kinetic
+  // energy (minus friction/coupler losses) carries the train over.
+  // User-requested layout (rough shape, west → east):
+  //   flat staging → gentle slope → BIG drop → small gentle slope →
+  //   climb → drop → small gentle slope → climb → HUGE drop →
+  //   gentle slope → climb → gentle slope → climb → gentle slope →
+  //   climb (finish).
+  // Every climb peak sits below the immediately preceding crest so
+  // the train always has surplus kinetic energy to coast over it.
   const sections = [
-    { x: stageStartX, y: startY - 30 },
-    { x: 80,          y: startY },           // top of lift hill
-    { x: 700,         y: startY + 420 },     // big drop
-    { x: 1100,        y: startY + 240 },     // hump 1
-    { x: 1500,        y: startY + 500 },     // valley
-    { x: 1900,        y: startY + 340 },     // hump 2
-    { x: 2300,        y: startY + 560 },     // valley
-    { x: 2700,        y: startY + 440 },     // hump 3
-    { x: 3100,        y: startY + 640 },     // valley
-    { x: 3500,        y: startY + 540 },     // hump 4
-    { x: 3900,        y: startY + 720 },     // valley
-    { x: 4500,        y: startY + 820 },     // long descent
-    { x: 5100,        y: startY + 760 },     // run-out hump
-    { x: WORLD_W - 80, y: startY + 600 },    // finish
+    { x: stageStartX, y: startY },           // staging start (flat)
+    { x: 300,         y: startY },           // staging end — lift hill plateau
+    { x: 700,         y: startY + 60 },      // gentle slope (60 px / 400 px ≈ 9°)
+    { x: 1500,        y: startY + 680 },     // BIG drop (620 px / 800 px ≈ 38°)
+    { x: 2000,        y: startY + 740 },     // small gentle slope
+    { x: 2300,        y: startY + 560 },     // climb (peak below big-drop floor by 120 px)
+    { x: 2700,        y: startY + 870 },     // drop
+    { x: 3000,        y: startY + 920 },     // small gentle slope
+    { x: 3250,        y: startY + 820 },     // climb (peak below previous valley by 50)
+    { x: 4050,        y: startY + 1500 },    // HUGE drop (680 px / 800 px ≈ 40°)
+    { x: 4550,        y: startY + 1580 },    // gentle slope (80 px / 500 px)
+    { x: 5000,        y: startY + 1460 },    // climb (120 px climb)
+    { x: 5450,        y: startY + 1580 },    // gentle slope
+    { x: 5900,        y: startY + 1480 },    // climb (100 px climb)
+    { x: 6400,        y: startY + 1590 },    // gentle slope
+    { x: 6920,        y: startY + 1510 },    // climb — now top of the second big drop
+    { x: 8000,        y: startY + 2150 },    // SECOND big drop (640 px / 1080 px ≈ 30°)
+    { x: 8400,        y: startY + 2110 },    // gentle wave up
+    { x: 8800,        y: startY + 2170 },    // gentle wave down
+    { x: 9200,        y: startY + 2100 },    // gentle wave up
+    { x: 9600,        y: startY + 2160 },    // gentle wave down
+    { x: WORLD_W - 80, y: startY + 2110 },   // finish (gentle wave up)
   ];
 
   let lastPt = null;
@@ -156,10 +184,13 @@ function buildTrain(space) {
   // Low wheel friction matches the rail — minimises rolling
   // resistance so kinetic energy carries the train across humps.
   const wheelMat = new Material(0.05, 0.1, 0.2, 2);
-  // Heavy floor ballast: keeps the chassis's centre of mass low and
-  // gives the train enough inertia to coast over the smaller humps
-  // without stalling.
-  const ballastMat = new Material(0.1, 0.4, 0.5, 16);
+  // Floor ballast: keeps the chassis's centre of mass low. Density
+  // is kept moderate — heavier ballast makes friction/contact losses
+  // scale with mass, which actually slows the train on long descents
+  // instead of helping. Lighter cars accelerate more freely under
+  // gravity and still coast through the humps thanks to the smooth
+  // hermite track.
+  const ballastMat = new Material(0.1, 0.4, 0.5, 4);
   const fWheel = new InteractionFilter(F_WHEEL, F_TRACK);
   const fChassis = new InteractionFilter(F_CHASSIS, F_PASSENGER);
   const fPassenger = new InteractionFilter(
@@ -230,7 +261,7 @@ function buildTrain(space) {
       SUSP_REST,
     );
     fSusp.frequency = 6;
-    fSusp.damping = 1.0;
+    fSusp.damping = 0.4;
     fSusp.space = space;
     const rSusp = new SpringJoint(
       chassis, rearWheel,
@@ -238,7 +269,7 @@ function buildTrain(space) {
       SUSP_REST,
     );
     rSusp.frequency = 6;
-    rSusp.damping = 1.0;
+    rSusp.damping = 0.4;
     rSusp.space = space;
     new LineJoint(
       chassis, frontWheel,
@@ -294,36 +325,54 @@ function buildTrain(space) {
       );
       pin.space = space;
 
-      // Soft spring around WORLD-vertical (not chassis-relative).
-      // This is the key to visible swaying: if the spring were
-      // chassis-relative, the passenger would tilt with the chassis
-      // and look glued to it. With a world-vertical reference, the
-      // passenger lags behind the chassis's rotation, getting flung
-      // forward on drops and backward on climbs by pure inertia.
-      // Range ±100°, very low frequency so the swing oscillates
-      // visibly before settling.
+      // Soft spring fixing the passenger's WORLD-rotation around π/2
+      // (upright). Fixed jointMin = jointMax = π/2 means the spring
+      // is *always* active (range constraints would go slack inside
+      // their min/max window and leave the passenger un-restored).
+      // Low frequency + low damping = visible inertial lag: drops
+      // throw them backward, climbs pitch them forward, then they
+      // oscillate back to upright. World-vertical (not chassis-rel)
+      // so the passengers visibly lag the chassis's rotation.
       const lean = new AngleJoint(
         space.world, pas,
-        Math.PI / 2 - 1.75,
-        Math.PI / 2 + 1.75,
+        Math.PI / 2,
+        Math.PI / 2,
         1,
       );
       lean.stiff = false;
-      lean.frequency = 0.8;
-      lean.damping = 0.05;
+      lean.frequency = 1.4;
+      lean.damping = 0.15;
       lean.space = space;
 
-      passengers.push(pas);
+      passengers.push({
+        body: pas,
+        prevVx: 0,
+        prevVy: 0,
+        scream: null,        // string currently shown
+        screamUntil: 0,      // time (s) when scream disappears
+        screamCooldown: 0,   // time (s) before another scream may trigger
+      });
     }
 
-    // ─ Coupler ─ stiff DistanceJoint anchored at chassis floor.
+    // ─ Coupler ─ classic rail-style PivotJoint linking a single
+    // virtual point in the middle of the gap to both cars. The two
+    // anchor points coincide in world space, so the cars hinge
+    // freely around that shared link — independent pitch, fixed
+    // gap, no slack, no pendulum.
+    //
+    // Anchor Y is at the chassis's effective centre of mass (~y=10,
+    // dominated by the heavy ballast at y=13), NOT at the floor edge
+    // (y=15). A coupler force passing through the COM produces no
+    // torque, so the leading and trailing cars no longer pitch
+    // asymmetrically under load — they roll down the slope as one
+    // train, with the coupler staying taut.
     if (prevChassis) {
-      const anchorReach = CAR_W * 0.5 + CAR_GAP * 0.5;
-      const coupler = new DistanceJoint(
+      const linkX = halfW + CAR_GAP * 0.5;
+      const linkY = halfH - CAR_WALL;       // ~chassis COM height
+      const coupler = new PivotJoint(
         prevChassis, chassis,
-        new Vec2(-anchorReach, halfH - 2),
-        new Vec2(+anchorReach, halfH - 2),
-        0, 0,
+        new Vec2(-linkX, linkY),
+        new Vec2(+linkX, linkY),
       );
       coupler.stiff = true;
       coupler.space = space;
@@ -351,7 +400,14 @@ export default {
   setup(space, W, H) {
     _space = space;
     space.gravity = new Vec2(0, 900);
+    // Disable Nape's default global drag (0.015) — minor on its own
+    // but stacks with suspension damping and contact losses, eating
+    // enough kinetic energy on a long descent to stall the train
+    // before the first hump.
+    space.worldLinearDrag = 0;
+    space.worldAngularDrag = 0;
     _cars = [];
+    _lastStepTime = 0;
     _trackPoints = buildCenterline();
     buildTrackBodies(space);
 
@@ -361,6 +417,24 @@ export default {
     floor.space = space;
 
     buildTrain(space);
+
+    // Kick-start: the staging is dead flat so the train would just
+    // sit there. A one-shot forward velocity on every chassis + wheel
+    // + passenger gets it rolling toward the lift-hill crest, after
+    // which gravity takes over for the big drop. Passengers also get
+    // the kick (and seed prevVx) so the jerk detector doesn't fire a
+    // spurious scream on the very first step.
+    const KICK_VX = 220;
+    for (const car of _cars) {
+      car.chassis.velocity = new Vec2(KICK_VX, 0);
+      car.frontWheel.velocity = new Vec2(KICK_VX, 0);
+      car.rearWheel.velocity = new Vec2(KICK_VX, 0);
+      for (const p of car.passengers) {
+        p.body.velocity = new Vec2(KICK_VX, 0);
+        p.prevVx = KICK_VX;
+        p.prevVy = 0;
+      }
+    }
 
     const head = _cars[0].chassis;
     const stageStartX = -CAR_COUNT * (CAR_W + CAR_GAP) - 80;
@@ -378,9 +452,41 @@ export default {
     for (const car of _cars) {
       car.chassis.force = new Vec2(0, 0);
     }
-    // Passengers are pinned to the chassis by PivotJoint — they can't
-    // escape, so the previous "respawn out-of-bounds passengers" loop
-    // is no longer needed.
+
+    // Per-passenger jerk detection: if a passenger's frame-to-frame
+    // velocity delta exceeds a threshold, fire a random scream. A
+    // cooldown keeps the same passenger from spamming every frame.
+    const now = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
+    const dt = _lastStepTime ? Math.max(1 / 240, now - _lastStepTime) : 1 / 60;
+    _lastStepTime = now;
+    // Threshold tuned for ~900 px/s² gravity: a free-fall frame at
+    // 60 Hz changes velocity by 15 px/s, so anything beyond ~80 px/s
+    // delta within one step means a hard yank.
+    const JERK_THRESHOLD = 80;
+    for (const car of _cars) {
+      for (const p of car.passengers) {
+        const v = p.body.velocity;
+        const dvx = v.x - p.prevVx;
+        const dvy = v.y - p.prevVy;
+        const jerk = Math.hypot(dvx, dvy);
+        p.prevVx = v.x;
+        p.prevVy = v.y;
+
+        if (p.screamUntil && now > p.screamUntil) {
+          p.scream = null;
+          p.screamUntil = 0;
+        }
+        if (p.screamCooldown > 0) p.screamCooldown -= dt;
+
+        if (jerk > JERK_THRESHOLD && p.screamCooldown <= 0) {
+          p.scream = SCREAMS[(Math.random() * SCREAMS.length) | 0];
+          // Stronger jerk → longer display, up to 1.4s.
+          const lifetime = Math.min(1.4, 0.5 + (jerk - JERK_THRESHOLD) / 200);
+          p.screamUntil = now + lifetime;
+          p.screamCooldown = lifetime + 0.25;
+        }
+      }
+    }
   },
 
   render(ctx, space, W, H, debugDraw, camX, camY) {
@@ -432,16 +538,43 @@ export default {
       drawBody(ctx, body, debugDraw);
     }
 
-    // Coupler lines
+    // Coupler lines — drawn between the actual PivotJoint anchors
+    // (just outside each chassis's side wall, at COM height), so the
+    // chain link visibly meets at the gap midpoint.
     ctx.strokeStyle = "#d29922cc";
     ctx.lineWidth = 2;
+    const halfW = CAR_W * 0.5;
+    const halfH = CAR_H * 0.5;
+    const linkX = halfW + CAR_GAP * 0.5;
+    const linkY = halfH - CAR_WALL;
     for (let i = 0; i < _cars.length - 1; i++) {
-      const a = _cars[i].chassis.position;
-      const b = _cars[i + 1].chassis.position;
+      const lead = _cars[i].chassis;
+      const trail = _cars[i + 1].chassis;
+      const a = lead.localPointToWorld(new Vec2(-linkX, linkY));
+      const b = trail.localPointToWorld(new Vec2(+linkX, linkY));
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
       ctx.lineTo(b.x, b.y);
       ctx.stroke();
+    }
+
+    // Passenger screams — comic-style text above each passenger that
+    // just experienced a hard jerk (drop, slam, sudden turn).
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.font = "bold 14px sans-serif";
+    for (const car of _cars) {
+      for (const p of car.passengers) {
+        if (!p.scream) continue;
+        const pos = p.body.position;
+        const x = pos.x;
+        const y = pos.y - PASSENGER_LEN * 0.6 - 8;
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "rgba(10,14,20,0.85)";
+        ctx.strokeText(p.scream, x, y);
+        ctx.fillStyle = "#ffd166";
+        ctx.fillText(p.scream, x, y);
+      }
     }
 
     ctx.restore();
