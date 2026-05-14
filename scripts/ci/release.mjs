@@ -181,17 +181,24 @@ function releasePackage(pkg, isFirstRelease, bump) {
     // Skip hooks in CI — the commit is deterministic and has already passed CI.
     run(`git commit -m "release(${pkg.shortName}): ${newVersion}"`);
   }
-  run(`git tag ${newTag}`);
+  // Use an annotated tag — `git push --follow-tags` only pushes annotated tags,
+  // so a lightweight `git tag <name>` here would silently leave the tag local-only
+  // (which would also prevent `gh release create` from finding it on the remote).
+  run(`git tag -a ${newTag} -m "Release ${pkg.fullName} v${newVersion}"`);
   run(`git push origin HEAD --follow-tags`);
 
   // Publish to npm
   run(`npm publish -w ${pkg.fullName} --access public`);
 
-  // GitHub Release (optional — tolerant of missing gh/token)
+  // GitHub Release (optional — tolerant of missing gh/token).
+  // Pass `--target HEAD` so we don't depend on the tag being visible on the
+  // remote yet (gh's tag-existence check has historically been racy right
+  // after a follow-tags push, and previously caused release-create to fail
+  // for nape-js-v3.38.0). `--generate-notes` auto-fills notes from commit log.
   if (process.env.GH_TOKEN || process.env.GITHUB_TOKEN) {
     const title = `${pkg.fullName} v${newVersion}`;
     const cmd =
-      `gh release create ${newTag} --title "${title}" --notes "Automated release for ${pkg.fullName} v${newVersion}."`;
+      `gh release create ${newTag} --target HEAD --generate-notes --title "${title}"`;
     try {
       run(cmd);
     } catch (err) {
