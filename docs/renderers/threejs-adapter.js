@@ -472,7 +472,7 @@ export class ThreeJSAdapter {
   }
 
   #addBodyMesh(body) {
-    if (body.userData?._hidden3d) return;
+    if (body.userData?._hidden3d || body.userData?._hidden) return;
     for (const shape of body.shapes) {
       let geom;
       if (shape.isCircle()) {

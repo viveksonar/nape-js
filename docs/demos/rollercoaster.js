@@ -1,10 +1,8 @@
 import {
   Body, BodyType, Vec2, Circle, Capsule, Polygon, Material,
-  DistanceJoint, LineJoint, SpringJoint, PivotJoint, AngleJoint,
+  LineJoint, SpringJoint, PivotJoint, AngleJoint,
   InteractionFilter,
 } from "../nape-js.esm.js";
-
-import { drawBody, drawGrid } from "../renderer.js";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const WORLD_W = 10000;
@@ -171,7 +169,6 @@ function buildTrackBodies(space) {
     const ground = new Body(BodyType.STATIC);
     ground.shapes.add(new Polygon(groundVerts, undefined, railMat, trackFilter));
     ground.userData._isTrack = true;
-    ground.userData._hidden = true;
     ground.space = space;
   }
 }
@@ -387,14 +384,13 @@ export default {
   id: "rollercoaster",
   label: "Rollercoaster",
   featured: true,
-  tags: ["SpringJoint", "LineJoint", "PivotJoint", "AngleJoint", "DistanceJoint", "Capsule", "Camera"],
+  tags: ["SpringJoint", "LineJoint", "PivotJoint", "AngleJoint", "Capsule", "Camera"],
   desc:
     "A 6-car train with sprung suspension rolls along a long hilly " +
     "track. Each car carries upright capsule passengers pinned by the " +
     "feet — they sway forward and back through every drop and crest. " +
     "Pure gravity, no motors.",
   walls: false,
-  canvas2dOnly: true,
   camera: null,
 
   setup(space, W, H) {
@@ -541,77 +537,15 @@ export default {
     }
   },
 
-  render(ctx, space, W, H, debugDraw, camX, camY) {
+  // Screams overlay only — body shapes (chassis, wheels, passengers,
+  // track ground) are rendered by each adapter's default debug-draw, so
+  // the demo works identically in canvas2d, three.js, and pixijs modes.
+  // The overlay runs in screen space, so we re-apply the camera offset
+  // to position the text in world coordinates above each passenger.
+  render3dOverlay(ctx, space, W, H, camX = 0, camY = 0) {
+    if (!_cars.length) return;
     ctx.save();
     ctx.translate(-camX, -camY);
-
-    drawGrid(ctx, W, H, camX, camY);
-
-    // Continuous ground silhouette
-    ctx.fillStyle = "#0e1622";
-    const pts = _trackPoints;
-    if (pts.length) {
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-      const lastP = pts[pts.length - 1];
-      ctx.lineTo(lastP.x, WORLD_H + 100);
-      ctx.lineTo(pts[0].x, WORLD_H + 100);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    // Rail surface highlight (single line on top of the ground)
-    ctx.strokeStyle = "#3a4a5e";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    if (pts.length) {
-      ctx.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-    }
-    ctx.stroke();
-
-    // Sleepers
-    ctx.strokeStyle = "#4a5a6e";
-    ctx.lineWidth = 1;
-    for (let i = 0; i < pts.length; i += 3) {
-      const p = pts[i];
-      if (!p.side) continue;
-      const n = p.side;
-      ctx.beginPath();
-      ctx.moveTo(p.x - n.x * 1, p.y - n.y * 1);
-      ctx.lineTo(p.x + n.x * 8, p.y + n.y * 8);
-      ctx.stroke();
-    }
-
-    // Bodies
-    for (const body of space.bodies) {
-      if (body.userData?._hidden) continue;
-      drawBody(ctx, body, debugDraw);
-    }
-
-    // Coupler lines — drawn between the actual PivotJoint anchors
-    // (just outside each chassis's side wall, at COM height), so the
-    // chain link visibly meets at the gap midpoint.
-    ctx.strokeStyle = "#d29922cc";
-    ctx.lineWidth = 2;
-    const halfW = CAR_W * 0.5;
-    const halfH = CAR_H * 0.5;
-    const linkX = halfW + CAR_GAP * 0.5;
-    const linkY = halfH - CAR_WALL;
-    for (let i = 0; i < _cars.length - 1; i++) {
-      const lead = _cars[i].chassis;
-      const trail = _cars[i + 1].chassis;
-      const a = lead.localPointToWorld(new Vec2(-linkX, linkY));
-      const b = trail.localPointToWorld(new Vec2(+linkX, linkY));
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-    }
-
-    // Passenger screams — comic-style text above each passenger that
-    // just experienced a hard jerk (drop, slam, sudden turn).
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
     ctx.font = "bold 14px sans-serif";
@@ -628,7 +562,6 @@ export default {
         ctx.fillText(p.scream, x, y);
       }
     }
-
     ctx.restore();
   },
 };

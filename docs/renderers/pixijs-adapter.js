@@ -122,7 +122,7 @@ export class PixiJSAdapter {
       showOutlines: this.#showOutlines,
       outlineAlpha: OUTLINE_ALPHA,
       colorResolver: (body) => bodyColorHex(body),
-      alphaResolver: (body) => bodyFillAlpha(body),
+      alphaResolver: (body) => (body.userData?._hidden ? 0 : bodyFillAlpha(body)),
     });
     this.#app.stage.addChild(this.#debug.container);
 
@@ -185,7 +185,7 @@ export class PixiJSAdapter {
         showOutlines: this.#showOutlines,
         outlineAlpha: OUTLINE_ALPHA,
         colorResolver: (body) => bodyColorHex(body),
-        alphaResolver: (body) => bodyFillAlpha(body),
+        alphaResolver: (body) => (body.userData?._hidden ? 0 : bodyFillAlpha(body)),
       });
       this.#app.stage.addChild(this.#debug.container);
     }
