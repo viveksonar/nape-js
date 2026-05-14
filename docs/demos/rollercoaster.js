@@ -479,6 +479,22 @@ export default {
       car.chassis.force = new Vec2(0, 0);
     }
 
+    // Passengers occasionally flipped on a hard drop: the AngleJoint
+    // springs each passenger's WORLD rotation back to π/2, but if a
+    // jolt spins the body past π/2 ± π the joint can pick the "short
+    // way home" across the wrap and yank the rider through a full
+    // turn. Clamping angular velocity keeps a single step from
+    // rotating them more than a few degrees, so the spring never sees
+    // a wrap-around in the first place.
+    const MAX_ANG_VEL = 6; // rad/s
+    for (const car of _cars) {
+      for (const p of car.passengers) {
+        const av = p.body.angularVel;
+        if (av > MAX_ANG_VEL) p.body.angularVel = MAX_ANG_VEL;
+        else if (av < -MAX_ANG_VEL) p.body.angularVel = -MAX_ANG_VEL;
+      }
+    }
+
     // Per-passenger acceleration detection: fire a random scream when
     // the magnitude of acceleration crosses a threshold. Acceleration
     // (not raw velocity delta) catches BOTH brief hard yanks AND the
@@ -566,7 +582,12 @@ export default {
       }
       if (_restartScheduled) {
         const runner = this._runner;
-        if (runner) setTimeout(() => runner.load(this), 0);
+        if (runner) {
+          setTimeout(() => {
+            runner.load(this);
+            runner.start();
+          }, 0);
+        }
       }
     }
   },
