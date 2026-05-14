@@ -32,6 +32,9 @@ let _cars = [];
 let _trackPoints = []; // [{ x, y, tan, side, s }]
 let _space = null;
 let _lastStepTime = 0;
+let _finishedAt = 0;        // performance.now()/1000 when train first reached the end
+let _stalledSince = 0;      // performance.now()/1000 when head first dipped below stall speed
+let _restartScheduled = false;
 
 // Funny scream lines. Picked at random when a passenger experiences
 // a large lateral/vertical jerk — drops, sudden direction changes,
@@ -404,6 +407,9 @@ export default {
     space.worldAngularDrag = 0;
     _cars = [];
     _lastStepTime = 0;
+    _finishedAt = 0;
+    _stalledSince = 0;
+    _restartScheduled = false;
     _trackPoints = buildCenterline();
     buildTrackBodies(space);
 
@@ -533,6 +539,34 @@ export default {
           p.screamCooldown = lifetime + 1.2 + Math.random() * 0.8;
           activeScreams++;
         }
+      }
+    }
+
+    // Restart on finish (or stall):
+    //   - once the head chassis crosses the end-of-track threshold,
+    //     wait ~2.5s so the train coasts visibly into the final wave,
+    //     then reload.
+    //   - if the train stalls anywhere on the track (head speed < 30
+    //     px/s for 5+ seconds), reload too — otherwise a particularly
+    //     unlucky run could leave the cars stuck on a slow hump until
+    //     the user resets manually.
+    if (!_restartScheduled) {
+      const head = _cars[0].chassis;
+      const headSpeed = Math.hypot(head.velocity.x, head.velocity.y);
+      const reachedEnd = head.position.x > WORLD_W - 400;
+      if (reachedEnd) {
+        if (!_finishedAt) _finishedAt = now;
+        if (now - _finishedAt > 2.5) _restartScheduled = true;
+      }
+      if (headSpeed < 30) {
+        if (!_stalledSince) _stalledSince = now;
+        if (now - _stalledSince > 5) _restartScheduled = true;
+      } else {
+        _stalledSince = 0;
+      }
+      if (_restartScheduled) {
+        const runner = this._runner;
+        if (runner) setTimeout(() => runner.load(this), 0);
       }
     }
   },
