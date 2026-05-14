@@ -128,6 +128,7 @@ export function drawBody(ctx, body, showOutlines = true) {
  */
 export function drawConstraints(ctx, space) {
   try {
+    const world = space.world;
     const rawConstraints = space.constraints;
     const cLen = rawConstraints.length;
     for (let i = 0; i < cLen; i++) {
@@ -136,14 +137,18 @@ export function drawConstraints(ctx, space) {
         try {
           const b1 = c.body1;
           const b2 = c.body2;
-          if (b1 && b2) {
-            ctx.beginPath();
-            ctx.moveTo(b1.position.x, b1.position.y);
-            ctx.lineTo(b2.position.x, b2.position.y);
-            ctx.strokeStyle = "#d2992233";
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
+          // Skip joints anchored to space.world — its position is the
+          // world origin (0,0), so the line would run from each body
+          // off to a meaningless point in the top-left. Common case:
+          // AngleJoint(space.world, body, ...) used to spring a body's
+          // orientation toward a fixed world angle.
+          if (!b1 || !b2 || b1 === world || b2 === world) continue;
+          ctx.beginPath();
+          ctx.moveTo(b1.position.x, b1.position.y);
+          ctx.lineTo(b2.position.x, b2.position.y);
+          ctx.strokeStyle = "#d2992233";
+          ctx.lineWidth = 1;
+          ctx.stroke();
         } catch (_) {}
       }
     }

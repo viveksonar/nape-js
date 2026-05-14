@@ -372,12 +372,18 @@ export class PixiDebugDraw {
     const constraints = space.constraints as any;
     const len: number = constraints.length;
     if (len === 0) return;
+    const world = (space as any).world;
     let drew = false;
     for (let i = 0; i < len; i++) {
       const c = constraints.at(i) as LinkedJoint;
       const a = c.body1;
       const b = c.body2;
       if (!a || !b) continue;
+      // Skip joints anchored to space.world (position at the world
+      // origin) — drawing a line from each body to (0,0) is visual
+      // noise and is the common case for AngleJoint world-rotation
+      // springs.
+      if (a === world || b === world) continue;
       gfx.moveTo(a.position.x, a.position.y);
       gfx.lineTo(b.position.x, b.position.y);
       drew = true;

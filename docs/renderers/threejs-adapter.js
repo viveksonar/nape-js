@@ -416,15 +416,20 @@ export class ThreeJSAdapter {
       const len = constraints.length;
       if (len === 0) return;
 
+      const world = space.world;
       const points = [];
       for (let i = 0; i < len; i++) {
         const c = constraints.at(i);
-        if (c.body1 && c.body2) {
-          points.push(
-            c.body1.position.x, -c.body1.position.y, 0,
-            c.body2.position.x, -c.body2.position.y, 0,
-          );
-        }
+        if (!c.body1 || !c.body2) continue;
+        // Skip joints anchored to space.world — its position is (0,0)
+        // (the world origin), so the line is visual noise. Common case:
+        // AngleJoint(space.world, body, ...) used as a world-rotation
+        // spring.
+        if (c.body1 === world || c.body2 === world) continue;
+        points.push(
+          c.body1.position.x, -c.body1.position.y, 0,
+          c.body2.position.x, -c.body2.position.y, 0,
+        );
       }
       if (points.length === 0) return;
 
