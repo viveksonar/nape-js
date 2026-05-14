@@ -66,6 +66,7 @@ import arenaDefense        from "./demos/arena-defense.js?v=3.35.0";
 import saveLoadRewind      from "./demos/save-load-rewind.js?v=3.35.0";
 import replayRecorder      from "./demos/replay-recorder.js?v=3.35.0";
 import popcorn             from "./demos/popcorn.js?v=3.35.0";
+import rollercoaster       from "./demos/rollercoaster.js?v=3.35.0";
 
 // Note on order: cardEntries reverses ALL_DEMOS, so the LAST tuple entry
 // becomes the TOP card in the grid. New demos go at the end so they take
@@ -101,6 +102,7 @@ const ALL_DEMOS = [
   replayRecorder,
   arenaDefense,
   popcorn,
+  rollercoaster,
 ];
 
 const gtag = window.gtag || function() {};

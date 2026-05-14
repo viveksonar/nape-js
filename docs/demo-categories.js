@@ -23,6 +23,7 @@ export const GAME_DEMO_IDS = new Set([
   "destructible-arena",
   "portals",
   "arena-defense",
+  "rollercoaster",
 ]);
 
 export const CATEGORIES = [
