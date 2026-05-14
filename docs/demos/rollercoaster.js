@@ -86,7 +86,7 @@ function buildCenterline() {
     { x: 5450,        y: startY + 1580 },    // gentle slope
     { x: 5900,        y: startY + 1480 },    // climb (100 px climb)
     { x: 6400,        y: startY + 1590 },    // gentle slope
-    { x: 6920,        y: startY + 1510 },    // climb — now top of the second big drop
+    { x: 6920,        y: startY + 1555 },    // mini-climb — top of the second big drop (kept low so the train always carries enough KE over it)
     { x: 8000,        y: startY + 2150 },    // SECOND big drop (640 px / 1080 px ≈ 30°)
     { x: 8400,        y: startY + 2110 },    // gentle wave up
     { x: 8800,        y: startY + 2170 },    // gentle wave down
