@@ -251,6 +251,14 @@ for the per-package auto-release pipeline. Run
 `node scripts/ci/release.mjs --dry-run` from the repo root to preview what
 would publish on the next master merge.
 
+## Contributing
+
+Pull requests are welcome! Every PR is reviewed collaboratively with
+[Claude Code](https://www.anthropic.com/claude-code) using the playbook in
+[`.claude/skills/pr-review/SKILL.md`](.claude/skills/pr-review/SKILL.md).
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full review process,
+pre-push checklist, and what gets flagged as a blocker vs. a nit.
+
 ## License
 
 MIT

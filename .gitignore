@@ -15,5 +15,7 @@ docs/replay/
 docs/serialization/
 
 # Tool configs
-.claude/
+.claude/*
+!.claude/skills/
+.claude/settings.local.json
 .serena/
