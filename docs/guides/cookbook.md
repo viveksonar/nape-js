@@ -17,6 +17,7 @@ Each recipe shows the minimal working code and explains the "why" behind key dec
 - [Vehicle (Top-Down)](#vehicle-top-down)
 - [Fluid / Water Pool](#fluid--water-pool)
 - [Raycasting](#raycasting)
+- [Convex Cast (Swept-Shape Queries)](#convex-cast-swept-shape-queries)
 - [Sensor / Trigger Zone](#sensor--trigger-zone)
 - [Collision Filtering](#collision-filtering)
 - [Explosion Impulse](#explosion-impulse)
@@ -340,6 +341,68 @@ if (result) {
 ```
 
 **Gotcha:** `space.rayCast()` on static bodies may return null if you haven't called `space.step()` at least once — the broadphase needs a step to index the shapes.
+
+---
+
+## Convex Cast (Swept-Shape Queries)
+
+Where `rayCast` queries an infinitely thin ray, `convexCast` and `convexMultiCast`
+sweep a full convex shape along its body's current velocity — useful for wide
+projectile hit-prediction, look-ahead for melee weapons, or tunnelling prevention
+for fast-moving objects.
+
+```typescript
+import { Space, Body, BodyType, Vec2, Capsule } from "@newkrok/nape-js";
+
+// Create a "sword" body — a capsule that rotates around its centre.
+const sword = new Body(BodyType.KINEMATIC, new Vec2(450, 250));
+const blade = new Capsule(160, 10); // 160 px long, 10 px wide
+sword.shapes.add(blade);
+sword.angularVel = 2.0; // radians per second
+sword.space = space;
+
+// Important: the broadphase needs at least one step before casts return results.
+space.step(1 / 60);
+
+// ── convexCast — first hit in the next frame ──────────────────────────────
+const result = space.convexCast(blade, 1 / 60, false);
+if (result) {
+  console.log("First hit at:", result.position.x, result.position.y);
+  console.log("Surface normal:", result.normal.x, result.normal.y);
+  console.log("Time-of-impact (seconds):", result.toi);
+  console.log("Shape hit:", result.shape);
+  result.dispose(); // always dispose to return to pool
+}
+
+// ── convexMultiCast — all hits in the next 0.3 seconds ───────────────────
+const results = space.convexMultiCast(blade, 0.3, false);
+for (const r of results) {
+  console.log("Hit shape:", r.shape, "at toi:", r.toi.toFixed(3));
+  r.dispose(); // dispose each individual result
+}
+```
+
+**`ConvexResult` properties:**
+
+| Property   | Type    | Description |
+|------------|---------|-------------|
+| `position` | `Vec2`  | World-space contact point |
+| `normal`   | `Vec2`  | Surface normal at contact, pointing away from the hit shape |
+| `toi`      | `number`| Time-of-impact in seconds — `0` = immediate contact, up to `deltaTime` |
+| `shape`    | `Shape` | The shape that was hit |
+
+**Tips:**
+
+- `liveSweep = true` (third argument) accounts for the *other* body's velocity
+  during the sweep — useful when predicting a projectile hitting a moving target.
+- Always call `result.dispose()` (and each item from `convexMultiCast`) to return
+  pooled objects; skipping this causes a small per-frame allocation leak.
+- The shape must belong to a body that is already in the space.
+- Combine with `InteractionFilter` to restrict which shapes are eligible hits
+  (e.g. ignore sensors or specific collision groups).
+
+> **See also:** the [Convex Cast demo](/examples) — spinning sword with real-time
+> swept-arc visualisation and HUD showing both APIs side-by-side.
 
 ---
 
