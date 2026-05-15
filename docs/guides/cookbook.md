@@ -369,7 +369,7 @@ const result = space.convexCast(blade, 1 / 60, false);
 if (result) {
   console.log("First hit at:", result.position.x, result.position.y);
   console.log("Surface normal:", result.normal.x, result.normal.y);
-  console.log("Time-of-impact (0–1):", result.toi);
+  console.log("Time-of-impact (seconds):", result.toi);
   console.log("Shape hit:", result.shape);
   result.dispose(); // always dispose to return to pool
 }
@@ -388,7 +388,7 @@ for (const r of results) {
 |------------|---------|-------------|
 | `position` | `Vec2`  | World-space contact point |
 | `normal`   | `Vec2`  | Surface normal at contact, pointing away from the hit shape |
-| `toi`      | `number`| Time-of-impact — `0` = immediate, `1` = end of `deltaTime` |
+| `toi`      | `number`| Time-of-impact in seconds — `0` = immediate contact, up to `deltaTime` |
 | `shape`    | `Shape` | The shape that was hit |
 
 **Tips:**

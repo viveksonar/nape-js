@@ -227,7 +227,7 @@ export default {
 
     // ── HUD ───────────────────────────────────────────────────────────────
     // Two fixed-width lines prevent text reflow / width flicker as counts change.
-    const hitLabel   = _firstHit ? "hit" : "—  ";
+    const hitLabel   = _firstHit ? "hit" : "---";
     const countPad   = String(_multiHits.length).padStart(2, " ");
     ctx.save();
     ctx.font      = "12px monospace";
