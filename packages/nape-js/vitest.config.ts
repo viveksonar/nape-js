@@ -9,5 +9,11 @@ export default defineConfig({
     globals: true,
     testTimeout: 10000,
     setupFiles: ["./tests/setup.ts"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "json-summary", "html", "lcov"],
+      include: ["src/**"],
+      exclude: ["src/**/*.d.ts"],
+    },
   },
 });

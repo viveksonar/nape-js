@@ -7,6 +7,7 @@
 [![npm version](https://img.shields.io/npm/v/@newkrok/nape-js.svg)](https://www.npmjs.com/package/@newkrok/nape-js)
 [![npm downloads](https://img.shields.io/npm/dm/@newkrok/nape-js.svg)](https://www.npmjs.com/package/@newkrok/nape-js)
 [![CI](https://github.com/NewKrok/nape-js/actions/workflows/ci.yml/badge.svg)](https://github.com/NewKrok/nape-js/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/NewKrok/nape-js/graph/badge.svg?flag=nape-js)](https://codecov.io/gh/NewKrok/nape-js)
 [![bundle size](https://img.shields.io/badge/gzip-27%20KB-blue.svg)](https://github.com/NewKrok/nape-js)
 [![license](https://img.shields.io/npm/l/@newkrok/nape-js.svg)](https://github.com/NewKrok/nape-js/blob/master/LICENSE)
 [![docs](https://img.shields.io/badge/docs-online-blue.svg)](https://napejs.org/)

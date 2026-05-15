@@ -1,10 +1,9 @@
 name: Benchmark
 
+# Disabled on push/PR — manual trigger only.
+# Re-enable by restoring the `push` / `pull_request` triggers below.
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+  workflow_dispatch:
 
 jobs:
   benchmark:
