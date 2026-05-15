@@ -1,0 +1,36 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: auto
+        threshold: 5%
+
+flag_management:
+  default_rules:
+    carryforward: true
+  individual_flags:
+    - name: nape-js
+      paths:
+        - packages/nape-js/src/
+    - name: nape-pixi
+      paths:
+        - packages/nape-pixi/src/
+
+ignore:
+  - "**/*.d.ts"
+  - "packages/*/tests/**"
+  - "packages/*/dist/**"
+  - "docs/**"
+  - "templates/**"
+  - "benchmarks/**"
+  - "server/**"
+  - "scripts/**"
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false

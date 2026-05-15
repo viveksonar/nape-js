@@ -30,6 +30,7 @@
     "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
     "dev": "vite",
     "lint": "eslint src/ tests/",
     "format": "prettier --write src/ tests/",
