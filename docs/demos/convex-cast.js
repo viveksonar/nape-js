@@ -226,12 +226,14 @@ export default {
     ctx.restore();
 
     // ── HUD ───────────────────────────────────────────────────────────────
-    const hitLabel  = _firstHit  ? "hit"  : "—";
-    const multiLabel = `${_multiHits.length} hit${_multiHits.length !== 1 ? "s" : ""} in ${CAST_DT}s`;
+    // Two fixed-width lines prevent text reflow / width flicker as counts change.
+    const hitLabel   = _firstHit ? "hit" : "—  ";
+    const countPad   = String(_multiHits.length).padStart(2, " ");
     ctx.save();
     ctx.font      = "12px monospace";
     ctx.fillStyle = "rgba(200,210,230,0.75)";
-    ctx.fillText(`convexCast: ${hitLabel}   convexMultiCast: ${multiLabel}`, 12, 20);
+    ctx.fillText(`convexCast:       ${hitLabel}`, 12, 20);
+    ctx.fillText(`convexMultiCast:  ${countPad} hit${_multiHits.length !== 1 ? "s" : " "} in ${CAST_DT}s`, 12, 36);
     ctx.restore();
   },
 };
