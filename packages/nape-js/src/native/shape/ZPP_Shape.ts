@@ -301,7 +301,7 @@ export class ZPP_Shape {
 
   getworldCOM(): void {
     if (this.body == null) {
-      throw new Error("Error: worldCOM only makes sense when Shape belongs to a Body");
+      throw new Error("worldCOM only makes sense when Shape belongs to a Body");
     }
     this.validate_worldCOM();
     this.wrap_worldCOM.zpp_inner.x = this.worldCOMx;
@@ -382,7 +382,7 @@ export class ZPP_Shape {
   // --- AABB validate callback (bound to aabb._validate) ---
   aabb_validate(): void {
     if (this.body == null) {
-      throw new Error("Error: bounds only makes sense when Shape belongs to a Body");
+      throw new Error("bounds only makes sense when Shape belongs to a Body");
     }
     this.validate_aabb();
   }
@@ -441,7 +441,7 @@ export class ZPP_Shape {
   // --- Midstep guard ---
   __immutable_midstep(name: string): void {
     if (this.body != null && this.body.space != null && this.body.space.midstep) {
-      throw new Error("Error: " + name + " cannot be set during a space step()");
+      throw new Error(`${name} cannot be set during a space step()`);
     }
   }
 

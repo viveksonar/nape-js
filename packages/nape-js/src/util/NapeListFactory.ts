@@ -109,7 +109,7 @@ export function createListClasses(spec: ListSpec): {
     this.zpp_i = 0;
     this.zpp_inner = null;
     if (!getZPPListClass().internal) {
-      throw new Error("Error: Cannot instantiate " + typeName + "Iterator derp!");
+      throw new Error("Cannot instantiate " + typeName + "Iterator derp!");
     }
   }
 
@@ -174,7 +174,7 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.fromArray = function (array: Any[]): Any {
     if (array == null) {
-      throw new Error("Error: Cannot convert null Array to Nape list");
+      throw new Error("Cannot convert null Array to Nape list");
     }
     const ret = new (TypedList as Any)();
     for (let i = 0; i < array.length; i++) {
@@ -220,7 +220,7 @@ export function createListClasses(spec: ListSpec): {
   TypedList.prototype.at = function (this: Any, index: number): Any {
     this.zpp_inner.valmod();
     if (index < 0 || index >= _getLength(this)) {
-      throw new Error("Error: Index out of bounds");
+      throw new Error("Index out of bounds");
     }
     if (this.zpp_inner.reverse_flag) {
       index = _getLength(this) - 1 - index;
@@ -239,7 +239,7 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.push = function (this: Any, obj: Any): boolean {
     if (this.zpp_inner.immutable) {
-      throw new Error("Error: " + typeName + "List is immutable");
+      throw new Error(`${typeName}List is immutable`);
     }
     this.zpp_inner.modify_test();
     this.zpp_inner.valmod();
@@ -269,7 +269,7 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.unshift = function (this: Any, obj: Any): boolean {
     if (this.zpp_inner.immutable) {
-      throw new Error("Error: " + typeName + "List is immutable");
+      throw new Error(`${typeName}List is immutable`);
     }
     this.zpp_inner.modify_test();
     this.zpp_inner.valmod();
@@ -299,11 +299,11 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.pop = function (this: Any): Any {
     if (this.zpp_inner.immutable) {
-      throw new Error("Error: " + typeName + "List is immutable");
+      throw new Error(`${typeName}List is immutable`);
     }
     this.zpp_inner.modify_test();
     if (this.zpp_inner.inner.head == null) {
-      throw new Error("Error: Cannot remove from empty list");
+      throw new Error("Cannot remove from empty list");
     }
     this.zpp_inner.valmod();
     let ret: Any;
@@ -341,11 +341,11 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.shift = function (this: Any): Any {
     if (this.zpp_inner.immutable) {
-      throw new Error("Error: " + typeName + "List is immutable");
+      throw new Error(`${typeName}List is immutable`);
     }
     this.zpp_inner.modify_test();
     if (this.zpp_inner.inner.head == null) {
-      throw new Error("Error: Cannot remove from empty list");
+      throw new Error("Cannot remove from empty list");
     }
     this.zpp_inner.valmod();
     let ret: Any;
@@ -391,7 +391,7 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.remove = function (this: Any, obj: Any): boolean {
     if (this.zpp_inner.immutable) {
-      throw new Error("Error: " + typeName + "List is immutable");
+      throw new Error(`${typeName}List is immutable`);
     }
     this.zpp_inner.modify_test();
     this.zpp_inner.valmod();
@@ -420,7 +420,7 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.clear = function (this: Any): void {
     if (this.zpp_inner.immutable) {
-      throw new Error("Error: " + typeName + "List is immutable");
+      throw new Error(`${typeName}List is immutable`);
     }
     if (this.zpp_inner.reverse_flag) {
       while (this.zpp_inner.inner.head != null) this.pop();
@@ -445,7 +445,7 @@ export function createListClasses(spec: ListSpec): {
     while (it.hasNext()) {
       const i = it.next();
       if (deep) {
-        throw new Error("Error: " + typeName + " is not a copyable type");
+        throw new Error(`${typeName} is not a copyable type`);
       }
       ret.push(i);
     }
@@ -454,7 +454,7 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.merge = function (this: Any, xs: Any): void {
     if (xs == null) {
-      throw new Error("Error: Cannot merge with null list");
+      throw new Error("Cannot merge with null list");
     }
     const it = TypedIterator.get(xs);
     while (it.hasNext()) {
@@ -484,7 +484,7 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.foreach = function (this: Any, lambda: Any): Any {
     if (lambda == null) {
-      throw new Error("Error: Cannot execute null on list elements");
+      throw new Error("Cannot execute null on list elements");
     }
     this.zpp_inner.valmod();
     const it = TypedIterator.get(this);
@@ -504,7 +504,7 @@ export function createListClasses(spec: ListSpec): {
 
   TypedList.prototype.filter = function (this: Any, lambda: Any): Any {
     if (lambda == null) {
-      throw new Error("Error: Cannot select elements of list with null");
+      throw new Error("Cannot select elements of list with null");
     }
     let i = 0;
     while (i < _getLength(this)) {

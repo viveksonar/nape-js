@@ -43,7 +43,7 @@ export class Mat23 {
     const vals = [a, b, tx, c, d, ty];
     for (let i = 0; i < vals.length; i++) {
       if (vals[i] !== vals[i]) {
-        throw new Error("Error: Mat23::" + names[i] + " cannot be NaN");
+        throw new Error("Mat23::" + names[i] + " cannot be NaN");
       }
     }
     zpp.setas(a, b, c, d, tx, ty);
@@ -60,7 +60,7 @@ export class Mat23 {
    */
   static rotation(angle: number): Mat23 {
     if (angle !== angle) {
-      throw new Error("Error: Cannot create rotation matrix with NaN angle");
+      throw new Error("Cannot create rotation matrix with NaN angle");
     }
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
@@ -108,7 +108,7 @@ export class Mat23 {
 
   private _setProp(name: string, value: number): void {
     if (value !== value) {
-      throw new Error("Error: Mat23::" + name + " cannot be NaN");
+      throw new Error("Mat23::" + name + " cannot be NaN");
     }
     (this.zpp_inner as any)[name] = value;
     this.zpp_inner.invalidate();
@@ -236,7 +236,7 @@ export class Mat23 {
    */
   set(matrix: Mat23): this {
     if (matrix == null) {
-      throw new Error("Error: Cannot set form null matrix");
+      throw new Error("Cannot set form null matrix");
     }
     const m = matrix.zpp_inner;
     this.zpp_inner.setas(m.a, m.b, m.c, m.d, m.tx, m.ty);
@@ -295,7 +295,7 @@ export class Mat23 {
    */
   inverse(): Mat23 {
     if (this.singular()) {
-      throw new Error("Error: Matrix is singular and cannot be inverted");
+      throw new Error("Matrix is singular and cannot be inverted");
     }
     const { a, b, c, d, tx, ty } = this.zpp_inner;
     const idet = 1.0 / (a * d - b * c);
@@ -325,7 +325,7 @@ export class Mat23 {
    */
   concat(matrix: Mat23): Mat23 {
     if (matrix == null) {
-      throw new Error("Error: Cannot concatenate with null Mat23");
+      throw new Error("Cannot concatenate with null Mat23");
     }
     const m = matrix.zpp_inner;
     const t = this.zpp_inner;
@@ -348,10 +348,10 @@ export class Mat23 {
    */
   transform(point: Vec2, noTranslation: boolean = false, weak: boolean = false): Vec2 {
     if (point != null && point.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (point == null) {
-      throw new Error("Error: Cannot transform null Vec2");
+      throw new Error("Cannot transform null Vec2");
     }
     point.zpp_inner.validate();
     const px = point.zpp_inner.x;
@@ -384,13 +384,13 @@ export class Mat23 {
    */
   inverseTransform(point: Vec2, noTranslation: boolean = false, weak: boolean = false): Vec2 {
     if (point != null && point.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (point == null) {
-      throw new Error("Error: Cannot transform null Vec2");
+      throw new Error("Cannot transform null Vec2");
     }
     if (this.singular()) {
-      throw new Error("Error: Matrix is singular and inverse transformation cannot be performed");
+      throw new Error("Matrix is singular and inverse transformation cannot be performed");
     }
     const { a, b, c, d, tx: mtx, ty: mty } = this.zpp_inner;
     const idet = 1.0 / (a * d - b * c);

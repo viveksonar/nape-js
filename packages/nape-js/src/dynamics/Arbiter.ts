@@ -40,7 +40,7 @@ export class Arbiter {
   constructor() {
     this.zpp_inner = null as any;
     if (!ZPP_Arbiter.internal) {
-      throw new Error("Error: Cannot instantiate Arbiter derp!");
+      throw new Error("Cannot instantiate Arbiter derp!");
     }
   }
 
@@ -225,7 +225,7 @@ export class Arbiter {
   /** @internal */
   protected _activeCheck(): void {
     if (!this.zpp_inner.active) {
-      throw new Error("Error: Arbiter not currently in use");
+      throw new Error("Arbiter not currently in use");
     }
   }
 
@@ -235,7 +235,7 @@ export class Arbiter {
     const b1 = inner.ws1.id > inner.ws2.id ? inner.b2.outer : inner.b1.outer;
     const b2 = inner.ws1.id > inner.ws2.id ? inner.b1.outer : inner.b2.outer;
     if (body != b1 && body != b2) {
-      throw new Error("Error: Arbiter does not relate to body");
+      throw new Error("Arbiter does not relate to body");
     }
   }
 }

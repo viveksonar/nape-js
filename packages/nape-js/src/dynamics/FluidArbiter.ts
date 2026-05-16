@@ -36,10 +36,10 @@ export class FluidArbiter extends Arbiter {
   }
   set position(value: Vec2) {
     if (!this.zpp_inner.fluidarb.mutable) {
-      throw new Error("Error: Arbiter is mutable only within a pre-handler");
+      throw new Error("Arbiter is mutable only within a pre-handler");
     }
     if (value == null) {
-      throw new Error("Error: FluidArbiter::position cannot be null");
+      throw new Error("FluidArbiter::position cannot be null");
     }
     this._activeCheck();
     if (this.zpp_inner.fluidarb.wrap_position == null) {
@@ -60,13 +60,13 @@ export class FluidArbiter extends Arbiter {
   }
   set overlap(value: number) {
     if (!this.zpp_inner.fluidarb.mutable) {
-      throw new Error("Error: Arbiter is mutable only within a pre-handler");
+      throw new Error("Arbiter is mutable only within a pre-handler");
     }
     if (value !== value) {
-      throw new Error("Error: FluidArbiter::overlap cannot be NaN");
+      throw new Error("FluidArbiter::overlap cannot be NaN");
     }
     if (value <= 0 || value == Infinity) {
-      throw new Error("Error: FluidArbiter::overlap must be strictly positive and non infinite");
+      throw new Error("FluidArbiter::overlap must be strictly positive and non infinite");
     }
     this.zpp_inner.fluidarb.overlap = value;
   }

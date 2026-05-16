@@ -132,7 +132,7 @@ export class ZPP_AABB {
     const napeNs = ZPP_AABB._nape;
 
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
 
     let ret: any;
@@ -165,15 +165,15 @@ export class ZPP_AABB {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const inner = ret.zpp_inner;
       if (inner._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (inner._isimmutable != null) inner._isimmutable();
       if (x !== x || y !== y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       if (inner._validate != null) inner._validate();
       if (inner.x !== x || inner.y !== y) {

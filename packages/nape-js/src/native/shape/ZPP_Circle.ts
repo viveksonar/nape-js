@@ -127,7 +127,7 @@ export class ZPP_Circle {
     const x = this.localCOMx;
     const y = this.localCOMy;
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (zpp.util.ZPP_PubPool.poolVec2 == null) {

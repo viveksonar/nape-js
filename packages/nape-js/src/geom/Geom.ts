@@ -19,11 +19,11 @@ function getZppBody(b: any): any {
 /** Validate a Vec2 output parameter: not disposed, not immutable. */
 function validateOutVec2(v: any, _name: string): void {
   if (v != null && v.zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._immutable) {
-    throw new Error("Error: Vec2 is immutable");
+    throw new Error("Vec2 is immutable");
   }
   if (inner._isimmutable != null) {
     inner._isimmutable();
@@ -34,7 +34,7 @@ function validateOutVec2(v: any, _name: string): void {
 function validateShapeHasBody(s: any, method: string): void {
   const zpp = getZppShape(s);
   if (zpp?.body?.outer == null) {
-    throw new Error(`Error: Shape must be part of a Body to calculate ${method}`);
+    throw new Error(`Shape must be part of a Body to calculate ${method}`);
   }
 }
 
@@ -55,7 +55,7 @@ export class Geom {
     const zb2 = getZppBody(body2);
 
     if (zb1.shapes.head == null || zb2.shapes.head == null) {
-      throw new Error("Error: Bodies cannot be empty in calculating distances");
+      throw new Error("Bodies cannot be empty in calculating distances");
     }
 
     // Validate all shapes on both bodies
@@ -128,7 +128,7 @@ export class Geom {
     const zb2 = getZppBody(body2);
 
     if (zb1.shapes.head == null || zb2.shapes.head == null) {
-      throw new Error("Error: Bodies must have shapes to test for intersection.");
+      throw new Error("Bodies must have shapes to test for intersection.");
     }
 
     // Validate all shapes on both bodies

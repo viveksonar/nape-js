@@ -55,14 +55,14 @@ export class Vec3 {
   /** @internal Check that this Vec3 has not been disposed. */
   private _checkDisposed(): void {
     if (this.zpp_disp) {
-      throw new Error("Error: Vec3 has been disposed and cannot be used!");
+      throw new Error("Vec3 has been disposed and cannot be used!");
     }
   }
 
   /** @internal Check immutability. */
   private _checkImmutable(): void {
     if (this.zpp_inner.immutable) {
-      throw new Error("Error: Vec3 is immutable");
+      throw new Error("Vec3 is immutable");
     }
   }
 
@@ -184,13 +184,13 @@ export class Vec3 {
   set length(value: number) {
     this._checkDisposed();
     if (value !== value) {
-      throw new Error("Error: Vec3::length cannot be NaN");
+      throw new Error("Vec3::length cannot be NaN");
     }
     this.zpp_inner.validate();
     const { x, y, z } = this.zpp_inner;
     const lsq = x * x + y * y + z * z;
     if (lsq === 0) {
-      throw new Error("Error: Cannot set length of a zero vector");
+      throw new Error("Cannot set length of a zero vector");
     }
     const scale = value / Math.sqrt(lsq);
     this._checkImmutable();
@@ -222,10 +222,10 @@ export class Vec3 {
   set(vector: Vec3): this {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec3 has been disposed and cannot be used!");
+      throw new Error("Vec3 has been disposed and cannot be used!");
     }
     if (vector == null) {
-      throw new Error("Error: Cannot assign null Vec3");
+      throw new Error("Cannot assign null Vec3");
     }
     vector.zpp_inner.validate();
     return this.setxyz(vector.zpp_inner.x, vector.zpp_inner.y, vector.zpp_inner.z);
@@ -259,7 +259,7 @@ export class Vec3 {
   equals(other: Vec3, epsilon: number = 0): boolean {
     this._checkDisposed();
     if (other != null && other.zpp_disp) {
-      throw new Error("Error: Vec3 has been disposed and cannot be used!");
+      throw new Error("Vec3 has been disposed and cannot be used!");
     }
     if (other == null) {
       return false;
@@ -303,10 +303,10 @@ export class Vec3 {
    */
   dispose(): void {
     if (this.zpp_disp) {
-      throw new Error("Error: Vec3 has been disposed and cannot be used!");
+      throw new Error("Vec3 has been disposed and cannot be used!");
     }
     if (this.zpp_inner.immutable) {
-      throw new Error("Error: This Vec3 is not disposable");
+      throw new Error("This Vec3 is not disposable");
     }
     this.zpp_pool = null;
     if (ZPP_PubPool.nextVec3 != null) {

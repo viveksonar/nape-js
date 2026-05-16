@@ -47,13 +47,13 @@ export class Circle extends Shape {
     // --- Validate and set radius ---
     if (radius !== zpp.radius) {
       if (radius !== radius) {
-        throw new Error("Error: Circle::radius cannot be NaN");
+        throw new Error("Circle::radius cannot be NaN");
       }
       if (radius < nape.Config.epsilon) {
-        throw new Error("Error: Circle::radius (" + radius + ") must be > Config.epsilon");
+        throw new Error("Circle::radius (" + radius + ") must be > Config.epsilon");
       }
       if (radius > ZPP_Const.FMAX) {
-        throw new Error("Error: Circle::radius (" + radius + ") must be < PR(Const).FMAX");
+        throw new Error("Circle::radius (" + radius + ") must be < PR(Const).FMAX");
       }
       zpp.radius = radius;
       zpp.invalidate_radius();
@@ -62,7 +62,7 @@ export class Circle extends Shape {
     // --- Handle localCOM ---
     if (localCOM != null) {
       if ((localCOM as any).zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const inner = localCOM.zpp_inner;
       if (inner._validate != null) inner._validate();
@@ -158,13 +158,13 @@ export class Circle extends Shape {
     }
     if (value !== zpp.radius) {
       if (value !== value) {
-        throw new Error("Error: Circle::radius cannot be NaN");
+        throw new Error("Circle::radius cannot be NaN");
       }
       if (value < nape.Config.epsilon) {
-        throw new Error("Error: Circle::radius (" + value + ") must be > Config.epsilon");
+        throw new Error("Circle::radius (" + value + ") must be > Config.epsilon");
       }
       if (value > ZPP_Const.FMAX) {
-        throw new Error("Error: Circle::radius (" + value + ") must be < PR(Const).FMAX");
+        throw new Error("Circle::radius (" + value + ") must be < PR(Const).FMAX");
       }
       zpp.radius = value;
       zpp.invalidate_radius();

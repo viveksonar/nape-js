@@ -77,7 +77,7 @@ export class ZPP_Broadphase {
                     if (_this.type == 1) {
                       const _this1 = _this.polygon;
                       if (_this1.lverts.next == null) {
-                        throw new Error("Error: An empty polygon has no meaningful localCOM");
+                        throw new Error("An empty polygon has no meaningful localCOM");
                       }
                       if (_this1.lverts.next.next == null) {
                         _this1.localCOMx = _this1.lverts.next.x;
@@ -180,7 +180,7 @@ export class ZPP_Broadphase {
                 }
               }
               if (_this3.lverts.next == null) {
-                throw new Error("Error: An empty polygon has no meaningful bounds");
+                throw new Error("An empty polygon has no meaningful bounds");
               }
               const p0 = _this3.gverts.next;
               _this3.aabb.minx = p0.x;
@@ -226,7 +226,7 @@ export class ZPP_Broadphase {
                       if (_this6.type == 1) {
                         const _this7 = _this6.polygon;
                         if (_this7.lverts.next == null) {
-                          throw new Error("Error: An empty polygon has no meaningful localCOM");
+                          throw new Error("An empty polygon has no meaningful localCOM");
                         }
                         if (_this7.lverts.next.next == null) {
                           _this7.localCOMx = _this7.lverts.next.x;
@@ -331,7 +331,7 @@ export class ZPP_Broadphase {
                   }
                 }
                 if (_this9.lverts.next == null) {
-                  throw new Error("Error: An empty polygon has no meaningful bounds");
+                  throw new Error("An empty polygon has no meaningful bounds");
                 }
                 const p01 = _this9.gverts.next;
                 _this9.aabb.minx = p01.x;
@@ -428,7 +428,7 @@ export class ZPP_Broadphase {
       }
       const _this1 = this.matrix;
       if (sx !== sx) {
-        throw new Error("Error: Mat23::a cannot be NaN");
+        throw new Error("Mat23::a cannot be NaN");
       }
       _this1.zpp_inner.a = sx;
       const _this2 = _this1.zpp_inner;
@@ -444,7 +444,7 @@ export class ZPP_Broadphase {
       }
       const b = _this4.zpp_inner.c;
       if (b !== b) {
-        throw new Error("Error: Mat23::b cannot be NaN");
+        throw new Error("Mat23::b cannot be NaN");
       }
       _this3.zpp_inner.b = b;
       const _this6 = _this3.zpp_inner;
@@ -453,7 +453,7 @@ export class ZPP_Broadphase {
       }
       const _this7 = this.matrix;
       if (sy !== sy) {
-        throw new Error("Error: Mat23::d cannot be NaN");
+        throw new Error("Mat23::d cannot be NaN");
       }
       _this7.zpp_inner.d = sy;
       const _this8 = _this7.zpp_inner;
@@ -463,7 +463,7 @@ export class ZPP_Broadphase {
       const _this9 = this.matrix;
       const tx = aabb.minx - sx * ab.minx;
       if (tx !== tx) {
-        throw new Error("Error: Mat23::tx cannot be NaN");
+        throw new Error("Mat23::tx cannot be NaN");
       }
       _this9.zpp_inner.tx = tx;
       const _this10 = _this9.zpp_inner;
@@ -473,7 +473,7 @@ export class ZPP_Broadphase {
       const _this11 = this.matrix;
       const ty = aabb.miny - sy * ab.miny;
       if (ty !== ty) {
-        throw new Error("Error: Mat23::ty cannot be NaN");
+        throw new Error("Mat23::ty cannot be NaN");
       }
       _this11.zpp_inner.ty = ty;
       const _this12 = _this11.zpp_inner;
@@ -496,7 +496,7 @@ export class ZPP_Broadphase {
                 if (_this14.type == 1) {
                   const _this15 = _this14.polygon;
                   if (_this15.lverts.next == null) {
-                    throw new Error("Error: An empty polygon has no meaningful localCOM");
+                    throw new Error("An empty polygon has no meaningful localCOM");
                   }
                   if (_this15.lverts.next.next == null) {
                     _this15.localCOMx = _this15.lverts.next.x;
@@ -599,7 +599,7 @@ export class ZPP_Broadphase {
             }
           }
           if (_this17.lverts.next == null) {
-            throw new Error("Error: An empty polygon has no meaningful bounds");
+            throw new Error("An empty polygon has no meaningful bounds");
           }
           const p0 = _this17.gverts.next;
           _this17.aabb.minx = p0.x;
@@ -746,7 +746,7 @@ export class ZPP_Broadphase {
         x1 = 0;
       }
       if (x1 !== x1 || y1 !== y1) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let ret: any;
       if (zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -777,21 +777,21 @@ export class ZPP_Broadphase {
         ret.zpp_inner.outer = ret;
       } else {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this1 = ret.zpp_inner;
         if (_this1._immutable) {
-          throw new Error("Error: Vec2 is immutable");
+          throw new Error("Vec2 is immutable");
         }
         if (_this1._isimmutable != null) {
           _this1._isimmutable();
         }
         if (x1 !== x1 || y1 !== y1) {
-          throw new Error("Error: Vec2 components cannot be NaN");
+          throw new Error("Vec2 components cannot be NaN");
         }
         let obj: boolean;
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {
@@ -799,7 +799,7 @@ export class ZPP_Broadphase {
         }
         if (ret.zpp_inner.x == x1) {
           if (ret != null && ret.zpp_disp) {
-            throw new Error("Error: Vec2 has been disposed and cannot be used!");
+            throw new Error("Vec2 has been disposed and cannot be used!");
           }
           const _this3 = ret.zpp_inner;
           if (_this3._validate != null) {
@@ -834,7 +834,7 @@ export class ZPP_Broadphase {
       const _this5 = this.matrix;
       const _this6 = this.matrix;
       if (ss !== ss) {
-        throw new Error("Error: Mat23::d cannot be NaN");
+        throw new Error("Mat23::d cannot be NaN");
       }
       _this6.zpp_inner.d = ss;
       const _this7 = _this6.zpp_inner;
@@ -843,7 +843,7 @@ export class ZPP_Broadphase {
       }
       const a = _this6.zpp_inner.d;
       if (a !== a) {
-        throw new Error("Error: Mat23::a cannot be NaN");
+        throw new Error("Mat23::a cannot be NaN");
       }
       _this5.zpp_inner.a = a;
       const _this8 = _this5.zpp_inner;
@@ -859,7 +859,7 @@ export class ZPP_Broadphase {
       }
       const b = _this10.zpp_inner.c;
       if (b !== b) {
-        throw new Error("Error: Mat23::b cannot be NaN");
+        throw new Error("Mat23::b cannot be NaN");
       }
       _this9.zpp_inner.b = b;
       const _this12 = _this9.zpp_inner;
@@ -869,7 +869,7 @@ export class ZPP_Broadphase {
       const _this13 = this.matrix;
       const tx = x - ss * ci.localCOMx;
       if (tx !== tx) {
-        throw new Error("Error: Mat23::tx cannot be NaN");
+        throw new Error("Mat23::tx cannot be NaN");
       }
       _this13.zpp_inner.tx = tx;
       const _this14 = _this13.zpp_inner;
@@ -879,7 +879,7 @@ export class ZPP_Broadphase {
       const _this15 = this.matrix;
       const ty = y - ss * ci.localCOMy;
       if (ty !== ty) {
-        throw new Error("Error: Mat23::ty cannot be NaN");
+        throw new Error("Mat23::ty cannot be NaN");
       }
       _this15.zpp_inner.ty = ty;
       const _this16 = _this15.zpp_inner;
@@ -902,7 +902,7 @@ export class ZPP_Broadphase {
                 if (_this18.type == 1) {
                   const _this19 = _this18.polygon;
                   if (_this19.lverts.next == null) {
-                    throw new Error("Error: An empty polygon has no meaningful localCOM");
+                    throw new Error("An empty polygon has no meaningful localCOM");
                   }
                   if (_this19.lverts.next.next == null) {
                     _this19.localCOMx = _this19.lverts.next.x;
@@ -1005,7 +1005,7 @@ export class ZPP_Broadphase {
             }
           }
           if (_this21.lverts.next == null) {
-            throw new Error("Error: An empty polygon has no meaningful bounds");
+            throw new Error("An empty polygon has no meaningful bounds");
           }
           const p0 = _this21.gverts.next;
           _this21.aabb.minx = p0.x;
@@ -1148,7 +1148,7 @@ export class ZPP_Broadphase {
                 if (_this3.type == 1) {
                   const _this4 = _this3.polygon;
                   if (_this4.lverts.next == null) {
-                    throw new Error("Error: An empty polygon has no meaningful localCOM");
+                    throw new Error("An empty polygon has no meaningful localCOM");
                   }
                   if (_this4.lverts.next.next == null) {
                     _this4.localCOMx = _this4.lverts.next.x;
@@ -1251,7 +1251,7 @@ export class ZPP_Broadphase {
             }
           }
           if (_this6.lverts.next == null) {
-            throw new Error("Error: An empty polygon has no meaningful bounds");
+            throw new Error("An empty polygon has no meaningful bounds");
           }
           const p0 = _this6.gverts.next;
           _this6.aabb.minx = p0.x;
@@ -1286,7 +1286,7 @@ export class ZPP_Broadphase {
           if (s.type == 1) {
             const _this8 = s.polygon;
             if (_this8.lverts.next == null) {
-              throw new Error("Error: An empty polygon has no meaningful localCOM");
+              throw new Error("An empty polygon has no meaningful localCOM");
             }
             if (_this8.lverts.next.next == null) {
               _this8.localCOMx = _this8.lverts.next.x;

@@ -15,7 +15,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class InteractionType {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate InteractionType derp!");
+      throw new Error("Cannot instantiate InteractionType derp!");
     }
   }
 

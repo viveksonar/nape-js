@@ -5,12 +5,13 @@ import { Body } from "../phys/Body";
 import { MatMN } from "../geom/MatMN";
 import { Vec3 } from "../geom/Vec3";
 import { Constraint } from "./Constraint";
+import { IMPULSE_ERROR_NULL_BODY } from "./Constraint";
 import { ZPP_LineJoint } from "../native/constraint/ZPP_LineJoint";
 
 /** Read validated x from a Vec2 input. */
 function _readVec2X(v: Vec2): number {
   if ((v as any).zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -20,7 +21,7 @@ function _readVec2X(v: Vec2): number {
 /** Read validated y from a Vec2 input. */
 function _readVec2Y(v: Vec2): number {
   if ((v as any).zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -91,10 +92,10 @@ export class LineJoint extends Constraint {
 
     // Set anchor1
     if ((anchor1 as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (anchor1 == null) {
-      throw new Error("Error: Constraint::anchor1 cannot be null");
+      throw new Error("Constraint::anchor1 cannot be null");
     }
     zpp.a1localx = _readVec2X(anchor1);
     zpp.a1localy = _readVec2Y(anchor1);
@@ -102,10 +103,10 @@ export class LineJoint extends Constraint {
 
     // Set anchor2
     if ((anchor2 as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (anchor2 == null) {
-      throw new Error("Error: Constraint::anchor2 cannot be null");
+      throw new Error("Constraint::anchor2 cannot be null");
     }
     zpp.a2localx = _readVec2X(anchor2);
     zpp.a2localy = _readVec2Y(anchor2);
@@ -113,10 +114,10 @@ export class LineJoint extends Constraint {
 
     // Set direction
     if ((direction as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (direction == null) {
-      throw new Error("Error: Constraint::direction cannot be null");
+      throw new Error("Constraint::direction cannot be null");
     }
     zpp.nlocalx = _readVec2X(direction);
     zpp.nlocaly = _readVec2Y(direction);
@@ -126,7 +127,7 @@ export class LineJoint extends Constraint {
     // Set jointMin with validation
     this.zpp_inner.immutable_midstep("LineJoint::jointMin");
     if (jointMin !== jointMin) {
-      throw new Error("Error: AngleJoint::jointMin cannot be NaN");
+      throw new Error("AngleJoint::jointMin cannot be NaN");
     }
     if (zpp.jointMin != jointMin) {
       zpp.jointMin = jointMin;
@@ -136,7 +137,7 @@ export class LineJoint extends Constraint {
     // Set jointMax with validation
     this.zpp_inner.immutable_midstep("LineJoint::jointMax");
     if (jointMax !== jointMax) {
-      throw new Error("Error: AngleJoint::jointMax cannot be NaN");
+      throw new Error("AngleJoint::jointMax cannot be NaN");
     }
     if (zpp.jointMax != jointMax) {
       zpp.jointMax = jointMax;
@@ -257,10 +258,10 @@ export class LineJoint extends Constraint {
   }
   set anchor1(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::anchor1 cannot be null");
+      throw new Error("Constraint::anchor1 cannot be null");
     }
     if (this.zpp_inner.wrap_a1 == null) {
       this.zpp_inner.setup_a1();
@@ -278,10 +279,10 @@ export class LineJoint extends Constraint {
   }
   set anchor2(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::anchor2 cannot be null");
+      throw new Error("Constraint::anchor2 cannot be null");
     }
     if (this.zpp_inner.wrap_a2 == null) {
       this.zpp_inner.setup_a2();
@@ -299,10 +300,10 @@ export class LineJoint extends Constraint {
   }
   set direction(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::direction cannot be null");
+      throw new Error("Constraint::direction cannot be null");
     }
     if (this.zpp_inner.wrap_n == null) {
       this.zpp_inner.setup_n();
@@ -322,7 +323,7 @@ export class LineJoint extends Constraint {
   set jointMin(value: number) {
     this.zpp_inner.immutable_midstep("LineJoint::jointMin");
     if (value !== value) {
-      throw new Error("Error: AngleJoint::jointMin cannot be NaN");
+      throw new Error("AngleJoint::jointMin cannot be NaN");
     }
     if (this.zpp_inner.jointMin != value) {
       this.zpp_inner.jointMin = value;
@@ -337,7 +338,7 @@ export class LineJoint extends Constraint {
   set jointMax(value: number) {
     this.zpp_inner.immutable_midstep("LineJoint::jointMax");
     if (value !== value) {
-      throw new Error("Error: AngleJoint::jointMax cannot be NaN");
+      throw new Error("AngleJoint::jointMax cannot be NaN");
     }
     if (this.zpp_inner.jointMax != value) {
       this.zpp_inner.jointMax = value;
@@ -360,12 +361,12 @@ export class LineJoint extends Constraint {
   override bodyImpulse(body: Body): Vec3 {
     const nape = getNape();
     if (body == null) {
-      throw new Error("Error: Cannot evaluate impulse on null body");
+      throw new Error(IMPULSE_ERROR_NULL_BODY);
     }
     const b1outer = this.zpp_inner.b1 == null ? null : this.zpp_inner.b1.outer;
     const b2outer = this.zpp_inner.b2 == null ? null : this.zpp_inner.b2.outer;
     if (body != b1outer && body != b2outer) {
-      throw new Error("Error: Body is not linked to this constraint");
+      throw new Error("Body is not linked to this constraint");
     }
     if (!this.zpp_inner.active) {
       return nape.geom.Vec3.get();
@@ -376,7 +377,7 @@ export class LineJoint extends Constraint {
 
   override visitBodies(lambda: (body: Body) => void): void {
     if (lambda == null) {
-      throw new Error("Error: Cannot apply null lambda to bodies");
+      throw new Error("Cannot apply null lambda to bodies");
     }
     const b1outer = this.zpp_inner.b1 == null ? null : this.zpp_inner.b1.outer;
     if (b1outer != null) {

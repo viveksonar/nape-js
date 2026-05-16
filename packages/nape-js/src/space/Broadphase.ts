@@ -12,7 +12,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class Broadphase {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate Broadphase derp!");
+      throw new Error("Cannot instantiate Broadphase derp!");
     }
   }
 

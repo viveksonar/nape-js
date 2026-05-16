@@ -6,6 +6,9 @@ import { MatMN } from "../geom/MatMN";
 import { Vec3 } from "../geom/Vec3";
 import { ZPP_Constraint } from "../native/constraint/ZPP_Constraint";
 
+/** @internal Shared error message for impulse evaluation on a null body. */
+export const IMPULSE_ERROR_NULL_BODY = "Cannot evaluate impulse on null body";
+
 /**
  * Base class for all physics constraints (joints).
  *
@@ -218,10 +221,10 @@ export class Constraint {
   }
   set frequency(value: number) {
     if (value !== value) {
-      throw new Error("Error: Constraint::Frequency cannot be NaN");
+      throw new Error("Constraint::Frequency cannot be NaN");
     }
     if (value <= 0) {
-      throw new Error("Error: Constraint::Frequency must be >0");
+      throw new Error("Constraint::Frequency must be >0");
     }
     if (this.zpp_inner.frequency != value) {
       this.zpp_inner.frequency = value;
@@ -243,10 +246,10 @@ export class Constraint {
   }
   set damping(value: number) {
     if (value !== value) {
-      throw new Error("Error: Constraint::Damping cannot be Nan");
+      throw new Error("Constraint::Damping cannot be Nan");
     }
     if (value < 0) {
-      throw new Error("Error: Constraint::Damping must be >=0");
+      throw new Error("Constraint::Damping must be >=0");
     }
     if (this.zpp_inner.damping != value) {
       this.zpp_inner.damping = value;
@@ -269,10 +272,10 @@ export class Constraint {
   }
   set maxForce(value: number) {
     if (value !== value) {
-      throw new Error("Error: Constraint::maxForce cannot be NaN");
+      throw new Error("Constraint::maxForce cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: Constraint::maxForce must be >=0");
+      throw new Error("Constraint::maxForce must be >=0");
     }
     if (this.zpp_inner.maxForce != value) {
       this.zpp_inner.maxForce = value;
@@ -292,10 +295,10 @@ export class Constraint {
   }
   set maxError(value: number) {
     if (value !== value) {
-      throw new Error("Error: Constraint::maxError cannot be NaN");
+      throw new Error("Constraint::maxError cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: Constraint::maxError must be >=0");
+      throw new Error("Constraint::maxError must be >=0");
     }
     if (this.zpp_inner.maxError != value) {
       this.zpp_inner.maxError = value;

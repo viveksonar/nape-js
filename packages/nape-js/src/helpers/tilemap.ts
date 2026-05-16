@@ -116,7 +116,7 @@ const DEFAULT_SOLID: TilemapSolidPredicate = (v) => v !== 0;
 function normalizeTileSize(tileSize: number | TilemapTileSize): TilemapTileSize {
   if (typeof tileSize === "number") {
     if (!isFinite(tileSize) || tileSize <= 0) {
-      throw new Error("Error: tileSize must be a positive finite number");
+      throw new Error("tileSize must be a positive finite number");
     }
     return { w: tileSize, h: tileSize };
   }
@@ -127,14 +127,14 @@ function normalizeTileSize(tileSize: number | TilemapTileSize): TilemapTileSize 
     tileSize.w <= 0 ||
     tileSize.h <= 0
   ) {
-    throw new Error("Error: tileSize.w and tileSize.h must be positive finite numbers");
+    throw new Error("tileSize.w and tileSize.h must be positive finite numbers");
   }
   return { w: tileSize.w, h: tileSize.h };
 }
 
 function gridDimensions(grid: TilemapGrid): { rows: number; cols: number } {
   if (grid == null) {
-    throw new Error("Error: grid cannot be null");
+    throw new Error("grid cannot be null");
   }
   const rows = grid.length;
   if (rows === 0) return { rows: 0, cols: 0 };
@@ -142,7 +142,7 @@ function gridDimensions(grid: TilemapGrid): { rows: number; cols: number } {
   for (let y = 0; y < rows; y++) {
     const row = grid[y];
     if (row == null) {
-      throw new Error("Error: grid row " + y + " is null");
+      throw new Error("grid row " + y + " is null");
     }
     if (row.length > cols) cols = row.length;
   }
@@ -283,7 +283,7 @@ export function meshTilemap(
  */
 export function buildTilemapBody(grid: TilemapGrid, options: TilemapOptions): Body {
   if (options == null) {
-    throw new Error("Error: options is required");
+    throw new Error("options is required");
   }
   const tileSize = normalizeTileSize(options.tileSize);
   const rects = meshTilemap(grid, { solid: options.solid, merge: options.merge });
@@ -327,19 +327,19 @@ export function buildTilemapBody(grid: TilemapGrid, options: TilemapOptions): Bo
  */
 export function tiledLayerToGrid(layer: TiledTileLayer): number[][] {
   if (layer == null) {
-    throw new Error("Error: layer cannot be null");
+    throw new Error("layer cannot be null");
   }
   const data = layer.data;
   if (data == null || typeof data.length !== "number") {
-    throw new Error("Error: layer.data must be array-like");
+    throw new Error("layer.data must be array-like");
   }
   const w = layer.width | 0;
   const h = layer.height | 0;
   if (w <= 0 || h <= 0) {
-    throw new Error("Error: layer.width / layer.height must be positive integers");
+    throw new Error("layer.width / layer.height must be positive integers");
   }
   if (data.length < w * h) {
-    throw new Error("Error: layer.data length is less than width * height");
+    throw new Error("layer.data length is less than width * height");
   }
   const grid: number[][] = [];
   for (let y = 0; y < h; y++) {
@@ -365,19 +365,19 @@ export function tiledLayerToGrid(layer: TiledTileLayer): number[][] {
  */
 export function ldtkLayerToGrid(layer: LDtkIntGridLayer): number[][] {
   if (layer == null) {
-    throw new Error("Error: layer cannot be null");
+    throw new Error("layer cannot be null");
   }
   const data = layer.intGridCsv;
   if (data == null || typeof data.length !== "number") {
-    throw new Error("Error: layer.intGridCsv must be array-like");
+    throw new Error("layer.intGridCsv must be array-like");
   }
   const w = (layer.__cWid ?? layer.cWid ?? 0) | 0;
   const h = (layer.__cHei ?? layer.cHei ?? 0) | 0;
   if (w <= 0 || h <= 0) {
-    throw new Error("Error: layer.__cWid / __cHei (or cWid / cHei) must be positive integers");
+    throw new Error("layer.__cWid / __cHei (or cWid / cHei) must be positive integers");
   }
   if (data.length < w * h) {
-    throw new Error("Error: layer.intGridCsv length is less than __cWid * __cHei");
+    throw new Error("layer.intGridCsv length is less than __cWid * __cHei");
   }
   const grid: number[][] = [];
   for (let y = 0; y < h; y++) {

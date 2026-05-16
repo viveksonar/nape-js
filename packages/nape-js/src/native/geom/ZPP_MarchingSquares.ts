@@ -67,17 +67,17 @@ export class ZPP_MarchingSquares {
       o.wrap.zpp_inner._inuse = false;
       const _this = o.wrap;
       if (_this != null && _this.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = _this.zpp_inner;
       if (_this1._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this1._isimmutable != null) {
         _this1._isimmutable();
       }
       if (_this.zpp_inner._inuse) {
-        throw new Error("Error: This Vec2 is not disposable");
+        throw new Error("This Vec2 is not disposable");
       }
       const inner = _this.zpp_inner;
       _this.zpp_inner.outer = null;
@@ -254,7 +254,7 @@ export class ZPP_MarchingSquares {
     ret: ZNPList<ZPP_GeomVert>,
   ): void {
     if (cell != null && cell.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     let _this = cell.zpp_inner;
     if (_this._validate != null) {
@@ -264,7 +264,7 @@ export class ZPP_MarchingSquares {
     let xn = xp | 0;
 
     if (cell != null && cell.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     _this = cell.zpp_inner;
     if (_this._validate != null) {
@@ -301,7 +301,7 @@ export class ZPP_MarchingSquares {
         yc = by0;
       } else if (y <= yn) {
         if (cell != null && cell.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = cell.zpp_inner;
         if (_this2._validate != null) {
@@ -318,7 +318,7 @@ export class ZPP_MarchingSquares {
           xc = bx0;
         } else if (x <= xn) {
           if (cell != null && cell.zpp_disp) {
-            throw new Error("Error: Vec2 has been disposed and cannot be used!");
+            throw new Error("Vec2 has been disposed and cannot be used!");
           }
           const _this3 = cell.zpp_inner;
           if (_this3._validate != null) {
@@ -354,7 +354,7 @@ export class ZPP_MarchingSquares {
         y1end = by1;
       } else {
         if (cell != null && cell.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this5 = cell.zpp_inner;
         if (_this5._validate != null) {
@@ -374,7 +374,7 @@ export class ZPP_MarchingSquares {
           x1end = bx1;
         } else {
           if (cell != null && cell.zpp_disp) {
-            throw new Error("Error: Vec2 has been disposed and cannot be used!");
+            throw new Error("Vec2 has been disposed and cannot be used!");
           }
           const _this6 = cell.zpp_inner;
           if (_this6._validate != null) {

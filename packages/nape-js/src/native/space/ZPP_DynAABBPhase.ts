@@ -225,7 +225,7 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                     if (_this.type == 1) {
                       const _this1 = _this.polygon;
                       if (_this1.lverts.next == null) {
-                        throw new Error("Error: An empty polygon has no meaningful localCOM");
+                        throw new Error("An empty polygon has no meaningful localCOM");
                       }
                       if (_this1.lverts.next.next == null) {
                         _this1.localCOMx = _this1.lverts.next.x;
@@ -328,7 +328,7 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                 }
               }
               if (_this3.lverts.next == null) {
-                throw new Error("Error: An empty polygon has no meaningful bounds");
+                throw new Error("An empty polygon has no meaningful bounds");
               }
               const p0 = _this3.gverts.next;
               _this3.aabb.minx = p0.x;
@@ -616,7 +616,7 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                         if (_this9.type == 1) {
                           const _this10 = _this9.polygon;
                           if (_this10.lverts.next == null) {
-                            throw new Error("Error: An empty polygon has no meaningful localCOM");
+                            throw new Error("An empty polygon has no meaningful localCOM");
                           }
                           if (_this10.lverts.next.next == null) {
                             _this10.localCOMx = _this10.lverts.next.x;
@@ -723,7 +723,7 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                     }
                   }
                   if (_this12.lverts.next == null) {
-                    throw new Error("Error: An empty polygon has no meaningful bounds");
+                    throw new Error("An empty polygon has no meaningful bounds");
                   }
                   const p0 = _this12.gverts.next;
                   _this12.aabb.minx = p0.x;
@@ -1272,7 +1272,7 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                         if (_this44.type == 1) {
                           const _this45 = _this44.polygon;
                           if (_this45.lverts.next == null) {
-                            throw new Error("Error: An empty polygon has no meaningful localCOM");
+                            throw new Error("An empty polygon has no meaningful localCOM");
                           }
                           if (_this45.lverts.next.next == null) {
                             _this45.localCOMx = _this45.lverts.next.x;
@@ -1381,7 +1381,7 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                     }
                   }
                   if (_this47.lverts.next == null) {
-                    throw new Error("Error: An empty polygon has no meaningful bounds");
+                    throw new Error("An empty polygon has no meaningful bounds");
                   }
                   const p01 = _this47.gverts.next;
                   _this47.aabb.minx = p01.x;
@@ -1934,7 +1934,7 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                     if (_this9.type == 1) {
                       const _this10 = _this9.polygon;
                       if (_this10.lverts.next == null) {
-                        throw new Error("Error: An empty polygon has no meaningful localCOM");
+                        throw new Error("An empty polygon has no meaningful localCOM");
                       }
                       if (_this10.lverts.next.next == null) {
                         _this10.localCOMx = _this10.lverts.next.x;
@@ -2039,7 +2039,7 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                 }
               }
               if (_this12.lverts.next == null) {
-                throw new Error("Error: An empty polygon has no meaningful bounds");
+                throw new Error("An empty polygon has no meaningful bounds");
               }
               const p0 = _this12.gverts.next;
               _this12.aabb.minx = p0.x;
@@ -4250,12 +4250,12 @@ export class ZPP_DynAABBPhase extends ZPP_Broadphase {
                 : null;
           if (result != null) {
             if (result.zpp_inner.next != null) {
-              throw new Error("Error: This object has been disposed of and cannot be used");
+              throw new Error("This object has been disposed of and cannot be used");
             }
             mint = result.zpp_inner.toiDistance;
             if (minres != null) {
               if (minres.zpp_inner.next != null) {
-                throw new Error("Error: This object has been disposed of and cannot be used");
+                throw new Error("This object has been disposed of and cannot be used");
               }
               minres.zpp_inner.free();
             }

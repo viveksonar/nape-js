@@ -102,7 +102,7 @@ export class ZPP_Contact {
 
   position_validate(): void {
     if (this.inactiveme()) {
-      throw new Error("Error: Contact not currently in use");
+      throw new Error("Contact not currently in use");
     }
     this.wrap_position.zpp_inner.x = this.px;
     this.wrap_position.zpp_inner.y = this.py;
@@ -142,18 +142,18 @@ export class ZPP_Contact {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -161,7 +161,7 @@ export class ZPP_Contact {
       }
       if (ret.zpp_inner.x == 0) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {

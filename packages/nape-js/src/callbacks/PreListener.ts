@@ -75,7 +75,7 @@ export class PreListener extends Listener {
     ZPP_Listener.internal = false;
 
     if (handler == null) {
-      throw new Error("Error: PreListener must take a handler!");
+      throw new Error("PreListener must take a handler!");
     }
 
     this.zpp_inner_zn = new ZPP_InteractionListener(
@@ -93,7 +93,7 @@ export class PreListener extends Listener {
 
     // Set interaction type
     if (interactionType == null) {
-      throw new Error("Error: Cannot set listener interaction type to null");
+      throw new Error("Cannot set listener interaction type to null");
     }
     const currentType = numberToInteractionType(this.zpp_inner_zn.itype);
     if (currentType != interactionType) {
@@ -129,7 +129,7 @@ export class PreListener extends Listener {
 
   set handler(handler: (cb: PreCallback) => PreFlag | null) {
     if (handler == null) {
-      throw new Error("Error: PreListener must take a non-null handler!");
+      throw new Error("PreListener must take a non-null handler!");
     }
     this.zpp_inner_zn.handlerp = handler as (cb: any) => any;
     this.zpp_inner_zn.wake();
@@ -161,7 +161,7 @@ export class PreListener extends Listener {
 
   set interactionType(interactionType: InteractionType | null) {
     if (interactionType == null) {
-      throw new Error("Error: Cannot set listener interaction type to null");
+      throw new Error("Cannot set listener interaction type to null");
     }
     const currentType = numberToInteractionType(this.zpp_inner_zn.itype);
     if (currentType != interactionType) {

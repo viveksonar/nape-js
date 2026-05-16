@@ -39,15 +39,15 @@ export class MarchingSquares {
   ): any {
     // --- Validate disposed Vec2 ---
     if (cellsize != null && (cellsize as any).zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (subgrid != null && (subgrid as any).zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
 
     // --- Validate required parameters ---
     if (iso == null) {
-      throw new Error("Error: MarchingSquares requires an iso function to operate");
+      throw new Error("MarchingSquares requires an iso function to operate");
     }
     if (bounds == null) {
       throw new Error(
@@ -66,7 +66,7 @@ export class MarchingSquares {
       cellZpp._validate();
     }
     if (cellZpp.x <= 0 || cellZpp.y <= 0) {
-      throw new Error("Error: MarchingSquares cannot operate with non-positive cell dimensions");
+      throw new Error("MarchingSquares cannot operate with non-positive cell dimensions");
     }
 
     // --- Validate quality ---
@@ -83,7 +83,7 @@ export class MarchingSquares {
         subZpp._validate();
       }
       if (subZpp.x <= 0 || subZpp.y <= 0) {
-        throw new Error("Error: MarchingSquares cannot with non-positive sub-grid dimensions");
+        throw new Error("MarchingSquares cannot with non-positive sub-grid dimensions");
       }
     }
 

@@ -18,7 +18,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class PreFlag {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate PreFlag derp!");
+      throw new Error("Cannot instantiate PreFlag derp!");
     }
   }
 

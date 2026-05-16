@@ -243,7 +243,7 @@ export class ZPP_Polygon {
   lverts_modifiable(): void {
     this.immutable_midstep("Polygon::localVerts");
     if (this.body != null && this.body.type === 1 && this.body.space != null) {
-      throw new Error("Error: Cannot modifiy shapes of static object once added to Space");
+      throw new Error("Cannot modifiy shapes of static object once added to Space");
     }
   }
 
@@ -794,7 +794,7 @@ export class ZPP_Polygon {
   __validate_aabb(): void {
     this._validateGverts();
     if (this.lverts.next == null) {
-      throw new Error("Error: An empty polygon has no meaningful bounds");
+      throw new Error("An empty polygon has no meaningful bounds");
     }
     const p0 = this.gverts.next;
     this.aabb.minx = p0.x;
@@ -921,7 +921,7 @@ export class ZPP_Polygon {
   __validate_angDrag(): void {
     const nape = ZPP_Polygon._nape;
     if (this.lverts.length < 3) {
-      throw new Error("Error: Polygon's with less than 3 vertices have no meaningful angDrag");
+      throw new Error("Polygon's with less than 3 vertices have no meaningful angDrag");
     }
     this.validate_area_inertia();
     this.validate_laxi();
@@ -1023,7 +1023,7 @@ export class ZPP_Polygon {
 
   __validate_localCOM(): void {
     if (this.lverts.next == null) {
-      throw new Error("Error: An empty polygon has no meaningful localCOM");
+      throw new Error("An empty polygon has no meaningful localCOM");
     }
     if (this.lverts.next.next == null) {
       this.localCOMx = this.lverts.next.x;
@@ -1077,7 +1077,7 @@ export class ZPP_Polygon {
 
   localCOM_validate(): void {
     if (this.lverts.next == null) {
-      throw new Error("Error: An empty polygon does not have any meaningful localCOM");
+      throw new Error("An empty polygon does not have any meaningful localCOM");
     }
     this.validate_localCOM();
   }
@@ -1101,7 +1101,7 @@ export class ZPP_Polygon {
     const x = this.localCOMx;
     const y = this.localCOMy;
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (zpp.util.ZPP_PubPool.poolVec2 == null) {

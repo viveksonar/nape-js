@@ -203,7 +203,7 @@ export class ZPP_ColArbiter extends ZPP_Arbiter {
 
   normal_validate(): void {
     if (this.cleared) {
-      throw new Error("Error: Arbiter not currently in use");
+      throw new Error("Arbiter not currently in use");
     }
     this.wrap_normal.zpp_inner.x = this.nx;
     this.wrap_normal.zpp_inner.y = this.ny;
@@ -250,21 +250,21 @@ export class ZPP_ColArbiter extends ZPP_Arbiter {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x !== x || y !== y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -272,7 +272,7 @@ export class ZPP_ColArbiter extends ZPP_Arbiter {
       }
       if (ret.zpp_inner.x == x) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {

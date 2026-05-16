@@ -235,7 +235,7 @@ export class ZPP_Space {
       x = 0;
     }
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret;
     if (ZPP_Space._zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -266,21 +266,21 @@ export class ZPP_Space {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -288,7 +288,7 @@ export class ZPP_Space {
       }
       if (ret.zpp_inner.x == x) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {
@@ -316,7 +316,7 @@ export class ZPP_Space {
 
   gravity_invalidate(x: any) {
     if (this.midstep) {
-      throw new Error("Error: Space::gravity cannot be set during space step");
+      throw new Error("Space::gravity cannot be set during space step");
     }
     this.gravityx = x.x;
     this.gravityy = x.y;
@@ -921,7 +921,7 @@ export class ZPP_Space {
 
   bodies_modifiable() {
     if (this.midstep) {
-      throw new Error("Error: Space::bodies cannot be set during space step()");
+      throw new Error("Space::bodies cannot be set during space step()");
     }
   }
 
@@ -948,7 +948,7 @@ export class ZPP_Space {
 
   compounds_modifiable() {
     if (this.midstep) {
-      throw new Error("Error: Space::compounds cannot be set during space step()");
+      throw new Error("Space::compounds cannot be set during space step()");
     }
   }
 
@@ -975,7 +975,7 @@ export class ZPP_Space {
 
   constraints_modifiable() {
     if (this.midstep) {
-      throw new Error("Error: Space::constraints cannot be set during space step()");
+      throw new Error("Space::constraints cannot be set during space step()");
     }
   }
 
@@ -997,7 +997,7 @@ export class ZPP_Space {
 
   listeners_modifiable() {
     if (this.midstep) {
-      throw new Error("Error: Space::listeners cannot be set during space step()");
+      throw new Error("Space::listeners cannot be set during space step()");
     }
   }
 
@@ -1650,7 +1650,7 @@ export class ZPP_Space {
   shapesInCircle(pos: any, rad: any, cont: any, filter: any, output: any) {
     const tmp = this.bphase;
     if (pos != null && pos.zpp_disp) {
-      throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     const _this = pos.zpp_inner;
     if (_this._validate != null) {
@@ -1658,7 +1658,7 @@ export class ZPP_Space {
     }
     const tmp1 = pos.zpp_inner.x;
     if (pos != null && pos.zpp_disp) {
-      throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     const _this1 = pos.zpp_inner;
     if (_this1._validate != null) {
@@ -1670,7 +1670,7 @@ export class ZPP_Space {
   bodiesInCircle(pos: any, rad: any, cont: any, filter: any, output: any) {
     const tmp = this.bphase;
     if (pos != null && pos.zpp_disp) {
-      throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     const _this = pos.zpp_inner;
     if (_this._validate != null) {
@@ -1678,7 +1678,7 @@ export class ZPP_Space {
     }
     const tmp1 = pos.zpp_inner.x;
     if (pos != null && pos.zpp_disp) {
-      throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     const _this1 = pos.zpp_inner;
     if (_this1._validate != null) {
@@ -1730,7 +1730,7 @@ export class ZPP_Space {
             if (_this.type == 1) {
               const _this1 = _this.polygon;
               if (_this1.lverts.next == null) {
-                throw new Error("Error: An empty polygon has no meaningful localCOM");
+                throw new Error("An empty polygon has no meaningful localCOM");
               }
               if (_this1.lverts.next.next == null) {
                 _this1.localCOMx = _this1.lverts.next.x;
@@ -2151,7 +2151,7 @@ export class ZPP_Space {
         x4 = 0;
       }
       if (x4 != x4 || y4 != y4) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let ret;
       if (ZPP_Space._zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -2182,21 +2182,21 @@ export class ZPP_Space {
         ret.zpp_inner.outer = ret;
       } else {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this9 = ret.zpp_inner;
         if (_this9._immutable) {
-          throw new Error("Error: Vec2 is immutable");
+          throw new Error("Vec2 is immutable");
         }
         if (_this9._isimmutable != null) {
           _this9._isimmutable();
         }
         if (x4 != x4 || y4 != y4) {
-          throw new Error("Error: Vec2 components cannot be NaN");
+          throw new Error("Vec2 components cannot be NaN");
         }
         let tmp1;
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this10 = ret.zpp_inner;
         if (_this10._validate != null) {
@@ -2204,7 +2204,7 @@ export class ZPP_Space {
         }
         if (ret.zpp_inner.x == x4) {
           if (ret != null && ret.zpp_disp) {
-            throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+            throw new Error("Vec2 has been disposed and cannot be used!");
           }
           const _this11 = ret.zpp_inner;
           if (_this11._validate != null) {
@@ -2233,7 +2233,7 @@ export class ZPP_Space {
         x5 = 0;
       }
       if (x5 != x5 || y5 != y5) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let ret2;
       if (ZPP_Space._zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -2264,21 +2264,21 @@ export class ZPP_Space {
         ret2.zpp_inner.outer = ret2;
       } else {
         if (ret2 != null && ret2.zpp_disp) {
-          throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this13 = ret2.zpp_inner;
         if (_this13._immutable) {
-          throw new Error("Error: Vec2 is immutable");
+          throw new Error("Vec2 is immutable");
         }
         if (_this13._isimmutable != null) {
           _this13._isimmutable();
         }
         if (x5 != x5 || y5 != y5) {
-          throw new Error("Error: Vec2 components cannot be NaN");
+          throw new Error("Vec2 components cannot be NaN");
         }
         let tmp2;
         if (ret2 != null && ret2.zpp_disp) {
-          throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this14 = ret2.zpp_inner;
         if (_this14._validate != null) {
@@ -2286,7 +2286,7 @@ export class ZPP_Space {
         }
         if (ret2.zpp_inner.x == x5) {
           if (ret2 != null && ret2.zpp_disp) {
-            throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+            throw new Error("Vec2 has been disposed and cannot be used!");
           }
           const _this15 = ret2.zpp_inner;
           if (_this15._validate != null) {
@@ -2323,7 +2323,7 @@ export class ZPP_Space {
             if (_this.type == 1) {
               const _this1 = _this.polygon;
               if (_this1.lverts.next == null) {
-                throw new Error("Error: An empty polygon has no meaningful localCOM");
+                throw new Error("An empty polygon has no meaningful localCOM");
               }
               if (_this1.lverts.next.next == null) {
                 _this1.localCOMx = _this1.lverts.next.x;
@@ -2494,7 +2494,7 @@ export class ZPP_Space {
             if (_this.type == 1) {
               const _this1 = _this.polygon;
               if (_this1.lverts.next == null) {
-                throw new Error("Error: An empty polygon has no meaningful localCOM");
+                throw new Error("An empty polygon has no meaningful localCOM");
               }
               if (_this1.lverts.next.next == null) {
                 _this1.localCOMx = _this1.lverts.next.x;
@@ -2830,7 +2830,7 @@ export class ZPP_Space {
             x4 = 0;
           }
           if (x4 != x4 || y4 != y4) {
-            throw new Error("Error: Vec2 components cannot be NaN");
+            throw new Error("Vec2 components cannot be NaN");
           }
           let ret1;
           if (ZPP_Space._zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -2861,21 +2861,21 @@ export class ZPP_Space {
             ret1.zpp_inner.outer = ret1;
           } else {
             if (ret1 != null && ret1.zpp_disp) {
-              throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+              throw new Error("Vec2 has been disposed and cannot be used!");
             }
             const _this9 = ret1.zpp_inner;
             if (_this9._immutable) {
-              throw new Error("Error: Vec2 is immutable");
+              throw new Error("Vec2 is immutable");
             }
             if (_this9._isimmutable != null) {
               _this9._isimmutable();
             }
             if (x4 != x4 || y4 != y4) {
-              throw new Error("Error: Vec2 components cannot be NaN");
+              throw new Error("Vec2 components cannot be NaN");
             }
             let res;
             if (ret1 != null && ret1.zpp_disp) {
-              throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+              throw new Error("Vec2 has been disposed and cannot be used!");
             }
             const _this10 = ret1.zpp_inner;
             if (_this10._validate != null) {
@@ -2883,7 +2883,7 @@ export class ZPP_Space {
             }
             if (ret1.zpp_inner.x == x4) {
               if (ret1 != null && ret1.zpp_disp) {
-                throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+                throw new Error("Vec2 has been disposed and cannot be used!");
               }
               const _this11 = ret1.zpp_inner;
               if (_this11._validate != null) {
@@ -2912,7 +2912,7 @@ export class ZPP_Space {
             x5 = 0;
           }
           if (x5 != x5 || y5 != y5) {
-            throw new Error("Error: Vec2 components cannot be NaN");
+            throw new Error("Vec2 components cannot be NaN");
           }
           let ret3;
           if (ZPP_Space._zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -2943,21 +2943,21 @@ export class ZPP_Space {
             ret3.zpp_inner.outer = ret3;
           } else {
             if (ret3 != null && ret3.zpp_disp) {
-              throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+              throw new Error("Vec2 has been disposed and cannot be used!");
             }
             const _this13 = ret3.zpp_inner;
             if (_this13._immutable) {
-              throw new Error("Error: Vec2 is immutable");
+              throw new Error("Vec2 is immutable");
             }
             if (_this13._isimmutable != null) {
               _this13._isimmutable();
             }
             if (x5 != x5 || y5 != y5) {
-              throw new Error("Error: Vec2 components cannot be NaN");
+              throw new Error("Vec2 components cannot be NaN");
             }
             let res1;
             if (ret3 != null && ret3.zpp_disp) {
-              throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+              throw new Error("Vec2 has been disposed and cannot be used!");
             }
             const _this14 = ret3.zpp_inner;
             if (_this14._validate != null) {
@@ -2965,7 +2965,7 @@ export class ZPP_Space {
             }
             if (ret3.zpp_inner.x == x5) {
               if (ret3 != null && ret3.zpp_disp) {
-                throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+                throw new Error("Vec2 has been disposed and cannot be used!");
               }
               const _this15 = ret3.zpp_inner;
               if (_this15._validate != null) {
@@ -2991,10 +2991,10 @@ export class ZPP_Space {
           while (cx_ite5 != null) {
             const j = cx_ite5.elt;
             if (res2.zpp_inner.next != null) {
-              throw new Error("Error: This object has been disposed of and cannot be used");
+              throw new Error("This object has been disposed of and cannot be used");
             }
             if (j.zpp_inner.next != null) {
-              throw new Error("Error: This object has been disposed of and cannot be used");
+              throw new Error("This object has been disposed of and cannot be used");
             }
             if (res2.zpp_inner.toiDistance < j.zpp_inner.toiDistance) {
               break;
@@ -6206,7 +6206,7 @@ export class ZPP_Space {
   static_validation(body: any) {
     if (body.shapes.head != null) {
       if (body.shapes.head == null) {
-        throw new Error("Error: Body bounds only makes sense if it contains shapes");
+        throw new Error("Body bounds only makes sense if it contains shapes");
       }
       if (body.zip_aabb) {
         body.zip_aabb = false;
@@ -6230,7 +6230,7 @@ export class ZPP_Space {
                       if (_this.type == 1) {
                         const _this1 = _this.polygon;
                         if (_this1.lverts.next == null) {
-                          throw new Error("Error: An empty polygon has no meaningful localCOM");
+                          throw new Error("An empty polygon has no meaningful localCOM");
                         }
                         if (_this1.lverts.next.next == null) {
                           _this1.localCOMx = _this1.lverts.next.x;
@@ -6333,7 +6333,7 @@ export class ZPP_Space {
                   }
                 }
                 if (_this3.lverts.next == null) {
-                  throw new Error("Error: An empty polygon has no meaningful bounds");
+                  throw new Error("An empty polygon has no meaningful bounds");
                 }
                 const p0 = _this3.gverts.next;
                 _this3.aabb.minx = p0.x;
@@ -6618,7 +6618,7 @@ export class ZPP_Space {
       cur.validate_inertia();
       if (cur.shapes.head != null) {
         if (cur.shapes.head == null) {
-          throw new Error("Error: Body bounds only makes sense if it contains shapes");
+          throw new Error("Body bounds only makes sense if it contains shapes");
         }
         if (cur.zip_aabb) {
           cur.zip_aabb = false;
@@ -6642,7 +6642,7 @@ export class ZPP_Space {
                         if (_this5.type == 1) {
                           const _this6 = _this5.polygon;
                           if (_this6.lverts.next == null) {
-                            throw new Error("Error: An empty polygon has no meaningful localCOM");
+                            throw new Error("An empty polygon has no meaningful localCOM");
                           }
                           if (_this6.lverts.next.next == null) {
                             _this6.localCOMx = _this6.lverts.next.x;
@@ -6749,7 +6749,7 @@ export class ZPP_Space {
                     }
                   }
                   if (_this8.lverts.next == null) {
-                    throw new Error("Error: An empty polygon has no meaningful bounds");
+                    throw new Error("An empty polygon has no meaningful bounds");
                   }
                   const p0 = _this8.gverts.next;
                   _this8.aabb.minx = p0.x;
@@ -6947,7 +6947,7 @@ export class ZPP_Space {
       cur1.validate_inertia();
       if (cur1.shapes.head != null) {
         if (cur1.shapes.head == null) {
-          throw new Error("Error: Body bounds only makes sense if it contains shapes");
+          throw new Error("Body bounds only makes sense if it contains shapes");
         }
         if (cur1.zip_aabb) {
           cur1.zip_aabb = false;
@@ -6971,7 +6971,7 @@ export class ZPP_Space {
                         if (_this15.type == 1) {
                           const _this16 = _this15.polygon;
                           if (_this16.lverts.next == null) {
-                            throw new Error("Error: An empty polygon has no meaningful localCOM");
+                            throw new Error("An empty polygon has no meaningful localCOM");
                           }
                           if (_this16.lverts.next.next == null) {
                             _this16.localCOMx = _this16.lverts.next.x;
@@ -7080,7 +7080,7 @@ export class ZPP_Space {
                     }
                   }
                   if (_this18.lverts.next == null) {
-                    throw new Error("Error: An empty polygon has no meaningful bounds");
+                    throw new Error("An empty polygon has no meaningful bounds");
                   }
                   const p01 = _this18.gverts.next;
                   _this18.aabb.minx = p01.x;

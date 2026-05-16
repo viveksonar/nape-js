@@ -12,7 +12,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class MassMode {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate MassMode derp!");
+      throw new Error("Cannot instantiate MassMode derp!");
     }
   }
 

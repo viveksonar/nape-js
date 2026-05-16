@@ -53,7 +53,7 @@ export class BodyListener extends Listener {
     ZPP_Listener.internal = false;
 
     if (handler == null) {
-      throw new Error("Error: BodyListener::handler cannot be null");
+      throw new Error("BodyListener::handler cannot be null");
     }
 
     let xevent: number;
@@ -93,7 +93,7 @@ export class BodyListener extends Listener {
 
   set handler(handler: (cb: BodyCallback) => void) {
     if (handler == null) {
-      throw new Error("Error: BodyListener::handler cannot be null");
+      throw new Error("BodyListener::handler cannot be null");
     }
     this.zpp_inner_zn.handler = handler;
   }

@@ -4,6 +4,7 @@ import { Vec3 } from "../geom/Vec3";
 import { MatMN } from "../geom/MatMN";
 import { Body } from "../phys/Body";
 import { Constraint } from "./Constraint";
+import { IMPULSE_ERROR_NULL_BODY } from "./Constraint";
 import { ZPP_UserConstraint } from "../native/constraint/ZPP_UserConstraint";
 
 /**
@@ -19,7 +20,7 @@ export abstract class UserConstraint extends Constraint {
     super();
 
     if (dimensions < 1) {
-      throw new Error("Error: Constraint dimension must be at least 1");
+      throw new Error("Constraint dimension must be at least 1");
     }
 
     const zpp = new ZPP_UserConstraint(dimensions, velocityOnly);
@@ -60,7 +61,7 @@ export abstract class UserConstraint extends Constraint {
 
   /** Create a copy of this constraint. Must be overridden. */
   __copy(): UserConstraint {
-    throw new Error("Error: UserConstraint::__copy must be overriden");
+    throw new Error("UserConstraint::__copy must be overriden");
   }
 
   /** Called when the constraint breaks. Optional override. */
@@ -77,17 +78,17 @@ export abstract class UserConstraint extends Constraint {
 
   /** Compute positional error. Must be overridden for non-velocity-only constraints. */
   __position(_err: number[]): void {
-    throw new Error("Error: UserConstraint::__position must be overriden");
+    throw new Error("UserConstraint::__position must be overriden");
   }
 
   /** Compute velocity error. Must be overridden. */
   __velocity(_err: number[]): void {
-    throw new Error("Error: Userconstraint::__velocity must be overriden");
+    throw new Error("Userconstraint::__velocity must be overriden");
   }
 
   /** Compute effective mass matrix (upper triangle). Must be overridden. */
   __eff_mass(_eff: number[]): void {
-    throw new Error("Error: UserConstraint::__eff_mass must be overriden");
+    throw new Error("UserConstraint::__eff_mass must be overriden");
   }
 
   /** Clamp accumulated impulse. Optional override. */
@@ -95,7 +96,7 @@ export abstract class UserConstraint extends Constraint {
 
   /** Apply impulse to a body. Must be overridden. */
   __impulse(_imp: number[], _body: Body, _out: any): void {
-    throw new Error("Error: UserConstraint::__impulse must be overriden");
+    throw new Error("UserConstraint::__impulse must be overriden");
   }
 
   // ---------------------------------------------------------------------------
@@ -107,7 +108,7 @@ export abstract class UserConstraint extends Constraint {
     const ret = new MatMN(dim, 1);
     for (let i = 0; i < dim; i++) {
       if (i < 0 || i >= ret.zpp_inner.m || 0 >= ret.zpp_inner.n) {
-        throw new Error("Error: MatMN indices out of range");
+        throw new Error("MatMN indices out of range");
       }
       ret.zpp_inner.x[i * ret.zpp_inner.n] = this.zpp_inner.jAcc[i];
     }
@@ -116,7 +117,7 @@ export abstract class UserConstraint extends Constraint {
 
   override bodyImpulse(body: Body): Vec3 {
     if (body == null) {
-      throw new Error("Error: Cannot evaluate impulse on null body");
+      throw new Error(IMPULSE_ERROR_NULL_BODY);
     }
     let found = false;
     for (const b of this.zpp_inner.bodies) {
@@ -126,7 +127,7 @@ export abstract class UserConstraint extends Constraint {
       }
     }
     if (!found) {
-      throw new Error("Error: Body is not linked to this constraint");
+      throw new Error("Body is not linked to this constraint");
     }
     if (!this.zpp_inner.active) {
       return Vec3.get();
@@ -177,7 +178,7 @@ export abstract class UserConstraint extends Constraint {
     if (oldBody != newBody) {
       if (oldBody != null) {
         if (!this.zpp_inner.remBody((oldBody as any).zpp_inner)) {
-          throw new Error("Error: oldBody is not registered to the cosntraint");
+          throw new Error("oldBody is not registered to the cosntraint");
         }
         if (
           this.zpp_inner.active &&

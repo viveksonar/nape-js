@@ -458,7 +458,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
       const b2 = b1.velx;
       const _this = this.vec3;
       if (_this != null && _this.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this1 = _this.zpp_inner;
       if (_this1._validate != null) {
@@ -470,7 +470,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
       const b4 = b3.vely;
       const _this2 = this.vec3;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this3 = _this2.zpp_inner;
       if (_this3._validate != null) {
@@ -482,7 +482,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
       const b6 = b5.angvel;
       const _this4 = this.vec3;
       if (_this4 != null && _this4.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this5 = _this4.zpp_inner;
       if (_this5._validate != null) {
@@ -525,7 +525,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
       const b2 = b1.velx;
       const _this = this.vec3;
       if (_this != null && _this.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this1 = _this.zpp_inner;
       if (_this1._validate != null) {
@@ -537,7 +537,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
       const b4 = b3.vely;
       const _this2 = this.vec3;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this3 = _this2.zpp_inner;
       if (_this3._validate != null) {
@@ -549,7 +549,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
       const b6 = b5.angvel;
       const _this4 = this.vec3;
       if (_this4 != null && _this4.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this5 = _this4.zpp_inner;
       if (_this5._validate != null) {
@@ -594,7 +594,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
       const b2 = b1.posx;
       const _this = this.vec3;
       if (_this != null && _this.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this1 = _this.zpp_inner;
       if (_this1._validate != null) {
@@ -606,7 +606,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
       const b4 = b3.posy;
       const _this2 = this.vec3;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this3 = _this2.zpp_inner;
       if (_this3._validate != null) {
@@ -616,7 +616,7 @@ export class ZPP_UserConstraint extends ZPP_Constraint {
 
       const _this4 = this.vec3;
       if (_this4 != null && _this4.zpp_disp) {
-        throw new Error("Error: " + "Vec3" + " has been disposed and cannot be used!");
+        throw new Error("Vec3 has been disposed and cannot be used!");
       }
       const _this5 = _this4.zpp_inner;
       if (_this5._validate != null) {

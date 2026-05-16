@@ -235,7 +235,7 @@ describe("ZPP_FluidProperties", () => {
       const fp = new ZPP_FluidProperties();
       fp.gravityx = NaN;
       fp.gravityy = 0;
-      expect(() => fp.getgravity()).toThrow("Error: Vec2 components cannot be NaN");
+      expect(() => fp.getgravity()).toThrow("Vec2 components cannot be NaN");
     });
 
     it("should create new inner Vec2 when both pool and inner pool are empty", () => {
@@ -455,7 +455,7 @@ describe("ZPP_FluidProperties", () => {
       };
 
       const fp = new ZPP_FluidProperties();
-      expect(() => fp.getgravity()).toThrow("Error: Vec2 has been disposed and cannot be used!");
+      expect(() => fp.getgravity()).toThrow("Vec2 has been disposed and cannot be used!");
     });
 
     it("should throw when existing inner is immutable (via new Vec2 path)", () => {
@@ -481,7 +481,7 @@ describe("ZPP_FluidProperties", () => {
       };
 
       const fp = new ZPP_FluidProperties();
-      expect(() => fp.getgravity()).toThrow("Error: Vec2 is immutable");
+      expect(() => fp.getgravity()).toThrow("Vec2 is immutable");
     });
   });
 });

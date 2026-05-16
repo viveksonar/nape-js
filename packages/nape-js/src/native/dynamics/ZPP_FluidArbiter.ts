@@ -117,7 +117,7 @@ export class ZPP_FluidArbiter extends ZPP_Arbiter {
 
   position_validate(): void {
     if (!this.active) {
-      throw new Error("Error: Arbiter not currently in use");
+      throw new Error("Arbiter not currently in use");
     }
     this.wrap_position.zpp_inner.x = this.centroidx;
     this.wrap_position.zpp_inner.y = this.centroidy;
@@ -162,18 +162,18 @@ export class ZPP_FluidArbiter extends ZPP_Arbiter {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -181,7 +181,7 @@ export class ZPP_FluidArbiter extends ZPP_Arbiter {
       }
       if (ret.zpp_inner.x == 0) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {

@@ -198,7 +198,7 @@ export class Shape extends Interactor {
     const zpp = (this as any).zpp_inner;
     zpp.immutable_midstep("Body::localCOM");
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (zpp.body != null && zpp.body.space != null && zpp.body.type === 1) {
       throw new Error(
@@ -206,7 +206,7 @@ export class Shape extends Interactor {
       );
     }
     if (value == null) {
-      throw new Error("Error: Shape::localCOM cannot be null");
+      throw new Error("Shape::localCOM cannot be null");
     }
     // Ensure localCOM wrapper exists
     if (zpp.wrap_localCOM == null) {
@@ -253,7 +253,7 @@ export class Shape extends Interactor {
     const zpp = (this as any).zpp_inner;
     zpp.immutable_midstep("Shape::material");
     if (value == null) {
-      throw new Error("Error: Cannot assign null as Shape material");
+      throw new Error("Cannot assign null as Shape material");
     }
     zpp.setMaterial((value as any).zpp_inner);
   }
@@ -267,7 +267,7 @@ export class Shape extends Interactor {
     const zpp = (this as any).zpp_inner;
     zpp.immutable_midstep("Shape::filter");
     if (value == null) {
-      throw new Error("Error: Cannot assign null as Shape filter");
+      throw new Error("Cannot assign null as Shape filter");
     }
     zpp.setFilter((value as any).zpp_inner);
   }
@@ -373,7 +373,7 @@ export class Shape extends Interactor {
     const zpp = (this as any).zpp_inner;
     zpp.immutable_midstep("Shape::translate()");
     if ((translation as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (zpp.body != null && zpp.body.space != null && zpp.body.type === 1) {
       throw new Error(
@@ -381,7 +381,7 @@ export class Shape extends Interactor {
       );
     }
     if (translation == null) {
-      throw new Error("Error: Cannot displace Shape by null Vec2");
+      throw new Error("Cannot displace Shape by null Vec2");
     }
     if ((translation as any).lsq() > 0) {
       const inner = (translation as any).zpp_inner;
@@ -414,17 +414,17 @@ export class Shape extends Interactor {
       );
     }
     if (scaleX !== scaleX || scaleY !== scaleY) {
-      throw new Error("Error: Cannot scale Shape by NaN");
+      throw new Error("Cannot scale Shape by NaN");
     }
     if (scaleX === 0 || scaleY === 0) {
-      throw new Error("Error: Cannot Scale shape by a factor of 0");
+      throw new Error("Cannot Scale shape by a factor of 0");
     }
     if (zpp.type === 0) {
       const d = scaleX * scaleX - scaleY * scaleY;
       if (d * d < nape.Config.epsilon * nape.Config.epsilon) {
         zpp.circle.__scale(scaleX, scaleY);
       } else {
-        throw new Error("Error: Cannot perform a non equal scaling on a Circle");
+        throw new Error("Cannot perform a non equal scaling on a Circle");
       }
     } else if (zpp.type === 1) {
       zpp.polygon.__scale(scaleX, scaleY);
@@ -448,7 +448,7 @@ export class Shape extends Interactor {
       );
     }
     if (angle !== angle) {
-      throw new Error("Error: Cannot rotate Shape by NaN");
+      throw new Error("Cannot rotate Shape by NaN");
     }
     const dr = angle % (2 * Math.PI);
     if (dr !== 0.0) {
@@ -479,17 +479,17 @@ export class Shape extends Interactor {
       );
     }
     if (matrix == null) {
-      throw new Error("Error: Cannot transform Shape by null matrix");
+      throw new Error("Cannot transform Shape by null matrix");
     }
     const mat = matrix._inner ?? matrix;
     if ((mat as any).singular()) {
-      throw new Error("Error: Cannot transform Shape by a singular matrix");
+      throw new Error("Cannot transform Shape by a singular matrix");
     }
     if (zpp.type === 0) {
       if ((mat as any).equiorthogonal()) {
         zpp.circle.__transform(mat);
       } else {
-        throw new Error("Error: Cannot transform Circle by a non equiorthogonal matrix");
+        throw new Error("Cannot transform Circle by a non equiorthogonal matrix");
       }
     } else if (zpp.type === 1) {
       zpp.polygon.__transform(mat);
@@ -508,13 +508,13 @@ export class Shape extends Interactor {
   contains(point: Vec2): boolean {
     const zpp = (this as any).zpp_inner;
     if ((point as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (point == null) {
       throw new Error("Cannot check null point for containment");
     }
     if ((zpp.body != null ? zpp.body.outer : null) == null) {
-      throw new Error("Error: Shape is not well defined without a Body");
+      throw new Error("Shape is not well defined without a Body");
     }
     ZPP_Geom.validateShape(zpp);
     const inner = (point as any).zpp_inner;
@@ -553,7 +553,7 @@ export class Shape extends Interactor {
     const x = zpp.worldCOMx;
     const y = zpp.worldCOMy;
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     // Get or create Vec2 from pool
     let ret: any;

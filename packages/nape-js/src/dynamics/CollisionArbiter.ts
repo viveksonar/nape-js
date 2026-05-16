@@ -116,10 +116,10 @@ export class CollisionArbiter extends Arbiter {
   set elasticity(value: number) {
     this._mutableCheck("elasticity");
     if (value !== value) {
-      throw new Error("Error: CollisionArbiter::elasticity cannot be NaN");
+      throw new Error("CollisionArbiter::elasticity cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: CollisionArbiter::elasticity cannot be negative");
+      throw new Error("CollisionArbiter::elasticity cannot be negative");
     }
     this.zpp_inner.colarb.restitution = value;
     this.zpp_inner.colarb.userdef_restitution = true;
@@ -139,10 +139,10 @@ export class CollisionArbiter extends Arbiter {
   set dynamicFriction(value: number) {
     this._mutableCheck("dynamicFriction");
     if (value !== value) {
-      throw new Error("Error: CollisionArbiter::dynamicFriction cannot be NaN");
+      throw new Error("CollisionArbiter::dynamicFriction cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: CollisionArbiter::dynamicFriction cannot be negative");
+      throw new Error("CollisionArbiter::dynamicFriction cannot be negative");
     }
     this.zpp_inner.colarb.dyn_fric = value;
     this.zpp_inner.colarb.userdef_dyn_fric = true;
@@ -162,10 +162,10 @@ export class CollisionArbiter extends Arbiter {
   set staticFriction(value: number) {
     this._mutableCheck("staticFriction");
     if (value !== value) {
-      throw new Error("Error: CollisionArbiter::staticFriction cannot be NaN");
+      throw new Error("CollisionArbiter::staticFriction cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: CollisionArbiter::staticFriction cannot be negative");
+      throw new Error("CollisionArbiter::staticFriction cannot be negative");
     }
     this.zpp_inner.colarb.stat_fric = value;
     this.zpp_inner.colarb.userdef_stat_fric = true;
@@ -185,10 +185,10 @@ export class CollisionArbiter extends Arbiter {
   set rollingFriction(value: number) {
     this._mutableCheck("rollingFriction");
     if (value !== value) {
-      throw new Error("Error: CollisionArbiter::rollingFriction cannot be NaN");
+      throw new Error("CollisionArbiter::rollingFriction cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: CollisionArbiter::rollingFriction cannot be negative");
+      throw new Error("CollisionArbiter::rollingFriction cannot be negative");
     }
     this.zpp_inner.colarb.rfric = value;
     this.zpp_inner.colarb.userdef_rfric = true;
@@ -271,7 +271,7 @@ export class CollisionArbiter extends Arbiter {
   /** @internal Throw if not in pre-handler mutable window. */
   private _mutableCheck(prop: string): void {
     if (!this.zpp_inner.colarb.mutable) {
-      throw new Error("Error: CollisionArbiter::" + prop + " is only mutable during a pre-handler");
+      throw new Error("CollisionArbiter::" + prop + " is only mutable during a pre-handler");
     }
   }
 
