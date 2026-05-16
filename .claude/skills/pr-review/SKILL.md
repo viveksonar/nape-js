@@ -37,28 +37,45 @@ gh issue view <issue#> --repo NewKrok/nape-js
 
 ### 2. Fetch + inspect diff
 
+**Always fetch master before diffing** — a stale local `master` ref will invent phantom diffs against files the PR doesn't actually touch (e.g. CI config that recent master commits updated). Run `git fetch origin master` and diff against `origin/master`, not local `master`:
+
 ```bash
+git fetch origin master
 git fetch origin pull/<N>/head:pr-<N>
-git diff --stat master..pr-<N>
-git log --oneline master..pr-<N>
+git diff --stat origin/master..pr-<N>
+git log --oneline origin/master..pr-<N>
 ```
 
-**Flag immediately** if the diff includes files unrelated to the stated purpose — this almost always means the PR was forked from old master and would revert intervening commits (see "Common: stale fork pattern" below).
+Cross-check the file list against GitHub's view — they should match. If they don't, your refs are stale:
 
-### 3. Rebase test
+```bash
+gh pr view <N> --repo NewKrok/nape-js --json files --jq '.files | length'
+git diff --name-only origin/master..pr-<N> | wc -l
+```
+
+**Flag immediately** if GitHub's file list includes files unrelated to the stated purpose — that's a real stale-fork signal coming from the PR itself, not a refs artifact (see "Common: stale fork pattern" below).
+
+### 3. Rebase test — only when needed
+
+Rebasing is **not** a default step. GitHub's "Merge pull request" button handles non-overlapping divergence cleanly via a merge commit, and asking every contributor to rebase after every upstream merge is friction the project does not want.
+
+Only do the rebase test (and only ask the contributor to rebase) when **one of these is true**:
+
+- `gh pr view` reports `mergeable: CONFLICTING` — GitHub already sees a textual conflict
+- Step 2's diff includes files unrelated to the PR's stated scope — strong sign of stale-fork pattern, where a vanilla merge would silently revert recent master commits (see "Common: stale fork pattern" below)
+- The merge base is far behind master AND master has had policy-relevant changes (CI, lint config, formatter rules) the PR doesn't yet reflect
+
+If none of these apply, **skip rebase** — fetch master, refresh the PR branch with `git fetch origin master`, run pre-push checks directly on the PR branch, and report. The PR's own diff is the true scope.
+
+When you do need to rebase:
 
 ```bash
 git checkout -b pr-<N>-rebase pr-<N>
-git rebase master
+git rebase origin/master
+git diff --stat origin/master..pr-<N>-rebase
 ```
 
-If the rebase succeeds cleanly, the resulting diff is what would actually land. If there are conflicts, resolve only the trivial ones (keep both sides of unrelated demo additions, etc.) and re-run the diff stat.
-
-```bash
-git diff --stat master..pr-<N>-rebase
-```
-
-The post-rebase diff is the **true scope** of the PR. Compare it to step 2 — large reductions in line count are normal when the branch was stale.
+If rebase succeeds cleanly, the post-rebase diff is what would actually land — compare to step 2; large reductions in line count are normal when the branch was stale. If there are conflicts, resolve only the trivial ones (keep both sides of unrelated additions) and re-run the diff stat. Non-trivial conflicts go back to the contributor.
 
 ### 4. Pre-push checks (CLAUDE.md mandates all four)
 
@@ -80,6 +97,7 @@ For **every PR**:
 - **Security**: any `eval`, `innerHTML`, file-system access, network calls, dynamic imports? Demos in `docs/demos/` are fine to use HTML in `desc` strings (controlled environment), but flag anything that touches user input.
 - **Code conventions**: does it follow existing demo / engine patterns? (Compare to neighbouring files in the same directory.)
 - **CLAUDE.md "no premature abstractions" rule**: are new helpers / utilities actually used by ≥2 callers, or are they speculative?
+- **Mechanical-refactor leftovers — blocker, not a nit**: when a PR does a global search-and-replace (regex rename, prefix strip, string substitution, etc.), grep the resulting tree for artifacts that prove the script ran without a cleanup pass. Common smells: `Error("" + "X" + "...")` (prefix stripped from `"Error: " + "X" + "..."`), trailing `+ ""`, doubled spaces, `foo.foo` from a half-applied rename. If the PR's stated goal is "clean up X", leaving N artifacts of the same shape is failing the goal — do not classify as cosmetic. Ask for a follow-up pass before approving. Suggest the regex (e.g. `Error\(""\s*\+\s*` → `Error(`) so the fix is one search-replace away.
 
 For PRs that touch **`packages/nape-js/src/` (engine source)**:
 
@@ -116,9 +134,13 @@ A PR diff that includes file deletions / reverts of code the user merged recentl
 - Their branch doesn't include those N commits
 - A vanilla GitHub merge would *revert* them
 
-**Verify** with `git merge-base master pr-<N>` — if the base is not the current `master` HEAD or close to it, recommend `Rebase onto current master` and resolve the conflicts (typically trivial — keep both sides).
+The dangerous variant is when `gh pr view` still reports `mergeable: MERGEABLE`. GitHub only flags **textual** conflicts: if the PR and the missed master commits edit different lines in the same file, the merge succeeds silently and undoes the master-side changes. This bites especially with mechanical refactors (global rename, prefix strip, etc.) where the PR happens to touch infrastructure files (`.github/workflows/*`, lint config, formatter config) that recent master work also reshaped.
 
-The user has seen this twice already (PR #156, PR #172). If a contributor's first response to "rebase" is confusion, give a one-liner: `git fetch upstream && git rebase upstream/master`, plus resolve any conflict by keeping both sides where the changes are additive.
+**Verify** with `git merge-base origin/master pr-<N>` — if the base is behind `origin/master` AND the PR diff touches files where master has had recent commits, run the rebase test. Compare the post-rebase diff to the original; anything that vanishes is what the vanilla merge would have reverted.
+
+The user has seen this twice (PR #156, PR #172), both from the same contributor. If a contributor's first response to "rebase" is confusion, give a one-liner: `git fetch upstream && git rebase upstream/master`, plus resolve any conflict by keeping both sides where the changes are additive.
+
+**False-positive pitfall**: before claiming stale-fork on a PR, always cross-check the file list with `gh pr view <N> --json files`. A diff produced against a stale local `master` ref will show changes to files the PR does not actually touch — typically the ones recent master commits modified (CI config, lint rules, etc.). The first move on every review is `git fetch origin master` and diffing against `origin/master`, not local `master`. See "Step 2: Fetch + inspect diff".
 
 ## Engine safety: mid-step guards
 
