@@ -26,14 +26,16 @@ gh pr view <N> --repo NewKrok/nape-js --json title,author,state,mergeable,headRe
 gh pr view <N> --repo NewKrok/nape-js --comments
 ```
 
-Read the PR body and find any referenced issue (`Closes #N`, `Fixes #N`, or prose like "the issue listed"). If the issue isn't explicitly linked via `closingIssuesReferences`, search:
+Read the PR body and find any referenced issue (`Closes #N`, `Fixes #N`, or prose like "the issue listed"). **Even if `closingIssuesReferences` is empty, always search for a related open issue** — contributors regularly forget the `Closes #N` keyword, and the open `Tests: ...` / `Cleanup: ...` issues are scoped exactly to land in incremental PRs. Search the open issues list with keywords from the PR title and file paths:
 
 ```bash
-gh issue list --repo NewKrok/nape-js --state all --search "<keywords from PR title>" --limit 5 --json number,title,state
+gh issue list --repo NewKrok/nape-js --state open --search "<keywords from PR title or touched files>" --limit 10 --json number,title,labels
 gh issue view <issue#> --repo NewKrok/nape-js
 ```
 
-**Report**: PR title, author (is it their first contribution?), the linked issue, and the full acceptance criteria from the issue.
+If a match exists, read its full body — most `Tests:` issues have a multi-checkbox acceptance list, and a PR can be a partial contribution toward it (still useful to flag, even if not closing).
+
+**Report**: PR title, author (is it their first contribution?), the linked-or-related issue, and the full acceptance criteria from the issue. If the PR has no `Closes #N` but a clear related issue exists, this is a **must-mention item in the contributor draft** (see Step 7) — either to ask them to add the keyword (if it fully closes the issue) or to note which boxes the PR ticks and which remain (if partial).
 
 ### 2. Fetch + inspect diff
 
@@ -120,7 +122,8 @@ End with:
 2. **Draft message for the contributor** in github-flavoured markdown, ready to paste. Structure:
    - Thank them.
    - **Blockers first** (engine-safety, security, scope mismatches).
-   - **Acceptance criteria table** when relevant (issue-listed items vs PR coverage). Quote `Closes #N` if missing.
+   - **Related issue** — if Step 1 found an open issue the PR addresses (even partially) and the PR body has no `Closes #N`, the draft **must** mention it. For a PR that fully covers the issue, ask for `Closes #N` so GitHub auto-closes on merge. For a partial PR, name the issue and list which checklist items the PR ticks vs which remain — this keeps the issue open as a clean follow-up target for the next contributor. Skip this only if you're certain no related open issue exists.
+   - **Acceptance criteria table** when relevant (issue-listed items vs PR coverage).
    - **Housekeeping** last (rebase, format, prettier).
    - Brief positive close — what looks good.
 
