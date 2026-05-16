@@ -21,20 +21,6 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-      - run: npm test
-
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
@@ -52,7 +38,7 @@ jobs:
       - name: Upload nape-js coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: ./packages/nape-js/coverage/coverage-final.json
+          files: ./packages/nape-js/coverage/lcov.info
           flags: nape-js
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -60,7 +46,7 @@ jobs:
       - name: Upload nape-pixi coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: ./packages/nape-pixi/coverage/coverage-final.json
+          files: ./packages/nape-pixi/coverage/lcov.info
           flags: nape-pixi
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
