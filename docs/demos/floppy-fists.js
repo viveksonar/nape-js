@@ -38,7 +38,11 @@ const MOVE_SPEED = 130;            // target horizontal velocity
 const MOVE_BLEND = 0.18;           // velocity lerp (snappy without teleport)
 const JUMP_VEL = -340;             // applied to torso when grounded + jump
 const JUMP_COOLDOWN = 18;          // frames between jumps
-const GROUND_PROBE = TORSO_H / 2 + 14; // dist torso center → floor for grounded
+// Grounded probe: full standing height is torso half + two leg segments.
+// Add slack so the fighter still counts as grounded when crouched or
+// after a hard landing compresses the joints.
+const STAND_HEIGHT = TORSO_H / 2 + LEG_LEN * 2;
+const GROUND_PROBE = STAND_HEIGHT + 12;
 
 // Strike actions — each maps to an action descriptor. The arm/leg's
 // AngleJoint sweeps from idle range → driven target (jointMin === jointMax,
@@ -75,8 +79,11 @@ const ROUND_INTRO_FRAMES = 60;     // brief lock at round start
 let _space = null;
 let _floor = null;
 let _mode = "ai";                  // "ai" | "2p"
-let _showHelp = true;              // F1 toggle (or auto-hide after 8s)
-let _helpFadeTimer = 60 * 8;
+// Help is hidden by default — F1 toggles it. (Otherwise the overlay sits
+// across the arena's bottom strip for the first 8 seconds and obscures the
+// fight; a brief on-canvas hint covers most of the controls anyway.)
+let _showHelp = false;
+let _helpFadeTimer = 0;
 let _fighters = [];                // [Fighter, Fighter]
 let _score = [0, 0];
 let _round = 1;
@@ -197,11 +204,16 @@ function buildFighter(space, x, y, fighterId, facing) {
   const cBody = fighterId === 0 ? 0 : 3;
   const cLimb = fighterId === 0 ? 4 : 1;
 
-  // Torso
+  // Torso. Rotation is locked — pure ragdoll fighters tip over instantly
+  // under gravity since AngleJoints aren't a strong enough stabilizer for
+  // the upper body. Locking the torso keeps the fighter upright like a
+  // Gang-Beasts/Stick-Fight rig: floppy limbs, anchored core. The torso
+  // still translates (move/jump/ringout) — only its angle is fixed.
   const torso = new Body(BodyType.DYNAMIC, new Vec2(x, y));
   const torsoShape = new Polygon(Polygon.box(TORSO_W, TORSO_H));
   torsoShape.filter = new InteractionFilter(group, mask);
   torso.shapes.add(torsoShape);
+  torso.allowRotation = false;
   torso.userData._fighterId = fighterId;
   torso.userData._part = "torso";
   torso.userData._colorIdx = cBody;
@@ -220,28 +232,35 @@ function buildFighter(space, x, y, fighterId, facing) {
     new Vec2(0, HEAD_R));
   addAngle(space, torso, head, -0.5, 0.5, 6, 0.5);
 
-  // ── Arms — upper + lower. Pose-side determined by `side` (-1 left, +1 right).
+  // ── Arms — upper + lower. Spawn pose: arms hang straight down by the
+  // torso's sides (vertical), upper-arm box rotated 90° (built tall).
+  // Mounted at the shoulder pivot so they swing forward/back on a strike.
   const arms = [];
   for (const side of [-1, 1]) {
-    const sx = side * (TORSO_W / 2 - 2);
-    const upperX = x + side * (TORSO_W / 2 + ARM_LEN / 2 - 2);
-    const upperY = y - TORSO_H / 2 + 10;
-    const upper = addBox(space, upperX, upperY, ARM_LEN, ARM_W,
+    const shoulderLocal = new Vec2(side * (TORSO_W / 2 - 1), -TORSO_H / 2 + 8);
+    const upperX = x + side * (TORSO_W / 2 + ARM_W / 2);
+    const upperY = y - TORSO_H / 2 + 8 + ARM_LEN / 2;
+    // Use ARM_W as the "horizontal" extent + ARM_LEN as the vertical so
+    // the arm box stands up — it's an axis-aligned tall thin rectangle.
+    const upper = addBox(space, upperX, upperY, ARM_W, ARM_LEN,
       group, mask, fighterId, "upperArm" + (side > 0 ? "R" : "L"), cLimb);
-    addPivot(space, torso, upper, new Vec2(sx, -TORSO_H / 2 + 10),
-      new Vec2(-side * (ARM_LEN / 2 - 1), 0));
-    // Shoulder idle: arm dangles by side, gentle swing range.
+    addPivot(space, torso, upper, shoulderLocal, new Vec2(0, -ARM_LEN / 2 + 1));
+    // Shoulder idle: arm can swing forward/back about ±half-π from rest,
+    // can't bend backwards past the torso. Symmetric so left + right
+    // behave identically.
     const shoulder = addAngle(space, torso, upper,
-      -Math.PI * 0.75, Math.PI * 0.75, IDLE_FREQ, IDLE_DAMP);
+      -Math.PI * 0.6, Math.PI * 0.6, IDLE_FREQ, IDLE_DAMP);
 
-    const lowerX = upperX + side * ARM_LEN;
-    const lower = addBox(space, lowerX, upperY, ARM_LEN, ARM_W,
+    const lowerY = upperY + ARM_LEN;
+    const lower = addBox(space, upperX, lowerY, ARM_W, ARM_LEN,
       group, mask, fighterId, "lowerArm" + (side > 0 ? "R" : "L"), cLimb);
-    addPivot(space, upper, lower, new Vec2(side * (ARM_LEN / 2 - 1), 0),
-      new Vec2(-side * (ARM_LEN / 2 - 1), 0));
+    addPivot(space, upper, lower, new Vec2(0, ARM_LEN / 2 - 1),
+      new Vec2(0, -ARM_LEN / 2 + 1));
+    // Elbow only bends forward (toward the facing direction), never the
+    // other way. side > 0 = right arm, bends to the right (positive).
     const elbow = addAngle(space, upper, lower,
-      side > 0 ? -0.1 : -Math.PI * 0.6,
-      side > 0 ? Math.PI * 0.6 : 0.1,
+      side > 0 ? -0.05 : -Math.PI * 0.7,
+      side > 0 ? Math.PI * 0.7 : 0.05,
       IDLE_FREQ, IDLE_DAMP);
 
     arms.push({ side, upper, lower, shoulder, elbow });
@@ -325,24 +344,28 @@ function triggerAction(f, kind) {
   const leg = f.legs.find(l => l.side === side);
   const otherArm = f.arms.find(a => a.side === -side);
 
+  // Strike target angles, in shoulder/hip local space. Arm rest = 0 (hangs
+  // straight down). Positive shoulder angle rotates the arm forward in the
+  // +side direction; for the left arm (side=-1) the forward direction is
+  // negative so we multiply by `side` and `-side` accordingly.
   if (kind === "jab") {
-    // Punch straight ahead — shoulder rotates forward, elbow snaps out.
-    setStrikeDrive(arm.shoulder, side * 0.2);
-    setStrikeDrive(arm.elbow, side * 0.05);
+    // Punch straight ahead — shoulder swings forward 90°, elbow snaps out.
+    setStrikeDrive(arm.shoulder, side * (Math.PI / 2));
+    setStrikeDrive(arm.elbow, side * 0.1);
     arm.lower.userData._striking = true;
     arm.upper.userData._striking = true;
   } else if (kind === "kick") {
-    // Front kick — drive hip + knee in the facing direction.
+    // Front kick — hip swings forward ~60°, knee snaps out.
     setStrikeDrive(leg.hip, side * 1.1);
-    setStrikeDrive(leg.knee, side * 0.2);
+    setStrikeDrive(leg.knee, side * 0.1);
     leg.lower.userData._striking = true;
     leg.upper.userData._striking = true;
   } else if (kind === "heavy") {
-    // Both arms swing overhead and slam down — uses both shoulders.
-    setStrikeDrive(arm.shoulder, side * 0.9);
-    setStrikeDrive(otherArm.shoulder, -side * 0.9);
-    setStrikeDrive(arm.elbow, side * 0.05);
-    setStrikeDrive(otherArm.elbow, -side * 0.05);
+    // Both arms wind overhead then crash down — shoulders driven past 90°.
+    setStrikeDrive(arm.shoulder, side * (Math.PI * 0.55));
+    setStrikeDrive(otherArm.shoulder, -side * (Math.PI * 0.55));
+    setStrikeDrive(arm.elbow, side * 0.1);
+    setStrikeDrive(otherArm.elbow, -side * 0.1);
     arm.lower.userData._striking = true;
     arm.upper.userData._striking = true;
     otherArm.lower.userData._striking = true;
@@ -353,13 +376,12 @@ function triggerAction(f, kind) {
 function releaseStrike(f) {
   // Restore idle ranges + clear striking flags for all limbs (cheap +
   // idempotent; safer than tracking which kind we were in).
-  const side = f.jabSide;
   for (const arm of f.arms) {
-    setIdleRange(arm.shoulder, -Math.PI * 0.75, Math.PI * 0.75);
+    setIdleRange(arm.shoulder, -Math.PI * 0.6, Math.PI * 0.6);
     if (arm.side > 0) {
-      setIdleRange(arm.elbow, -0.1, Math.PI * 0.6);
+      setIdleRange(arm.elbow, -0.05, Math.PI * 0.7);
     } else {
-      setIdleRange(arm.elbow, -Math.PI * 0.6, 0.1);
+      setIdleRange(arm.elbow, -Math.PI * 0.7, 0.05);
     }
     arm.lower.userData._striking = false;
     arm.upper.userData._striking = false;
@@ -370,7 +392,6 @@ function releaseStrike(f) {
     leg.lower.userData._striking = false;
     leg.upper.userData._striking = false;
   }
-  void side;
   f.action.kind = null;
 }
 
@@ -531,6 +552,15 @@ function collectInputs() {
   // Wipe action slots so a stale value doesn't fire twice.
   _input[0].action = null;
   _input[1].action = null;
+  // During the intro lock both fighters stand still — no movement, no
+  // strikes, no AI steering. Lets them settle on the floor visually.
+  if (_roundState === "intro") {
+    for (const slot of _input) {
+      slot.left = slot.right = slot.jump = false;
+      slot.action = null;
+    }
+    return;
+  }
 
   readHumanInput(_input[0], 0, P1_MAP);
   if (_mode === "2p") {
@@ -608,9 +638,12 @@ function despawnFighter(f) {
 
 function spawnRound() {
   for (const f of _fighters) despawnFighter(f);
+  // Spawn the torso center one full standing-height above the floor so the
+  // feet land on top, not buried in the static platform.
+  const spawnY = FLOOR_Y - STAND_HEIGHT - 4;
   _fighters = [
-    buildFighter(_space, SCREEN_W / 2 - 120, FLOOR_Y - TORSO_H, 0, +1),
-    buildFighter(_space, SCREEN_W / 2 + 120, FLOOR_Y - TORSO_H, 1, -1),
+    buildFighter(_space, SCREEN_W / 2 - 120, spawnY, 0, +1),
+    buildFighter(_space, SCREEN_W / 2 + 120, spawnY, 1, -1),
   ];
   _winner = -1;
   _roundState = "intro";
@@ -706,7 +739,8 @@ function drawCenterHUD(ctx) {
   ctx.fillText(`Round ${_round}   ${_score[0]} : ${_score[1]}`, SCREEN_W / 2, 15);
   ctx.font = "11px system-ui, sans-serif";
   ctx.fillStyle = "#8b949e";
-  const modeTxt = _mode === "ai" ? "AI mode — press T for 2P" : "2P mode — press T for AI";
+  const modeTxt = _mode === "ai" ? "AI — T: 2P · R: restart · F1: controls"
+                                 : "2P — T: AI · R: restart · F1: controls";
   ctx.fillText(modeTxt, SCREEN_W / 2, HUD_H - 8);
 }
 
@@ -814,8 +848,8 @@ export default {
     _floor = buildRing(space);
 
     _mode = "ai";
-    _showHelp = true;
-    _helpFadeTimer = 60 * 8;
+    _showHelp = false;
+    _helpFadeTimer = 0;
     _score = [0, 0];
     _round = 1;
     _fighters = [];
