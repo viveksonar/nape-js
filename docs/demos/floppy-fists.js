@@ -89,7 +89,7 @@ const ROUND_INTRO_FRAMES = 60;     // brief lock at round start
 let _space = null;
 let _floor = null;
 let _mode = "ai";                  // "ai" | "2p"
-// Help is hidden by default — F1 toggles it. (Otherwise the overlay sits
+// Help is hidden by default — I toggles it. (Otherwise the overlay sits
 // across the arena's bottom strip for the first 8 seconds and obscures the
 // fight; a brief on-canvas hint covers most of the controls anyway.)
 let _showHelp = false;
@@ -880,8 +880,8 @@ function drawCenterHUD(ctx) {
   ctx.fillText(`Round ${_round}   ${_score[0]} : ${_score[1]}`, SCREEN_W / 2, 15);
   ctx.font = "11px system-ui, sans-serif";
   ctx.fillStyle = "#8b949e";
-  const modeTxt = _mode === "ai" ? "AI — T: 2P · R: restart · F1: controls"
-                                 : "2P — T: AI · R: restart · F1: controls";
+  const modeTxt = _mode === "ai" ? "AI — T: 2P · R: restart · I: controls"
+                                 : "2P — T: AI · R: restart · I: controls";
   ctx.fillText(modeTxt, SCREEN_W / 2, HUD_H - 8);
 }
 
@@ -897,7 +897,7 @@ function drawHelp(ctx) {
     _mode === "ai"
       ? "P2:  AI controlled"
       : "P2:  ← / → move   ↑ jump   J jab   K kick   L heavy",
-    "T  toggle AI/2P    R  restart    F1  hide help",
+    "T  toggle AI/2P    R  restart    I  hide help",
   ];
   const w = 470, h = 18 * lines.length + 14;
   const x = (SCREEN_W - w) / 2;
@@ -975,7 +975,7 @@ export default {
     "Limbs are driven by mutating <code>AngleJoint</code> targets each frame (motor-like control without <code>MotorJoint</code>); " +
     "<code>InteractionListener</code> tallies damage from contact impulse. " +
     "<b>P1</b>: <code>A/D</code> move, <code>W</code> jump, <code>F</code> jab, <code>G</code> kick, <code>H</code> heavy. " +
-    "<b>P2</b>: arrows + <code>J/K/L</code>, or AI. Press <code>T</code> to toggle AI/2P, <code>R</code> to restart.",
+    "<b>P2</b>: arrows + <code>J/K/L</code>, or AI. Press <code>T</code> to toggle AI/2P, <code>R</code> to restart, <code>I</code> for help.",
   walls: false,
   workerCompatible: false,
 
@@ -1010,6 +1010,12 @@ export default {
       (cb) => handleLimbTorsoBegin(cb),
     ));
 
+    // Important: clear previous listeners before adding new ones — the
+    // docs runner can call setup() multiple times (renderer switch, play
+    // → stop → play) and we'd otherwise stack closures, each of which
+    // wakes on every key press and trips the mode toggle twice.
+    if (_onKeyDown) window.removeEventListener("keydown", _onKeyDown);
+    if (_onKeyUp) window.removeEventListener("keyup", _onKeyUp);
     _onKeyDown = (e) => {
       if (!_space) return;
       _keys[e.code] = true;
@@ -1017,11 +1023,17 @@ export default {
       if (e.code === "KeyT") {
         _mode = _mode === "ai" ? "2p" : "ai";
         _helpFadeTimer = 60 * 5;
+        e.preventDefault();
       } else if (e.code === "KeyR") {
         resetDemo();
-      } else if (e.code === "F1") {
+        e.preventDefault();
+      } else if (e.code === "KeyI") {
+        // KeyI (info) — F1 is intercepted by browsers (devtools shortcut
+        // on some, no-op suppressable on others) so it never reaches the
+        // page reliably. KeyH is the heavy attack so it's spoken for too.
         _showHelp = !_showHelp;
         _helpFadeTimer = _showHelp ? 60 * 5 : 0;
+        e.preventDefault();
       }
     };
     _onKeyUp = (e) => {
