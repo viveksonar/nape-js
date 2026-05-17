@@ -36,8 +36,10 @@ const LEG_LEN = 30, LEG_W = 9;
 // ── Ragdoll behavior tuning ───────────────────────────────────────────────
 const MOVE_SPEED = 130;            // target horizontal velocity
 const MOVE_BLEND = 0.18;           // velocity lerp (snappy without teleport)
-const JUMP_VEL = -340;             // applied to torso when grounded + jump
-const JUMP_COOLDOWN = 18;          // frames between jumps
+const JUMP_VEL = -520;             // initial upward velocity on jump press
+const JUMP_HOLD_FRAMES = 8;        // extra "boost" frames while jump held
+const JUMP_HOLD_ACCEL = -90;       // velocity nudge per held frame
+const JUMP_COOLDOWN = 28;          // frames between jumps (must regain ground)
 // Grounded probe: full standing height is torso half + two leg segments.
 // Add slack so the fighter still counts as grounded when crouched or
 // after a hard landing compresses the joints.
@@ -147,21 +149,23 @@ function addCircle(space, x, y, r, group, mask, fighterId, part, colorIdx) {
   return body;
 }
 
-function addPivot(space, b1, b2, a1, a2) {
+function addPivot(space, b1, b2, a1, a2, jointBag) {
   const j = new PivotJoint(b1, b2, a1, a2);
   j.space = space;
+  if (jointBag) jointBag.push(j);
   return j;
 }
 
 // Idle range joint: acts as a soft rotational *limit* (no spring force inside
 // the window). When we want to drive a limb toward a target angle for a
 // strike, we collapse min===max with a stiff spring (see setStrikeDrive).
-function addAngle(space, b1, b2, min, max, freq, damp) {
+function addAngle(space, b1, b2, min, max, freq, damp, jointBag) {
   const j = new AngleJoint(b1, b2, min, max);
   j.stiff = false;
   j.frequency = freq;
   j.damping = damp;
   j.space = space;
+  if (jointBag) jointBag.push(j);
   return j;
 }
 
@@ -203,6 +207,12 @@ function buildFighter(space, x, y, fighterId, facing) {
   const mask = fighterId === 0 ? MASK_A : MASK_B;
   const cBody = fighterId === 0 ? 0 : 3;
   const cLimb = fighterId === 0 ? 4 : 1;
+  // All joints get pushed here so despawn can detach them before the
+  // bodies leave the space — nape's invariant is that a constraint and
+  // both of its endpoints share the same space, and pulling the bodies
+  // out while joints linger throws "Constraints must have each body
+  // within the same space..." on the next mutation.
+  const joints = [];
 
   // Torso. Rotation is locked — pure ragdoll fighters tip over instantly
   // under gravity since AngleJoints aren't a strong enough stabilizer for
@@ -229,8 +239,8 @@ function buildFighter(space, x, y, fighterId, facing) {
 
   // Neck — limited tilt range + soft spring back to upright.
   addPivot(space, torso, head, new Vec2(0, -TORSO_H / 2),
-    new Vec2(0, HEAD_R));
-  addAngle(space, torso, head, -0.5, 0.5, 6, 0.5);
+    new Vec2(0, HEAD_R), joints);
+  addAngle(space, torso, head, -0.5, 0.5, 6, 0.5, joints);
 
   // ── Arms — upper + lower. Spawn pose: arms hang straight down by the
   // torso's sides (vertical), upper-arm box rotated 90° (built tall).
@@ -244,24 +254,25 @@ function buildFighter(space, x, y, fighterId, facing) {
     // the arm box stands up — it's an axis-aligned tall thin rectangle.
     const upper = addBox(space, upperX, upperY, ARM_W, ARM_LEN,
       group, mask, fighterId, "upperArm" + (side > 0 ? "R" : "L"), cLimb);
-    addPivot(space, torso, upper, shoulderLocal, new Vec2(0, -ARM_LEN / 2 + 1));
+    addPivot(space, torso, upper, shoulderLocal,
+      new Vec2(0, -ARM_LEN / 2 + 1), joints);
     // Shoulder idle: arm can swing forward/back about ±half-π from rest,
     // can't bend backwards past the torso. Symmetric so left + right
     // behave identically.
     const shoulder = addAngle(space, torso, upper,
-      -Math.PI * 0.6, Math.PI * 0.6, IDLE_FREQ, IDLE_DAMP);
+      -Math.PI * 0.6, Math.PI * 0.6, IDLE_FREQ, IDLE_DAMP, joints);
 
     const lowerY = upperY + ARM_LEN;
     const lower = addBox(space, upperX, lowerY, ARM_W, ARM_LEN,
       group, mask, fighterId, "lowerArm" + (side > 0 ? "R" : "L"), cLimb);
     addPivot(space, upper, lower, new Vec2(0, ARM_LEN / 2 - 1),
-      new Vec2(0, -ARM_LEN / 2 + 1));
+      new Vec2(0, -ARM_LEN / 2 + 1), joints);
     // Elbow only bends forward (toward the facing direction), never the
     // other way. side > 0 = right arm, bends to the right (positive).
     const elbow = addAngle(space, upper, lower,
       side > 0 ? -0.05 : -Math.PI * 0.7,
       side > 0 ? Math.PI * 0.7 : 0.05,
-      IDLE_FREQ, IDLE_DAMP);
+      IDLE_FREQ, IDLE_DAMP, joints);
 
     arms.push({ side, upper, lower, shoulder, elbow });
   }
@@ -275,39 +286,36 @@ function buildFighter(space, x, y, fighterId, facing) {
     const upper = addBox(space, upperX, upperY, LEG_W, LEG_LEN,
       group, mask, fighterId, "upperLeg" + (side > 0 ? "R" : "L"), cLimb);
     addPivot(space, torso, upper, new Vec2(sx, TORSO_H / 2 - 2),
-      new Vec2(0, -LEG_LEN / 2 + 1));
-    const hip = addAngle(space, torso, upper, -0.7, 0.7, IDLE_FREQ, IDLE_DAMP);
+      new Vec2(0, -LEG_LEN / 2 + 1), joints);
+    const hip = addAngle(space, torso, upper, -0.7, 0.7,
+      IDLE_FREQ, IDLE_DAMP, joints);
 
     const lowerY = upperY + LEG_LEN;
     const lower = addBox(space, upperX, lowerY, LEG_W, LEG_LEN,
       group, mask, fighterId, "lowerLeg" + (side > 0 ? "R" : "L"), cLimb);
     addPivot(space, upper, lower, new Vec2(0, LEG_LEN / 2 - 1),
-      new Vec2(0, -LEG_LEN / 2 + 1));
+      new Vec2(0, -LEG_LEN / 2 + 1), joints);
     const knee = addAngle(space, upper, lower, -0.1, Math.PI * 0.5,
-      IDLE_FREQ, IDLE_DAMP);
+      IDLE_FREQ, IDLE_DAMP, joints);
 
     legs.push({ side, upper, lower, hip, knee });
   }
 
-  // The "primary" striking limbs default to the side the fighter faces.
-  // Fighter 0 faces right (facing=+1) → right arm/leg jabs; fighter 1
-  // faces left → left arm/leg. Defined here so action setup picks the
-  // correct limb regardless of which fighter we're driving.
+  // jabSide tracks the player's current facing direction and is updated
+  // every frame in step() based on the last horizontal input. Spawn-time
+  // facing is just the initial value.
   const jabSide = facing > 0 ? 1 : -1;
-
-  // Cheap visual cue: tilt facing so the ragdoll's lead arm starts forward.
-  // Torso starts upright; the arm-shoulder bias is set per-side in the AI
-  // idle pass each step (see updateIdlePose).
 
   return {
     id: fighterId,
     facing,
     jabSide,
-    torso, head, arms, legs,
+    torso, head, arms, legs, joints,
     action: { kind: null, timer: 0, cooldown: 0 },
     ai: { state: "approach", strikeCdTimer: 30 + Math.random() * 60, postStrikeRetreat: 0 },
     grounded: false,
     jumpCd: 0,
+    jumpHold: 0,
   };
 }
 
@@ -431,12 +439,39 @@ function isGrounded(f) {
   return py + GROUND_PROBE >= FLOOR_Y;
 }
 
-function tryJump(f) {
+function startJump(f) {
   if (f.jumpCd > 0) return;
   if (!isGrounded(f)) return;
-  const v = f.torso.velocity;
-  f.torso.velocity = new Vec2(v.x, JUMP_VEL);
+  // Apply the upward velocity to every body in the rig, not just the
+  // torso — the limbs are roughly twice the torso's combined mass, so
+  // shoving only the torso fires it skyward while the joints rip the
+  // legs along like deadweight. Boosting the whole rig produces a
+  // crisp, predictable hop.
+  setRigVelocityY(f, JUMP_VEL);
   f.jumpCd = JUMP_COOLDOWN;
+  f.jumpHold = JUMP_HOLD_FRAMES;
+}
+
+// While the jump key is held (up to JUMP_HOLD_FRAMES after lift-off),
+// keep nudging the rig upward. Lets the player tune jump height — a
+// quick tap is a short hop, holding it is a full-height leap.
+function continueJumpIfHeld(f, jumpHeld) {
+  if (f.jumpHold <= 0) return;
+  if (!jumpHeld) { f.jumpHold = 0; return; }
+  f.jumpHold--;
+  const v = f.torso.velocity;
+  if (v.y > 0) { f.jumpHold = 0; return; } // already descending — stop
+  setRigVelocityY(f, v.y + JUMP_HOLD_ACCEL);
+}
+
+function setRigVelocityY(f, vy) {
+  const allBodies = [f.torso, f.head,
+    ...f.arms.flatMap(a => [a.upper, a.lower]),
+    ...f.legs.flatMap(l => [l.upper, l.lower])];
+  for (const b of allBodies) {
+    const v = b.velocity;
+    b.velocity = new Vec2(v.x, vy);
+  }
 }
 
 // ── AI ────────────────────────────────────────────────────────────────────
@@ -628,8 +663,15 @@ function drainHits() {
 
 // ── Round flow ────────────────────────────────────────────────────────────
 function despawnFighter(f) {
-  // Drop every body owned by the fighter. The joints follow because nape
-  // garbage-collects constraints whose body endpoints leave the space.
+  // Detach the joints BEFORE removing the bodies. Nape requires a
+  // constraint's two endpoints to live in the same space as the
+  // constraint itself; pulling bodies out first leaves dangling joints
+  // and the next mutation throws
+  //   "Constraints must have each body within the same space..."
+  for (const j of f.joints) {
+    if (j.space) j.space = null;
+  }
+  f.joints.length = 0;
   const parts = [f.torso, f.head,
     ...f.arms.flatMap(a => [a.upper, a.lower]),
     ...f.legs.flatMap(l => [l.upper, l.lower])];
@@ -680,14 +722,11 @@ function checkWinCondition() {
 }
 
 // ── Top-level demo lifecycle ──────────────────────────────────────────────
-function resetDemo(space) {
-  // Wipe every body except the floor (built once during setup).
-  const toKill = [];
-  for (const b of space.bodies) {
-    if (b === _floor) continue;
-    toKill.push(b);
-  }
-  for (const b of toKill) b.space = null;
+function resetDemo() {
+  // Detach each fighter's joints + bodies in the correct order (see
+  // despawnFighter for the rationale). The floor stays — it was built
+  // once at setup time and is reused across resets.
+  for (const f of _fighters) despawnFighter(f);
   _fighters = [];
   _score = [0, 0];
   _round = 1;
@@ -877,7 +916,7 @@ export default {
         _mode = _mode === "ai" ? "2p" : "ai";
         _helpFadeTimer = 60 * 5;
       } else if (e.code === "KeyR") {
-        resetDemo(_space);
+        resetDemo();
       } else if (e.code === "F1") {
         _showHelp = !_showHelp;
         _helpFadeTimer = _showHelp ? 60 * 5 : 0;
@@ -924,8 +963,23 @@ export default {
       if (f.jumpCd > 0) f.jumpCd--;
 
       const input = _input[i];
+      // Human-controlled fighters face the direction of the most recent
+      // horizontal input. Without this the strike direction is frozen to
+      // the spawn-time facing, so jabs always point the same way even
+      // after the player turns around. (AI fighters get their jabSide
+      // overwritten inside aiTick based on the opponent's position.)
+      const isHuman = i === 0 || _mode === "2p";
+      if (isHuman) {
+        if (input.right) f.jabSide = 1;
+        else if (input.left) f.jabSide = -1;
+        f.facing = f.jabSide;
+      }
       applyMovement(f, input);
-      if (input.jump) tryJump(f);
+      // input.jump is the current key state (true while held). startJump
+      // only fires when grounded + cooldown elapsed; continueJumpIfHeld
+      // adds a few frames of upward boost while the key is still held.
+      if (input.jump) startJump(f);
+      continueJumpIfHeld(f, !!input.jump);
       if (input.action && _roundState === "playing") triggerAction(f, input.action);
 
       f.grounded = isGrounded(f);
