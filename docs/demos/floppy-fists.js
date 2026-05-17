@@ -65,11 +65,18 @@ const HIT_INVULN_FRAMES = 6;       // brief reset per torso to debounce
 const MAX_HP = 100;
 
 // AI tuning (state machine: idle → approach → strike → retreat → idle).
-const AI_REACH = 80;               // close enough to strike
-const AI_RETREAT_DIST = 60;        // back off after a strike to this gap
-const AI_STRIKE_COOLDOWN_MIN = 50;
-const AI_STRIKE_COOLDOWN_MAX = 110;
-const AI_JUMP_CHANCE = 0.012;      // per-frame when grounded & approaching
+const AI_REACH = 86;               // close enough to strike
+const AI_RETREAT_DIST = 48;        // back off after a strike to this gap
+const AI_STRIKE_COOLDOWN_MIN = 14; // shorter than human spam-friction
+const AI_STRIKE_COOLDOWN_MAX = 38;
+const AI_RETREAT_DURATION_MIN = 6; // brief reposition, not a sprint home
+const AI_RETREAT_DURATION_MAX = 14;
+const AI_COMBO_CHANCE = 0.55;      // chance to chain a second strike at close range
+const AI_COMBO_DELAY = 10;         // frames between combo hits
+const AI_REACT_RANGE = 130;        // distance at which AI reacts to opponent strikes
+const AI_REACT_JAB_CHANCE = 0.7;   // chance to counter-jab when opponent strikes
+const AI_JUMP_CHANCE = 0.018;      // per-frame baseline jump while approaching
+const AI_REACTION_JUMP_CHANCE = 0.25; // jump when opponent is above us
 
 const STRIKES = ["jab", "kick", "heavy"];
 
@@ -312,7 +319,13 @@ function buildFighter(space, x, y, fighterId, facing) {
     jabSide,
     torso, head, arms, legs, joints,
     action: { kind: null, timer: 0, cooldown: 0 },
-    ai: { state: "approach", strikeCdTimer: 30 + Math.random() * 60, postStrikeRetreat: 0 },
+    ai: {
+      state: "approach",
+      strikeCdTimer: 30 + Math.random() * 60,
+      postStrikeRetreat: 0,
+      comboLeft: 0,
+      comboDelay: 0,
+    },
     grounded: false,
     jumpCd: 0,
     jumpHold: 0,
@@ -492,8 +505,32 @@ function aiTick(f, opponent) {
   f.jabSide = dx >= 0 ? 1 : -1;
   f.facing = f.jabSide;
 
-  // FSM: retreat after a strike connects, otherwise approach until in reach
-  // then strike.
+  // React to the opponent's strikes — if they just queued an action and
+  // we're close enough to counter, jab back on the next tick instead of
+  // sitting still. This is what makes the AI feel less passive.
+  const oppAction = opponent.action;
+  const oppStartedStrike =
+    oppAction && oppAction.timer >= STRIKE_DURATION - 2 && oppAction.kind != null;
+  const canStrikeNow =
+    f.action.timer <= 0 && f.action.cooldown <= 0;
+
+  if (oppStartedStrike && dist < AI_REACT_RANGE && canStrikeNow
+      && Math.random() < AI_REACT_JAB_CHANCE) {
+    // Counter-jab — closes faster than the opponent's strike connects.
+    slot.action = dist < AI_REACH * 0.8 ? "jab" : "kick";
+    f.ai.strikeCdTimer = AI_STRIKE_COOLDOWN_MIN;
+    f.ai.postStrikeRetreat = 0;
+    f.ai.comboLeft = 0;
+    // Still need to close the gap if just out of reach.
+    if (Math.abs(dx) > AI_REACH * 0.7) {
+      if (dx > 0) slot.right = true; else slot.left = true;
+    }
+    return;
+  }
+
+  // FSM: short reposition after a hit, otherwise approach until in reach
+  // then strike. Retreat is intentionally brief so the AI doesn't strand
+  // itself far away after every jab.
   if (f.ai.postStrikeRetreat > 0) {
     f.ai.postStrikeRetreat--;
     f.ai.state = "retreat";
@@ -506,9 +543,19 @@ function aiTick(f, opponent) {
   if (f.ai.state === "approach") {
     if (dx > 6) slot.right = true;
     else if (dx < -6) slot.left = true;
-    // Try to jump over if the opponent is above us or to clear the void.
+    // Jump baseline + when the opponent is above us (they jumped or are
+    // on a knockback arc — we want to meet them or block their landing).
     if (Math.random() < AI_JUMP_CHANCE) slot.jump = true;
-    if (dy < -30 && Math.random() < AI_JUMP_CHANCE * 4) slot.jump = true;
+    if (dy < -28 && Math.random() < AI_REACTION_JUMP_CHANCE) slot.jump = true;
+    // If approaching the very edge of reach, queue an opening strike so
+    // we connect on the same frame we enter range.
+    if (dist < AI_REACH + 8 && canStrikeNow) {
+      slot.action = dy < -20 ? "jab" : "kick";
+      f.ai.comboLeft = Math.random() < AI_COMBO_CHANCE ? 1 : 0;
+      f.ai.comboDelay = AI_COMBO_DELAY;
+      f.ai.postStrikeRetreat = AI_RETREAT_DURATION_MIN +
+        Math.floor(Math.random() * (AI_RETREAT_DURATION_MAX - AI_RETREAT_DURATION_MIN));
+    }
   } else if (f.ai.state === "retreat") {
     if (dx > 0) slot.left = true;
     else slot.right = true;
@@ -516,12 +563,27 @@ function aiTick(f, opponent) {
       f.ai.postStrikeRetreat = 0;
     }
   } else if (f.ai.state === "strike") {
-    // Keep edging in if just out of range, otherwise pick a random strike.
+    // Keep edging in if just out of range, otherwise pick a strike.
     if (Math.abs(dx) > AI_REACH - 10) {
       if (dx > 0) slot.right = true; else slot.left = true;
     }
+    // Combo follow-up: if we still have a queued combo hit, fire on the
+    // combo delay regardless of the per-strike cooldown.
+    if (f.ai.comboLeft > 0 && canStrikeNow) {
+      f.ai.comboDelay--;
+      if (f.ai.comboDelay <= 0) {
+        slot.action = Math.random() < 0.5 ? "heavy" : "jab";
+        f.ai.comboLeft--;
+        f.ai.strikeCdTimer = AI_STRIKE_COOLDOWN_MIN;
+        f.ai.postStrikeRetreat = f.ai.comboLeft > 0
+          ? 0
+          : AI_RETREAT_DURATION_MIN +
+            Math.floor(Math.random() * (AI_RETREAT_DURATION_MAX - AI_RETREAT_DURATION_MIN));
+        return;
+      }
+    }
     f.ai.strikeCdTimer--;
-    if (f.ai.strikeCdTimer <= 0 && f.action.timer <= 0 && f.action.cooldown <= 0) {
+    if (f.ai.strikeCdTimer <= 0 && canStrikeNow) {
       // Bias by vertical offset — kick more when on the ground, heavy when
       // close, jab as the bread-and-butter mid-range poke.
       let kind;
@@ -532,7 +594,13 @@ function aiTick(f, opponent) {
       slot.action = kind;
       f.ai.strikeCdTimer = AI_STRIKE_COOLDOWN_MIN
         + Math.random() * (AI_STRIKE_COOLDOWN_MAX - AI_STRIKE_COOLDOWN_MIN);
-      f.ai.postStrikeRetreat = 30 + Math.floor(Math.random() * 30);
+      // Queue a combo follow-up at close range.
+      f.ai.comboLeft = dist < AI_REACH * 0.7 && Math.random() < AI_COMBO_CHANCE ? 1 : 0;
+      f.ai.comboDelay = AI_COMBO_DELAY;
+      f.ai.postStrikeRetreat = f.ai.comboLeft > 0
+        ? 0
+        : AI_RETREAT_DURATION_MIN +
+          Math.floor(Math.random() * (AI_RETREAT_DURATION_MAX - AI_RETREAT_DURATION_MIN));
     }
   }
 }
