@@ -36,9 +36,9 @@ const LEG_LEN = 30, LEG_W = 9;
 // ── Ragdoll behavior tuning ───────────────────────────────────────────────
 const MOVE_SPEED = 130;            // target horizontal velocity
 const MOVE_BLEND = 0.18;           // velocity lerp (snappy without teleport)
-const JUMP_VEL = -520;             // initial upward velocity on jump press
+const JUMP_VEL = -130;             // initial upward velocity on jump press
 const JUMP_HOLD_FRAMES = 8;        // extra "boost" frames while jump held
-const JUMP_HOLD_ACCEL = -90;       // velocity nudge per held frame
+const JUMP_HOLD_ACCEL = -22;       // velocity nudge per held frame
 const JUMP_COOLDOWN = 28;          // frames between jumps (must regain ground)
 // Grounded probe: full standing height is torso half + two leg segments.
 // Add slack so the fighter still counts as grounded when crouched or
