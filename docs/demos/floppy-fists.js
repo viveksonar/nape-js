@@ -75,8 +75,9 @@ const AI_COMBO_CHANCE = 0.55;      // chance to chain a second strike at close r
 const AI_COMBO_DELAY = 10;         // frames between combo hits
 const AI_REACT_RANGE = 130;        // distance at which AI reacts to opponent strikes
 const AI_REACT_JAB_CHANCE = 0.7;   // chance to counter-jab when opponent strikes
-const AI_JUMP_CHANCE = 0.018;      // per-frame baseline jump while approaching
-const AI_REACTION_JUMP_CHANCE = 0.25; // jump when opponent is above us
+const AI_JUMP_CHANCE = 0.045;      // per-frame baseline jump while approaching
+const AI_REACTION_JUMP_CHANCE = 0.35; // jump when opponent is above us
+const AI_STRIKE_JUMP_CHANCE = 0.35; // chance to jump on the same frame as a close-range strike
 
 const STRIKES = ["jab", "kick", "heavy"];
 
@@ -562,6 +563,8 @@ function aiTick(f, opponent) {
     if (dist >= AI_RETREAT_DIST) {
       f.ai.postStrikeRetreat = 0;
     }
+    // Mid-retreat hops — keeps the AI mobile instead of skating straight back.
+    if (Math.random() < AI_JUMP_CHANCE * 0.6) slot.jump = true;
   } else if (f.ai.state === "strike") {
     // Keep edging in if just out of range, otherwise pick a strike.
     if (Math.abs(dx) > AI_REACH - 10) {
@@ -592,6 +595,9 @@ function aiTick(f, opponent) {
       else if (dy > 20) kind = r < 0.6 ? "kick" : "jab";
       else kind = r < 0.55 ? "jab" : (r < 0.8 ? "kick" : "heavy");
       slot.action = kind;
+      // Spice it up with the occasional jump-strike — gives the AI an
+      // attack from above and breaks up flat brawl on the platform.
+      if (Math.random() < AI_STRIKE_JUMP_CHANCE) slot.jump = true;
       f.ai.strikeCdTimer = AI_STRIKE_COOLDOWN_MIN
         + Math.random() * (AI_STRIKE_COOLDOWN_MAX - AI_STRIKE_COOLDOWN_MIN);
       // Queue a combo follow-up at close range.
@@ -772,20 +778,48 @@ function checkWinCondition() {
   for (let i = 0; i < 2; i++) {
     const f = _fighters[i];
     if (!f.torso.space) continue;
-    if (f.torso.position.y > FLOOR_THRESHOLD) {
-      _winner = 1 - i;
-      _score[_winner]++;
-      _roundState = "post";
-      _roundTimer = ROUND_POST_FRAMES;
-      return;
+    const ringedOut = f.torso.position.y > FLOOR_THRESHOLD;
+    const koed = f.torso.userData._hp <= 0;
+    if (!ringedOut && !koed) continue;
+
+    _winner = 1 - i;
+    _score[_winner]++;
+    _roundState = "post";
+    _roundTimer = ROUND_POST_FRAMES;
+    // Collapse the loser (skip on ring-out — they're already gone).
+    // knockbackDir points away from the winner so the loser falls back.
+    if (!ringedOut) {
+      const winner = _fighters[_winner];
+      const dx = f.torso.position.x - winner.torso.position.x;
+      collapseFighter(f, dx >= 0 ? 1 : -1);
     }
-    if (f.torso.userData._hp <= 0) {
-      _winner = 1 - i;
-      _score[_winner]++;
-      _roundState = "post";
-      _roundTimer = ROUND_POST_FRAMES;
-      return;
-    }
+    return;
+  }
+}
+
+// Drop the fighter to the ground when they lose a round: unlock the
+// torso (so gravity tips it), give the rig a backwards shove, and widen
+// each AngleJoint range so the limbs flop instead of staying tucked.
+// Called from checkWinCondition() on KO and ring-out alike.
+function collapseFighter(f, knockbackDir) {
+  if (!f.torso.space) return;
+  f.torso.allowRotation = true;
+  // Backwards + upward shove on the torso — small enough that it doesn't
+  // ring-out the loser when the cause was HP, big enough to look
+  // visibly defeated.
+  const tv = f.torso.velocity;
+  f.torso.velocity = new Vec2(tv.x + knockbackDir * 90, tv.y - 60);
+  // Widen every AngleJoint into a free hinge. We collect them by walking
+  // the limb structs the buildFighter exposes — safer than sniffing the
+  // joint list, which mixes pivots + angle joints.
+  const angleJoints = [];
+  for (const a of f.arms) angleJoints.push(a.shoulder, a.elbow);
+  for (const l of f.legs) angleJoints.push(l.hip, l.knee);
+  for (const j of angleJoints) {
+    j.jointMin = -Math.PI;
+    j.jointMax = Math.PI;
+    j.frequency = 2;
+    j.damping = 0.3;
   }
 }
 
