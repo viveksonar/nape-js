@@ -41,7 +41,6 @@ jobs:
           files: ./packages/nape-js/coverage/lcov.info
           flags: nape-js
           fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload nape-pixi coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -49,7 +48,6 @@ jobs:
           files: ./packages/nape-pixi/coverage/lcov.info
           flags: nape-pixi
           fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload coverage reports as artifact
         if: always()
