@@ -48,7 +48,7 @@ function ContactIterator(this: any) {
   this.zpp_i = 0;
   this.zpp_inner = null;
   if (!ZPP_ContactList.internal) {
-    throw new Error("Error: Cannot instantiate ContactIterator derp!");
+    throw new Error("Cannot instantiate ContactIterator derp!");
   }
 }
 
@@ -106,7 +106,7 @@ function ContactListCtor(this: any) {
 
 ContactListCtor.fromArray = function (array: any[]): any {
   if (array == null) {
-    throw new Error("Error: Cannot convert null Array to Nape list");
+    throw new Error("Cannot convert null Array to Nape list");
   }
   const nape = getNape();
   const ret = new nape.dynamics.ContactList();
@@ -133,7 +133,7 @@ ContactListCtor.prototype.at = function (this: any, index: number): any {
   this.zpp_inner.valmod();
   const len = ensureLength(this.zpp_inner);
   if (index < 0 || index >= len) {
-    throw new Error("Error: Index out of bounds");
+    throw new Error("Index out of bounds");
   }
   if (this.zpp_inner.reverse_flag) {
     index = ensureLength(this.zpp_inner) - 1 - index;
@@ -165,7 +165,7 @@ ContactListCtor.prototype.at = function (this: any, index: number): any {
 
 ContactListCtor.prototype.push = function (this: any, obj: any): boolean {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: ContactList is immutable");
+    throw new Error("ContactList is immutable");
   }
   this.zpp_inner.modify_test();
   this.zpp_inner.valmod();
@@ -194,7 +194,7 @@ ContactListCtor.prototype.push = function (this: any, obj: any): boolean {
 
 ContactListCtor.prototype.unshift = function (this: any, obj: any): boolean {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: ContactList is immutable");
+    throw new Error("ContactList is immutable");
   }
   this.zpp_inner.modify_test();
   this.zpp_inner.valmod();
@@ -223,12 +223,12 @@ ContactListCtor.prototype.unshift = function (this: any, obj: any): boolean {
 
 ContactListCtor.prototype.pop = function (this: any): any {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: ContactList is immutable");
+    throw new Error("ContactList is immutable");
   }
   this.zpp_inner.modify_test();
   const len = ensureLength(this.zpp_inner);
   if (len == 0) {
-    throw new Error("Error: Cannot remove from empty list");
+    throw new Error("Cannot remove from empty list");
   }
   this.zpp_inner.valmod();
   let ret: any;
@@ -267,12 +267,12 @@ ContactListCtor.prototype.pop = function (this: any): any {
 
 ContactListCtor.prototype.shift = function (this: any): any {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: ContactList is immutable");
+    throw new Error("ContactList is immutable");
   }
   this.zpp_inner.modify_test();
   const len = ensureLength(this.zpp_inner);
   if (len == 0) {
-    throw new Error("Error: Cannot remove from empty list");
+    throw new Error("Cannot remove from empty list");
   }
   this.zpp_inner.valmod();
   let ret: any;
@@ -319,7 +319,7 @@ ContactListCtor.prototype.add = function (this: any, obj: any): boolean {
 
 ContactListCtor.prototype.remove = function (this: any, obj: any): boolean {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: ContactList is immutable");
+    throw new Error("ContactList is immutable");
   }
   this.zpp_inner.modify_test();
   this.zpp_inner.valmod();
@@ -346,7 +346,7 @@ ContactListCtor.prototype.remove = function (this: any, obj: any): boolean {
 
 ContactListCtor.prototype.clear = function (this: any): void {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: ContactList is immutable");
+    throw new Error("ContactList is immutable");
   }
   if (this.zpp_inner.reverse_flag) {
     while (ensureLength(this.zpp_inner) != 0) {
@@ -377,7 +377,7 @@ ContactListCtor.prototype.copy = function (this: any, deep?: boolean): any {
   while (it.hasNext()) {
     const i = it.next();
     if (deep) {
-      throw new Error("Error: Contact is not a copyable type");
+      throw new Error("Contact is not a copyable type");
     }
     ret.push(i);
   }
@@ -386,7 +386,7 @@ ContactListCtor.prototype.copy = function (this: any, deep?: boolean): any {
 
 ContactListCtor.prototype.merge = function (this: any, xs: any): void {
   if (xs == null) {
-    throw new Error("Error: Cannot merge with null list");
+    throw new Error("Cannot merge with null list");
   }
   xs.zpp_inner.valmod();
   const it = ContactIterator.get(xs);
@@ -418,7 +418,7 @@ ContactListCtor.prototype.toString = function (this: any): string {
 
 ContactListCtor.prototype.foreach = function (this: any, lambda: any): any {
   if (lambda == null) {
-    throw new Error("Error: Cannot execute null on list elements");
+    throw new Error("Cannot execute null on list elements");
   }
   this.zpp_inner.valmod();
   const it = ContactIterator.get(this);
@@ -453,7 +453,7 @@ ContactListCtor.prototype.foreach = function (this: any, lambda: any): any {
 
 ContactListCtor.prototype.filter = function (this: any, lambda: any): any {
   if (lambda == null) {
-    throw new Error("Error: Cannot select elements of list with null");
+    throw new Error("Cannot select elements of list with null");
   }
   let i = 0;
   while (true) {

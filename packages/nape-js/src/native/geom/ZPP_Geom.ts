@@ -119,7 +119,7 @@ export class ZPP_Geom {
             }
           }
           if (_this6.lverts.next == null) {
-            throw new Error("Error: An empty polygon has no meaningful bounds");
+            throw new Error("An empty polygon has no meaningful bounds");
           }
           const p0 = _this6.gverts.next;
           _this6.aabb.minx = p0.x;
@@ -205,7 +205,7 @@ export class ZPP_Geom {
   /** @internal Compute polygon local COM from vertex ring. */
   private static _computePolygonLocalCOM(poly: any): void {
     if (poly.lverts.next == null) {
-      throw new Error("Error: An empty polygon has no meaningful localCOM");
+      throw new Error("An empty polygon has no meaningful localCOM");
     }
     if (poly.lverts.next.next == null) {
       poly.localCOMx = poly.lverts.next.x;

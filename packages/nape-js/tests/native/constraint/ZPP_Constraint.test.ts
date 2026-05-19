@@ -147,7 +147,7 @@ describe("ZPP_Constraint", () => {
       const c = new ZPP_Constraint();
       c.space = { midstep: true };
       expect(() => c.immutable_midstep("frequency")).toThrow(
-        "Error: Constraint::frequency cannot be set during space step()",
+        "Constraint::frequency cannot be set during space step()",
       );
     });
 

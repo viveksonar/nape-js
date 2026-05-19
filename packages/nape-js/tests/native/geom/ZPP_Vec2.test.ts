@@ -104,7 +104,7 @@ describe("ZPP_Vec2", () => {
     it("should throw when _immutable is true", () => {
       const v = new ZPP_Vec2();
       v._immutable = true;
-      expect(() => v.immutable()).toThrow("Error: Vec2 is immutable");
+      expect(() => v.immutable()).toThrow("Vec2 is immutable");
     });
 
     it("should call _isimmutable when set and not immutable", () => {

@@ -117,7 +117,7 @@ export class ZPP_SpatialHashPhase extends ZPP_Broadphase {
                   if (_this.type == 1) {
                     const _this1 = _this.polygon;
                     if (_this1.lverts.next == null) {
-                      throw new Error("Error: An empty polygon has no meaningful localCOM");
+                      throw new Error("An empty polygon has no meaningful localCOM");
                     }
                     if (_this1.lverts.next.next == null) {
                       _this1.localCOMx = _this1.lverts.next.x;
@@ -220,7 +220,7 @@ export class ZPP_SpatialHashPhase extends ZPP_Broadphase {
               }
             }
             if (_this3.lverts.next == null) {
-              throw new Error("Error: An empty polygon has no meaningful bounds");
+              throw new Error("An empty polygon has no meaningful bounds");
             }
             const p0 = _this3.gverts.next;
             _this3.aabb.minx = p0.x;
@@ -877,12 +877,12 @@ export class ZPP_SpatialHashPhase extends ZPP_Broadphase {
               : ray.polysect(shape.polygon, inner, mint);
           if (result != null) {
             if (result.zpp_inner.next != null) {
-              throw new Error("Error: This object has been disposed of and cannot be used");
+              throw new Error("This object has been disposed of and cannot be used");
             }
             mint = result.zpp_inner.toiDistance;
             if (minres != null) {
               if (minres.zpp_inner.next != null) {
-                throw new Error("Error: This object has been disposed of and cannot be used");
+                throw new Error("This object has been disposed of and cannot be used");
               }
               minres.zpp_inner.free();
             }

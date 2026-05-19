@@ -82,7 +82,7 @@ export class ZPP_Vec2 {
 
   immutable(): void {
     if (this._immutable) {
-      throw new Error("Error: Vec2 is immutable");
+      throw new Error("Vec2 is immutable");
     }
     if (this._isimmutable != null) this._isimmutable();
   }

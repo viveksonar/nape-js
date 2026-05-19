@@ -14,7 +14,7 @@ import { ZPP_PubPool } from "../native/util/ZPP_PubPool";
 
 function GeomVertexIteratorCtor(this: any) {
   if (!ZPP_GeomVertexIterator.internal) {
-    throw new Error("Error: Cannot instantiate GeomVertexIterator");
+    throw new Error("Cannot instantiate GeomVertexIterator");
   }
 }
 
@@ -22,7 +22,7 @@ GeomVertexIteratorCtor.prototype.zpp_inner = null;
 
 GeomVertexIteratorCtor.prototype.hasNext = function (this: any): boolean {
   if (this.zpp_inner == null) {
-    throw new Error("Error: Iterator has been disposed");
+    throw new Error("Iterator has been disposed");
   }
   const ret = this.zpp_inner.ptr != this.zpp_inner.start || this.zpp_inner.first;
   this.zpp_inner.first = false;
@@ -38,7 +38,7 @@ GeomVertexIteratorCtor.prototype.hasNext = function (this: any): boolean {
 
 GeomVertexIteratorCtor.prototype.next = function (this: any): any {
   if (this.zpp_inner == null) {
-    throw new Error("Error: Iterator has been disposed");
+    throw new Error("Iterator has been disposed");
   }
   const vert = this.zpp_inner.ptr;
   if (vert.wrap == null) {
@@ -46,7 +46,7 @@ GeomVertexIteratorCtor.prototype.next = function (this: any): any {
     const y = vert.y;
 
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
 
     const nape = getNape();
@@ -80,11 +80,11 @@ GeomVertexIteratorCtor.prototype.next = function (this: any): any {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const inner = ret.zpp_inner;
       if (inner._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (inner._isimmutable != null) {
         inner._isimmutable();

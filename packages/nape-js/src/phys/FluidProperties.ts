@@ -43,7 +43,7 @@ export class FluidProperties {
     // --- Validate and set density (internal storage = value / 1000) ---
     if (density != zpp.density * 1000) {
       if (density !== density) {
-        throw new Error("Error: FluidProperties::density cannot be NaN");
+        throw new Error("FluidProperties::density cannot be NaN");
       }
       zpp.density = density / 1000;
       zpp.invalidate();
@@ -52,10 +52,10 @@ export class FluidProperties {
     // --- Validate and set viscosity ---
     if (viscosity != zpp.viscosity) {
       if (viscosity !== viscosity) {
-        throw new Error("Error: FluidProperties::viscosity cannot be NaN");
+        throw new Error("FluidProperties::viscosity cannot be NaN");
       }
       if (viscosity < 0) {
-        throw new Error("Error: FluidProperties::viscosity (" + viscosity + ") must be >= 0");
+        throw new Error("FluidProperties::viscosity (" + viscosity + ") must be >= 0");
       }
       zpp.viscosity = viscosity / 1;
       zpp.invalidate();
@@ -95,7 +95,7 @@ export class FluidProperties {
   set density(value: number) {
     if (value != this.zpp_inner.density * 1000) {
       if (value !== value) {
-        throw new Error("Error: FluidProperties::density cannot be NaN");
+        throw new Error("FluidProperties::density cannot be NaN");
       }
       this.zpp_inner.density = value / 1000;
       this.zpp_inner.invalidate();
@@ -108,10 +108,10 @@ export class FluidProperties {
   set viscosity(value: number) {
     if (value != this.zpp_inner.viscosity) {
       if (value !== value) {
-        throw new Error("Error: FluidProperties::viscosity cannot be NaN");
+        throw new Error("FluidProperties::viscosity cannot be NaN");
       }
       if (value < 0) {
-        throw new Error("Error: FluidProperties::viscosity (" + value + ") must be >= 0");
+        throw new Error("FluidProperties::viscosity (" + value + ") must be >= 0");
       }
       this.zpp_inner.viscosity = value / 1;
       this.zpp_inner.invalidate();
@@ -131,17 +131,17 @@ export class FluidProperties {
         this.zpp_inner.wrap_gravity.zpp_inner._inuse = false;
         const _this = this.zpp_inner.wrap_gravity;
         if (_this != null && _this.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this1 = _this.zpp_inner;
         if (_this1._immutable) {
-          throw new Error("Error: Vec2 is immutable");
+          throw new Error("Vec2 is immutable");
         }
         if (_this1._isimmutable != null) {
           _this1._isimmutable();
         }
         if (_this.zpp_inner._inuse) {
-          throw new Error("Error: This Vec2 is not disposable");
+          throw new Error("This Vec2 is not disposable");
         }
         const inner = _this.zpp_inner;
         _this.zpp_inner.outer = null;
@@ -169,30 +169,30 @@ export class FluidProperties {
       }
     } else {
       if (gravity != null && gravity.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       if (this.zpp_inner.wrap_gravity == null) {
         this.zpp_inner.getgravity();
       }
       const _this2 = this.zpp_inner.wrap_gravity;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       if (gravity != null && gravity.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this3 = _this2.zpp_inner;
       if (_this3._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this3._isimmutable != null) {
         _this3._isimmutable();
       }
       if (gravity == null) {
-        throw new Error("Error: Cannot assign null Vec2");
+        throw new Error("Cannot assign null Vec2");
       }
       if (gravity != null && gravity.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this4 = gravity.zpp_inner;
       if (_this4._validate != null) {
@@ -200,7 +200,7 @@ export class FluidProperties {
       }
       const x = gravity.zpp_inner.x;
       if (gravity != null && gravity.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this5 = gravity.zpp_inner;
       if (_this5._validate != null) {
@@ -208,21 +208,21 @@ export class FluidProperties {
       }
       const y = gravity.zpp_inner.y;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this6 = _this2.zpp_inner;
       if (_this6._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this6._isimmutable != null) {
         _this6._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this7 = _this2.zpp_inner;
       if (_this7._validate != null) {
@@ -230,7 +230,7 @@ export class FluidProperties {
       }
       if (_this2.zpp_inner.x == x) {
         if (_this2 != null && _this2.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this8 = _this2.zpp_inner;
         if (_this8._validate != null) {
@@ -250,17 +250,17 @@ export class FluidProperties {
       }
       if (gravity.zpp_inner.weak) {
         if (gravity != null && gravity.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this10 = gravity.zpp_inner;
         if (_this10._immutable) {
-          throw new Error("Error: Vec2 is immutable");
+          throw new Error("Vec2 is immutable");
         }
         if (_this10._isimmutable != null) {
           _this10._isimmutable();
         }
         if (gravity.zpp_inner._inuse) {
-          throw new Error("Error: This Vec2 is not disposable");
+          throw new Error("This Vec2 is not disposable");
         }
         const inner1 = gravity.zpp_inner;
         gravity.zpp_inner.outer = null;
@@ -327,17 +327,17 @@ export class FluidProperties {
         ret.zpp_inner.wrap_gravity.zpp_inner._inuse = false;
         const _this = ret.zpp_inner.wrap_gravity;
         if (_this != null && _this.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this1 = _this.zpp_inner;
         if (_this1._immutable) {
-          throw new Error("Error: Vec2 is immutable");
+          throw new Error("Vec2 is immutable");
         }
         if (_this1._isimmutable != null) {
           _this1._isimmutable();
         }
         if (_this.zpp_inner._inuse) {
-          throw new Error("Error: This Vec2 is not disposable");
+          throw new Error("This Vec2 is not disposable");
         }
         const inner = _this.zpp_inner;
         _this.zpp_inner.outer = null;
@@ -366,30 +366,30 @@ export class FluidProperties {
     } else {
       // Copy gravity from source
       if (gravity != null && gravity.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       if (ret.zpp_inner.wrap_gravity == null) {
         ret.zpp_inner.getgravity();
       }
       const _this2 = ret.zpp_inner.wrap_gravity;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       if (gravity != null && gravity.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this3 = _this2.zpp_inner;
       if (_this3._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this3._isimmutable != null) {
         _this3._isimmutable();
       }
       if (gravity == null) {
-        throw new Error("Error: Cannot assign null Vec2");
+        throw new Error("Cannot assign null Vec2");
       }
       if (gravity != null && gravity.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this4 = gravity.zpp_inner;
       if (_this4._validate != null) {
@@ -397,7 +397,7 @@ export class FluidProperties {
       }
       const x = gravity.zpp_inner.x;
       if (gravity != null && gravity.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this5 = gravity.zpp_inner;
       if (_this5._validate != null) {
@@ -405,21 +405,21 @@ export class FluidProperties {
       }
       const y = gravity.zpp_inner.y;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this6 = _this2.zpp_inner;
       if (_this6._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this6._isimmutable != null) {
         _this6._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp;
       if (_this2 != null && _this2.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this7 = _this2.zpp_inner;
       if (_this7._validate != null) {
@@ -427,7 +427,7 @@ export class FluidProperties {
       }
       if (_this2.zpp_inner.x == x) {
         if (_this2 != null && _this2.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this8 = _this2.zpp_inner;
         if (_this8._validate != null) {
@@ -447,17 +447,17 @@ export class FluidProperties {
       }
       if (gravity.zpp_inner.weak) {
         if (gravity != null && gravity.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this10 = gravity.zpp_inner;
         if (_this10._immutable) {
-          throw new Error("Error: Vec2 is immutable");
+          throw new Error("Vec2 is immutable");
         }
         if (_this10._isimmutable != null) {
           _this10._isimmutable();
         }
         if (gravity.zpp_inner._inuse) {
-          throw new Error("Error: This Vec2 is not disposable");
+          throw new Error("This Vec2 is not disposable");
         }
         const inner1 = gravity.zpp_inner;
         gravity.zpp_inner.outer = null;

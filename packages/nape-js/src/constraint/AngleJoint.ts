@@ -4,6 +4,7 @@ import { Body } from "../phys/Body";
 import { MatMN } from "../geom/MatMN";
 import { Vec3 } from "../geom/Vec3";
 import { Constraint } from "./Constraint";
+import { IMPULSE_ERROR_NULL_BODY } from "./Constraint";
 import { ZPP_AngleJoint } from "../native/constraint/ZPP_AngleJoint";
 
 /**
@@ -60,7 +61,7 @@ export class AngleJoint extends Constraint {
     // Set joint parameters with validation
     this.zpp_inner.immutable_midstep("AngleJoint::jointMin");
     if (jointMin !== jointMin) {
-      throw new Error("Error: AngleJoint::jointMin cannot be NaN");
+      throw new Error("AngleJoint::jointMin cannot be NaN");
     }
     if (zpp.jointMin != jointMin) {
       zpp.jointMin = jointMin;
@@ -69,7 +70,7 @@ export class AngleJoint extends Constraint {
 
     this.zpp_inner.immutable_midstep("AngleJoint::jointMax");
     if (jointMax !== jointMax) {
-      throw new Error("Error: AngleJoint::jointMax cannot be NaN");
+      throw new Error("AngleJoint::jointMax cannot be NaN");
     }
     if (zpp.jointMax != jointMax) {
       zpp.jointMax = jointMax;
@@ -78,7 +79,7 @@ export class AngleJoint extends Constraint {
 
     this.zpp_inner.immutable_midstep("AngleJoint::ratio");
     if (ratio !== ratio) {
-      throw new Error("Error: AngleJoint::ratio cannot be NaN");
+      throw new Error("AngleJoint::ratio cannot be NaN");
     }
     if (zpp.ratio != ratio) {
       zpp.ratio = ratio;
@@ -197,7 +198,7 @@ export class AngleJoint extends Constraint {
   set jointMin(value: number) {
     this.zpp_inner.immutable_midstep("AngleJoint::jointMin");
     if (value !== value) {
-      throw new Error("Error: AngleJoint::jointMin cannot be NaN");
+      throw new Error("AngleJoint::jointMin cannot be NaN");
     }
     if (this.zpp_inner.jointMin != value) {
       this.zpp_inner.jointMin = value;
@@ -212,7 +213,7 @@ export class AngleJoint extends Constraint {
   set jointMax(value: number) {
     this.zpp_inner.immutable_midstep("AngleJoint::jointMax");
     if (value !== value) {
-      throw new Error("Error: AngleJoint::jointMax cannot be NaN");
+      throw new Error("AngleJoint::jointMax cannot be NaN");
     }
     if (this.zpp_inner.jointMax != value) {
       this.zpp_inner.jointMax = value;
@@ -232,7 +233,7 @@ export class AngleJoint extends Constraint {
   set ratio(value: number) {
     this.zpp_inner.immutable_midstep("AngleJoint::ratio");
     if (value !== value) {
-      throw new Error("Error: AngleJoint::ratio cannot be NaN");
+      throw new Error("AngleJoint::ratio cannot be NaN");
     }
     if (this.zpp_inner.ratio != value) {
       this.zpp_inner.ratio = value;
@@ -252,7 +253,7 @@ export class AngleJoint extends Constraint {
    */
   isSlack(): boolean {
     if (this.zpp_inner.b1 == null || this.zpp_inner.b2 == null) {
-      throw new Error("Error: Cannot compute slack for AngleJoint if either body is null.");
+      throw new Error("Cannot compute slack for AngleJoint if either body is null.");
     }
     return this.zpp_inner.is_slack();
   }
@@ -261,7 +262,7 @@ export class AngleJoint extends Constraint {
     const nape = getNape();
     const ret = new nape.geom.MatMN(1, 1);
     if (0 >= ret.zpp_inner.m || 0 >= ret.zpp_inner.n) {
-      throw new Error("Error: MatMN indices out of range");
+      throw new Error("MatMN indices out of range");
     }
     ret.zpp_inner.x[0 * ret.zpp_inner.n] = this.zpp_inner.jAcc;
     return ret;
@@ -270,12 +271,12 @@ export class AngleJoint extends Constraint {
   override bodyImpulse(body: Body): Vec3 {
     const nape = getNape();
     if (body == null) {
-      throw new Error("Error: Cannot evaluate impulse on null body");
+      throw new Error(IMPULSE_ERROR_NULL_BODY);
     }
     const b1outer = this.zpp_inner.b1 == null ? null : this.zpp_inner.b1.outer;
     const b2outer = this.zpp_inner.b2 == null ? null : this.zpp_inner.b2.outer;
     if (body != b1outer && body != b2outer) {
-      throw new Error("Error: Body is not linked to this constraint");
+      throw new Error("Body is not linked to this constraint");
     }
     if (!this.zpp_inner.active) {
       return nape.geom.Vec3.get(0, 0, 0);
@@ -286,7 +287,7 @@ export class AngleJoint extends Constraint {
 
   override visitBodies(lambda: (body: Body) => void): void {
     if (lambda == null) {
-      throw new Error("Error: Cannot apply null lambda to bodies");
+      throw new Error("Cannot apply null lambda to bodies");
     }
     const b1outer = this.zpp_inner.b1 == null ? null : this.zpp_inner.b1.outer;
     if (b1outer != null) {

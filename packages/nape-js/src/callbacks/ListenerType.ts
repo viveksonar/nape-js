@@ -14,7 +14,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class ListenerType {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate ListenerType derp!");
+      throw new Error("Cannot instantiate ListenerType derp!");
     }
   }
 

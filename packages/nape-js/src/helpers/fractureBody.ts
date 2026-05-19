@@ -90,13 +90,13 @@ export function fractureBody(
   // Find the first polygon shape on the body
   const shape = findPolygonShape(body);
   if (!shape) {
-    throw new Error("Error: fractureBody requires a body with at least one Polygon shape");
+    throw new Error("fractureBody requires a body with at least one Polygon shape");
   }
 
   // Extract world-space polygon vertices
   const worldVerts = getWorldVertices(shape);
   if (worldVerts.length < 3) {
-    throw new Error("Error: Polygon shape has fewer than 3 world vertices");
+    throw new Error("Polygon shape has fewer than 3 world vertices");
   }
 
   // Compute AABB of the polygon

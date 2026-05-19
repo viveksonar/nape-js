@@ -39,10 +39,10 @@ export class AABB {
   constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
     // NaN checks
     if (x !== x || y !== y) {
-      throw new Error("Error: AABB position cannot be NaN");
+      throw new Error("AABB position cannot be NaN");
     }
     if (width !== width || height !== height) {
-      throw new Error("Error: AABB dimensions cannot be NaN");
+      throw new Error("AABB dimensions cannot be NaN");
     }
 
     // Acquire a ZPP_AABB from the pool or create a new one
@@ -72,14 +72,14 @@ export class AABB {
    */
   static fromPoints(points: Vec2[]): AABB {
     if (points == null || points.length === 0) {
-      throw new Error("Error: AABB::fromPoints requires at least one point");
+      throw new Error("AABB::fromPoints requires at least one point");
     }
     const first = points[0];
     if (first != null && first.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (first == null) {
-      throw new Error("Error: AABB::fromPoints cannot contain null Vec2");
+      throw new Error("AABB::fromPoints cannot contain null Vec2");
     }
     first.zpp_inner.validate();
     let minx = first.zpp_inner.x;
@@ -89,10 +89,10 @@ export class AABB {
     for (let i = 1; i < points.length; i++) {
       const p = points[i];
       if (p != null && p.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       if (p == null) {
-        throw new Error("Error: AABB::fromPoints cannot contain null Vec2");
+        throw new Error("AABB::fromPoints cannot contain null Vec2");
       }
       p.zpp_inner.validate();
       const px = p.zpp_inner.x;
@@ -139,12 +139,12 @@ export class AABB {
   /** The x position of the left edge (minx). Setting shifts the box horizontally. */
   set x(x: number) {
     if (this.zpp_inner._immutable) {
-      throw new Error("Error: AABB is immutable");
+      throw new Error("AABB is immutable");
     }
     this.zpp_inner.validate();
     if (this.zpp_inner.minx != x) {
       if (x !== x) {
-        throw new Error("Error: AABB::x cannot be NaN");
+        throw new Error("AABB::x cannot be NaN");
       }
       this.zpp_inner.maxx += x - this.zpp_inner.minx;
       this.zpp_inner.minx = x;
@@ -160,12 +160,12 @@ export class AABB {
   /** The y position of the top edge (miny). Setting shifts the box vertically. */
   set y(y: number) {
     if (this.zpp_inner._immutable) {
-      throw new Error("Error: AABB is immutable");
+      throw new Error("AABB is immutable");
     }
     this.zpp_inner.validate();
     if (this.zpp_inner.miny != y) {
       if (y !== y) {
-        throw new Error("Error: AABB::y cannot be NaN");
+        throw new Error("AABB::y cannot be NaN");
       }
       this.zpp_inner.maxy += y - this.zpp_inner.miny;
       this.zpp_inner.miny = y;
@@ -181,15 +181,15 @@ export class AABB {
   /** Width of the box (maxx − minx). Must be ≥ 0. */
   set width(width: number) {
     if (this.zpp_inner._immutable) {
-      throw new Error("Error: AABB is immutable");
+      throw new Error("AABB is immutable");
     }
     this.zpp_inner.validate();
     if (this.zpp_inner.maxx - this.zpp_inner.minx != width) {
       if (width !== width) {
-        throw new Error("Error: AABB::width cannot be NaN");
+        throw new Error("AABB::width cannot be NaN");
       }
       if (width < 0) {
-        throw new Error("Error: AABB::width (" + width + ") must be >= 0");
+        throw new Error("AABB::width (" + width + ") must be >= 0");
       }
       this.zpp_inner.validate();
       this.zpp_inner.maxx = this.zpp_inner.minx + width;
@@ -205,15 +205,15 @@ export class AABB {
   /** Height of the box (maxy − miny). Must be ≥ 0. */
   set height(height: number) {
     if (this.zpp_inner._immutable) {
-      throw new Error("Error: AABB is immutable");
+      throw new Error("AABB is immutable");
     }
     this.zpp_inner.validate();
     if (this.zpp_inner.maxy - this.zpp_inner.miny != height) {
       if (height !== height) {
-        throw new Error("Error: AABB::height cannot be NaN");
+        throw new Error("AABB::height cannot be NaN");
       }
       if (height < 0) {
-        throw new Error("Error: AABB::height (" + height + ") must be >= 0");
+        throw new Error("AABB::height (" + height + ") must be >= 0");
       }
       this.zpp_inner.validate();
       this.zpp_inner.maxy = this.zpp_inner.miny + height;
@@ -240,13 +240,13 @@ export class AABB {
    */
   set min(min: any) {
     if (min != null && min.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (this.zpp_inner._immutable) {
-      throw new Error("Error: AABB is immutable");
+      throw new Error("AABB is immutable");
     }
     if (min == null) {
-      throw new Error("Error: Cannot assign null to AABB::min");
+      throw new Error("Cannot assign null to AABB::min");
     }
 
     // NaN check on current bounds
@@ -254,18 +254,18 @@ export class AABB {
     const curMinX = this.zpp_inner.minx;
     this.zpp_inner.validate();
     if (curMinX != this.zpp_inner.minx) {
-      throw new Error("Error: AABB::min components cannot be NaN");
+      throw new Error("AABB::min components cannot be NaN");
     }
     this.zpp_inner.validate();
     const curMinY = this.zpp_inner.miny;
     this.zpp_inner.validate();
     if (curMinY != this.zpp_inner.miny) {
-      throw new Error("Error: AABB::min components cannot be NaN");
+      throw new Error("AABB::min components cannot be NaN");
     }
 
     // Validate min.x <= max.x
     if (min != null && min.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (min.zpp_inner._validate != null) {
       min.zpp_inner._validate();
@@ -275,18 +275,18 @@ export class AABB {
     this.zpp_inner.getmax();
     const maxVec = this.zpp_inner.wrap_max;
     if (maxVec != null && maxVec.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (maxVec.zpp_inner._validate != null) {
       maxVec.zpp_inner._validate();
     }
     if (newX > maxVec.zpp_inner.x) {
-      throw new Error("Error: Assignment would cause negative width");
+      throw new Error("Assignment would cause negative width");
     }
 
     // Validate min.y <= max.y
     if (min != null && min.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (min.zpp_inner._validate != null) {
       min.zpp_inner._validate();
@@ -296,13 +296,13 @@ export class AABB {
     this.zpp_inner.getmin();
     const minVecForMaxY = this.zpp_inner.wrap_max;
     if (minVecForMaxY != null && minVecForMaxY.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (minVecForMaxY.zpp_inner._validate != null) {
       minVecForMaxY.zpp_inner._validate();
     }
     if (newY > minVecForMaxY.zpp_inner.y) {
-      throw new Error("Error: Assignment would cause negative height");
+      throw new Error("Assignment would cause negative height");
     }
 
     // Assign via Vec2 set
@@ -331,13 +331,13 @@ export class AABB {
    */
   set max(max: any) {
     if (max != null && max.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (this.zpp_inner._immutable) {
-      throw new Error("Error: AABB is immutable");
+      throw new Error("AABB is immutable");
     }
     if (max == null) {
-      throw new Error("Error: Cannot assign null to AABB::max");
+      throw new Error("Cannot assign null to AABB::max");
     }
 
     // NaN check on current bounds
@@ -345,18 +345,18 @@ export class AABB {
     const curMinX = this.zpp_inner.minx;
     this.zpp_inner.validate();
     if (curMinX != this.zpp_inner.minx) {
-      throw new Error("Error: AABB::max components cannot be NaN");
+      throw new Error("AABB::max components cannot be NaN");
     }
     this.zpp_inner.validate();
     const curMinY = this.zpp_inner.miny;
     this.zpp_inner.validate();
     if (curMinY != this.zpp_inner.miny) {
-      throw new Error("Error: AABB::max components cannot be NaN");
+      throw new Error("AABB::max components cannot be NaN");
     }
 
     // Validate max.x >= min.x
     if (max != null && max.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (max.zpp_inner._validate != null) {
       max.zpp_inner._validate();
@@ -366,18 +366,18 @@ export class AABB {
     this.zpp_inner.getmin();
     const minVec = this.zpp_inner.wrap_min;
     if (minVec != null && minVec.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (minVec.zpp_inner._validate != null) {
       minVec.zpp_inner._validate();
     }
     if (newX < minVec.zpp_inner.x) {
-      throw new Error("Error: Assignment would cause negative width");
+      throw new Error("Assignment would cause negative width");
     }
 
     // Validate max.y >= min.y
     if (max != null && max.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (max.zpp_inner._validate != null) {
       max.zpp_inner._validate();
@@ -387,13 +387,13 @@ export class AABB {
     this.zpp_inner.getmin();
     const minVecForY = this.zpp_inner.wrap_min;
     if (minVecForY != null && minVecForY.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (minVecForY.zpp_inner._validate != null) {
       minVecForY.zpp_inner._validate();
     }
     if (newY < minVecForY.zpp_inner.y) {
-      throw new Error("Error: Assignment would cause negative height");
+      throw new Error("Assignment would cause negative height");
     }
 
     // Assign via Vec2 set
@@ -413,30 +413,30 @@ export class AABB {
   /** @internal Assign source Vec2 values to target Vec2 wrapper. */
   private _assignVec2(target: any, source: any): void {
     if (target != null && target.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (source != null && source.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     const inner = target.zpp_inner;
     if (inner._immutable) {
-      throw new Error("Error: Vec2 is immutable");
+      throw new Error("Vec2 is immutable");
     }
     if (inner._isimmutable != null) {
       inner._isimmutable();
     }
     if (source == null) {
-      throw new Error("Error: Cannot assign null Vec2");
+      throw new Error("Cannot assign null Vec2");
     }
     if (source != null && source.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (source.zpp_inner._validate != null) {
       source.zpp_inner._validate();
     }
     const x = source.zpp_inner.x;
     if (source != null && source.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (source.zpp_inner._validate != null) {
       source.zpp_inner._validate();
@@ -444,29 +444,29 @@ export class AABB {
     const y = source.zpp_inner.y;
 
     if (target != null && target.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     const inner2 = target.zpp_inner;
     if (inner2._immutable) {
-      throw new Error("Error: Vec2 is immutable");
+      throw new Error("Vec2 is immutable");
     }
     if (inner2._isimmutable != null) {
       inner2._isimmutable();
     }
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
 
     let same;
     if (target != null && target.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (target.zpp_inner._validate != null) {
       target.zpp_inner._validate();
     }
     if (target.zpp_inner.x == x) {
       if (target != null && target.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       if (target.zpp_inner._validate != null) {
         target.zpp_inner._validate();
@@ -490,17 +490,17 @@ export class AABB {
     const zpp_nape = napeNs.zpp_nape;
 
     if (vec != null && vec.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     const inner = vec.zpp_inner;
     if (inner._immutable) {
-      throw new Error("Error: Vec2 is immutable");
+      throw new Error("Vec2 is immutable");
     }
     if (inner._isimmutable != null) {
       inner._isimmutable();
     }
     if (vec.zpp_inner._inuse) {
-      throw new Error("Error: This Vec2 is not disposable");
+      throw new Error("This Vec2 is not disposable");
     }
     const innerRef = vec.zpp_inner;
     vec.zpp_inner.outer = null;

@@ -98,13 +98,13 @@ export class Capsule extends Shape {
 
     // Validate
     if (width !== width || height !== height) {
-      throw new Error("Error: Capsule dimensions cannot be NaN");
+      throw new Error("Capsule dimensions cannot be NaN");
     }
     if (height <= 0) {
-      throw new Error("Error: Capsule height (" + height + ") must be > 0");
+      throw new Error("Capsule height (" + height + ") must be > 0");
     }
     if (width < height) {
-      throw new Error("Error: Capsule width (" + width + ") must be >= height (" + height + ")");
+      throw new Error("Capsule width (" + width + ") must be >= height (" + height + ")");
     }
 
     const radius = height / 2;
@@ -135,7 +135,7 @@ export class Capsule extends Shape {
     let comY = 0;
     if (localCOM != null) {
       if ((localCOM as any).zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const inner = localCOM.zpp_inner;
       if (inner._validate != null) inner._validate();
@@ -255,10 +255,10 @@ export class Capsule extends Shape {
     }
     if (value !== this._radius) {
       if (value !== value) {
-        throw new Error("Error: Capsule::radius cannot be NaN");
+        throw new Error("Capsule::radius cannot be NaN");
       }
       if (value < nape.Config.epsilon) {
-        throw new Error("Error: Capsule::radius (" + value + ") must be > Config.epsilon");
+        throw new Error("Capsule::radius (" + value + ") must be > Config.epsilon");
       }
       this._radius = value;
       (zpp as any)._capsuleRadius = value;
@@ -280,10 +280,10 @@ export class Capsule extends Shape {
     }
     if (value !== this._halfLength) {
       if (value !== value) {
-        throw new Error("Error: Capsule::halfLength cannot be NaN");
+        throw new Error("Capsule::halfLength cannot be NaN");
       }
       if (value < 0) {
-        throw new Error("Error: Capsule::halfLength (" + value + ") must be >= 0");
+        throw new Error("Capsule::halfLength (" + value + ") must be >= 0");
       }
       this._halfLength = value;
       (zpp as any)._capsuleHalfLength = value;

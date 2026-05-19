@@ -83,7 +83,7 @@ export class ZPP_Compound {
   // --- Mid-step guard (ZPP_Compound-specific) ---
   __imutable_midstep(name: string): void {
     if (this.space != null && this.space.midstep) {
-      throw new Error("Error: " + name + " cannot be set during space step()");
+      throw new Error(`${name} cannot be set during space step()`);
     }
   }
 

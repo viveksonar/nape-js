@@ -121,13 +121,13 @@ export class RadialGravityField {
 
   constructor(options: RadialGravityFieldOptions) {
     if (options == null) {
-      throw new Error("Error: options is required");
+      throw new Error("options is required");
     }
     if (options.source == null) {
-      throw new Error("Error: options.source is required (Vec2 or Body)");
+      throw new Error("options.source is required (Vec2 or Body)");
     }
     if (typeof options.strength !== "number" || !isFinite(options.strength)) {
-      throw new Error("Error: options.strength must be a finite number");
+      throw new Error("options.strength must be a finite number");
     }
 
     this.source = options.source;
@@ -141,13 +141,13 @@ export class RadialGravityField {
     this.enabled = options.enabled ?? true;
 
     if (this.maxRadius < 0) {
-      throw new Error("Error: options.maxRadius must be >= 0");
+      throw new Error("options.maxRadius must be >= 0");
     }
     if (this.minRadius < 0) {
-      throw new Error("Error: options.minRadius must be >= 0");
+      throw new Error("options.minRadius must be >= 0");
     }
     if (this.softening < 0) {
-      throw new Error("Error: options.softening must be >= 0");
+      throw new Error("options.softening must be >= 0");
     }
   }
 

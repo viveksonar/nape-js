@@ -13,7 +13,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class BodyType {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate BodyType derp!");
+      throw new Error("Cannot instantiate BodyType derp!");
     }
   }
 

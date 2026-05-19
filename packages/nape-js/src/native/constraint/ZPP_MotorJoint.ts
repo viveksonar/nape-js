@@ -123,10 +123,10 @@ export class ZPP_MotorJoint extends ZPP_Constraint {
   override validate(): void {
     // Note: "AngleJoint" in the first error message matches the original Haxe source
     if (this.b1 == null || this.b2 == null) {
-      throw new Error("Error: AngleJoint cannot be simulated null bodies");
+      throw new Error("AngleJoint cannot be simulated null bodies");
     }
     if (this.b1 == this.b2) {
-      throw new Error("Error: MotorJoint cannot be simulated with body1 == body2");
+      throw new Error("MotorJoint cannot be simulated with body1 == body2");
     }
     if (this.b1.space != this.space || this.b2.space != this.space) {
       throw new Error(
@@ -134,7 +134,7 @@ export class ZPP_MotorJoint extends ZPP_Constraint {
       );
     }
     if (this.b1.type != 2 && this.b2.type != 2) {
-      throw new Error("Error: Constraints cannot have both bodies non-dynamic");
+      throw new Error("Constraints cannot have both bodies non-dynamic");
     }
   }
 

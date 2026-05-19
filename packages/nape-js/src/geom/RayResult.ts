@@ -21,7 +21,7 @@ export class RayResult {
   constructor() {
     this.zpp_inner = null!;
     if (!ZPP_ConvexRayResult.internal) {
-      throw new Error("Error: RayResult cannot be instantiated derp!");
+      throw new Error("RayResult cannot be instantiated derp!");
     }
   }
 
@@ -90,7 +90,7 @@ export class RayResult {
   /** @internal */
   private _disposed(): void {
     if (this.zpp_inner.next != null) {
-      throw new Error("Error: This object has been disposed of and cannot be used");
+      throw new Error("This object has been disposed of and cannot be used");
     }
   }
 }

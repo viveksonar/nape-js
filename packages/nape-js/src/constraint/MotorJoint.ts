@@ -4,6 +4,7 @@ import { Body } from "../phys/Body";
 import { MatMN } from "../geom/MatMN";
 import { Vec3 } from "../geom/Vec3";
 import { Constraint } from "./Constraint";
+import { IMPULSE_ERROR_NULL_BODY } from "./Constraint";
 import { ZPP_MotorJoint } from "../native/constraint/ZPP_MotorJoint";
 
 /**
@@ -51,7 +52,7 @@ export class MotorJoint extends Constraint {
     // Set joint parameters with validation
     this.zpp_inner.immutable_midstep("MotorJoint::rate");
     if (rate !== rate) {
-      throw new Error("Error: MotorJoint::rate cannot be NaN");
+      throw new Error("MotorJoint::rate cannot be NaN");
     }
     if (zpp.rate != rate) {
       zpp.rate = rate;
@@ -60,7 +61,7 @@ export class MotorJoint extends Constraint {
 
     this.zpp_inner.immutable_midstep("MotorJoint::ratio");
     if (ratio !== ratio) {
-      throw new Error("Error: MotorJoint::ratio cannot be NaN");
+      throw new Error("MotorJoint::ratio cannot be NaN");
     }
     if (zpp.ratio != ratio) {
       zpp.ratio = ratio;
@@ -184,7 +185,7 @@ export class MotorJoint extends Constraint {
   set rate(value: number) {
     this.zpp_inner.immutable_midstep("MotorJoint::rate");
     if (value !== value) {
-      throw new Error("Error: MotorJoint::rate cannot be NaN");
+      throw new Error("MotorJoint::rate cannot be NaN");
     }
     if (this.zpp_inner.rate != value) {
       this.zpp_inner.rate = value;
@@ -204,7 +205,7 @@ export class MotorJoint extends Constraint {
   set ratio(value: number) {
     this.zpp_inner.immutable_midstep("MotorJoint::ratio");
     if (value !== value) {
-      throw new Error("Error: MotorJoint::ratio cannot be NaN");
+      throw new Error("MotorJoint::ratio cannot be NaN");
     }
     if (this.zpp_inner.ratio != value) {
       this.zpp_inner.ratio = value;
@@ -220,7 +221,7 @@ export class MotorJoint extends Constraint {
     const nape = getNape();
     const ret = new nape.geom.MatMN(1, 1);
     if (0 >= ret.zpp_inner.m || 0 >= ret.zpp_inner.n) {
-      throw new Error("Error: MatMN indices out of range");
+      throw new Error("MatMN indices out of range");
     }
     ret.zpp_inner.x[0 * ret.zpp_inner.n] = this.zpp_inner.jAcc;
     return ret;
@@ -229,12 +230,12 @@ export class MotorJoint extends Constraint {
   override bodyImpulse(body: Body): Vec3 {
     const nape = getNape();
     if (body == null) {
-      throw new Error("Error: Cannot evaluate impulse on null body");
+      throw new Error(IMPULSE_ERROR_NULL_BODY);
     }
     const b1outer = this.zpp_inner.b1 == null ? null : this.zpp_inner.b1.outer;
     const b2outer = this.zpp_inner.b2 == null ? null : this.zpp_inner.b2.outer;
     if (body != b1outer && body != b2outer) {
-      throw new Error("Error: Body is not linked to this constraint");
+      throw new Error("Body is not linked to this constraint");
     }
     if (!this.zpp_inner.active) {
       return nape.geom.Vec3.get();

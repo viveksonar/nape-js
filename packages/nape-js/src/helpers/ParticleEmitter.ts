@@ -322,43 +322,43 @@ export class ParticleEmitter {
   private _destroyed = false;
 
   constructor(options: ParticleEmitterOptions) {
-    if (options == null) throw new Error("Error: options is required");
-    if (options.space == null) throw new Error("Error: options.space is required");
-    if (options.origin == null) throw new Error("Error: options.origin is required");
+    if (options == null) throw new Error("options is required");
+    if (options.space == null) throw new Error("options.space is required");
+    if (options.origin == null) throw new Error("options.origin is required");
 
     const lifetimeMin = options.lifetimeMin ?? 1;
     const lifetimeMax = options.lifetimeMax ?? 1;
     if (!isFinite(lifetimeMin) || lifetimeMin < 0) {
-      throw new Error("Error: options.lifetimeMin must be >= 0");
+      throw new Error("options.lifetimeMin must be >= 0");
     }
     if (!isFinite(lifetimeMax) || lifetimeMax < 0) {
-      throw new Error("Error: options.lifetimeMax must be >= 0");
+      throw new Error("options.lifetimeMax must be >= 0");
     }
     if (lifetimeMax < lifetimeMin) {
-      throw new Error("Error: options.lifetimeMax must be >= options.lifetimeMin");
+      throw new Error("options.lifetimeMax must be >= options.lifetimeMin");
     }
 
     const maxParticles = options.maxParticles ?? 512;
     if (!Number.isInteger(maxParticles) || maxParticles < 0) {
-      throw new Error("Error: options.maxParticles must be a non-negative integer");
+      throw new Error("options.maxParticles must be a non-negative integer");
     }
 
     const rate = options.rate ?? 0;
     if (!isFinite(rate) || rate < 0) {
-      throw new Error("Error: options.rate must be >= 0");
+      throw new Error("options.rate must be >= 0");
     }
     const burstCount = options.burstCount ?? 0;
     if (!Number.isInteger(burstCount) || burstCount < 0) {
-      throw new Error("Error: options.burstCount must be a non-negative integer");
+      throw new Error("options.burstCount must be a non-negative integer");
     }
     const burstInterval = options.burstInterval ?? 0;
     if (!isFinite(burstInterval) || burstInterval < 0) {
-      throw new Error("Error: options.burstInterval must be >= 0");
+      throw new Error("options.burstInterval must be >= 0");
     }
 
     const radius = options.particleRadius ?? 2;
     if (!isFinite(radius) || radius <= 0) {
-      throw new Error("Error: options.particleRadius must be > 0");
+      throw new Error("options.particleRadius must be > 0");
     }
 
     this.space = options.space;
@@ -574,7 +574,7 @@ export class ParticleEmitter {
    */
   emit(count: number): Body[] {
     if (this._destroyed) {
-      throw new Error("Error: ParticleEmitter has been destroyed");
+      throw new Error("ParticleEmitter has been destroyed");
     }
     if (!this.enabled) return [];
     if (count <= 0) return [];
@@ -692,9 +692,9 @@ export class ParticleEmitter {
    */
   update(dt: number): void {
     if (this._destroyed) {
-      throw new Error("Error: ParticleEmitter has been destroyed");
+      throw new Error("ParticleEmitter has been destroyed");
     }
-    if (dt < 0) throw new Error("Error: dt must be >= 0");
+    if (dt < 0) throw new Error("dt must be >= 0");
 
     // 1) deferred kills first so `_alive` reflects user requests before we
     //    apply lifetime / bounds checks.

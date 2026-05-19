@@ -5,12 +5,13 @@ import { Body } from "../phys/Body";
 import { MatMN } from "../geom/MatMN";
 import { Vec3 } from "../geom/Vec3";
 import { Constraint } from "./Constraint";
+import { IMPULSE_ERROR_NULL_BODY } from "./Constraint";
 import { ZPP_DistanceJoint } from "../native/constraint/ZPP_DistanceJoint";
 
 /** Read validated x from a Vec2 input. */
 function _readVec2X(v: Vec2): number {
   if ((v as any).zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -20,7 +21,7 @@ function _readVec2X(v: Vec2): number {
 /** Read validated y from a Vec2 input. */
 function _readVec2Y(v: Vec2): number {
   if ((v as any).zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -91,10 +92,10 @@ export class DistanceJoint extends Constraint {
 
     // Set anchor1
     if ((anchor1 as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (anchor1 == null) {
-      throw new Error("Error: Constraint::anchor1 cannot be null");
+      throw new Error("Constraint::anchor1 cannot be null");
     }
     const a1x = _readVec2X(anchor1);
     const a1y = _readVec2Y(anchor1);
@@ -104,10 +105,10 @@ export class DistanceJoint extends Constraint {
 
     // Set anchor2
     if ((anchor2 as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (anchor2 == null) {
-      throw new Error("Error: Constraint::anchor2 cannot be null");
+      throw new Error("Constraint::anchor2 cannot be null");
     }
     const a2x = _readVec2X(anchor2);
     const a2y = _readVec2Y(anchor2);
@@ -118,10 +119,10 @@ export class DistanceJoint extends Constraint {
     // Set jointMin with validation
     this.zpp_inner.immutable_midstep("DistanceJoint::jointMin");
     if (jointMin !== jointMin) {
-      throw new Error("Error: DistanceJoint::jointMin cannot be NaN");
+      throw new Error("DistanceJoint::jointMin cannot be NaN");
     }
     if (jointMin < 0) {
-      throw new Error("Error: DistanceJoint::jointMin must be >= 0");
+      throw new Error("DistanceJoint::jointMin must be >= 0");
     }
     if (zpp.jointMin != jointMin) {
       zpp.jointMin = jointMin;
@@ -131,10 +132,10 @@ export class DistanceJoint extends Constraint {
     // Set jointMax with validation
     this.zpp_inner.immutable_midstep("DistanceJoint::jointMax");
     if (jointMax !== jointMax) {
-      throw new Error("Error: DistanceJoint::jointMax cannot be NaN");
+      throw new Error("DistanceJoint::jointMax cannot be NaN");
     }
     if (jointMax < 0) {
-      throw new Error("Error: DistanceJoint::jointMax must be >= 0");
+      throw new Error("DistanceJoint::jointMax must be >= 0");
     }
     if (zpp.jointMax != jointMax) {
       zpp.jointMax = jointMax;
@@ -255,10 +256,10 @@ export class DistanceJoint extends Constraint {
   }
   set anchor1(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::anchor1 cannot be null");
+      throw new Error("Constraint::anchor1 cannot be null");
     }
     if (this.zpp_inner.wrap_a1 == null) {
       this.zpp_inner.setup_a1();
@@ -276,10 +277,10 @@ export class DistanceJoint extends Constraint {
   }
   set anchor2(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::anchor2 cannot be null");
+      throw new Error("Constraint::anchor2 cannot be null");
     }
     if (this.zpp_inner.wrap_a2 == null) {
       this.zpp_inner.setup_a2();
@@ -299,10 +300,10 @@ export class DistanceJoint extends Constraint {
   set jointMin(value: number) {
     this.zpp_inner.immutable_midstep("DistanceJoint::jointMin");
     if (value !== value) {
-      throw new Error("Error: DistanceJoint::jointMin cannot be NaN");
+      throw new Error("DistanceJoint::jointMin cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: DistanceJoint::jointMin must be >= 0");
+      throw new Error("DistanceJoint::jointMin must be >= 0");
     }
     if (this.zpp_inner.jointMin != value) {
       this.zpp_inner.jointMin = value;
@@ -317,10 +318,10 @@ export class DistanceJoint extends Constraint {
   set jointMax(value: number) {
     this.zpp_inner.immutable_midstep("DistanceJoint::jointMax");
     if (value !== value) {
-      throw new Error("Error: DistanceJoint::jointMax cannot be NaN");
+      throw new Error("DistanceJoint::jointMax cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: DistanceJoint::jointMax must be >= 0");
+      throw new Error("DistanceJoint::jointMax must be >= 0");
     }
     if (this.zpp_inner.jointMax != value) {
       this.zpp_inner.jointMax = value;
@@ -340,7 +341,7 @@ export class DistanceJoint extends Constraint {
    */
   isSlack(): boolean {
     if (this.zpp_inner.b1 == null || this.zpp_inner.b2 == null) {
-      throw new Error("Error: Cannot compute slack for DistanceJoint if either body is null.");
+      throw new Error("Cannot compute slack for DistanceJoint if either body is null.");
     }
     return this.zpp_inner.is_slack();
   }
@@ -349,7 +350,7 @@ export class DistanceJoint extends Constraint {
     const nape = getNape();
     const ret = new nape.geom.MatMN(1, 1);
     if (0 >= ret.zpp_inner.m || 0 >= ret.zpp_inner.n) {
-      throw new Error("Error: MatMN indices out of range");
+      throw new Error("MatMN indices out of range");
     }
     ret.zpp_inner.x[0 * ret.zpp_inner.n] = this.zpp_inner.jAcc;
     return ret;
@@ -358,12 +359,12 @@ export class DistanceJoint extends Constraint {
   override bodyImpulse(body: Body): Vec3 {
     const nape = getNape();
     if (body == null) {
-      throw new Error("Error: Cannot evaluate impulse on null body");
+      throw new Error(IMPULSE_ERROR_NULL_BODY);
     }
     const b1outer = this.zpp_inner.b1 == null ? null : this.zpp_inner.b1.outer;
     const b2outer = this.zpp_inner.b2 == null ? null : this.zpp_inner.b2.outer;
     if (body != b1outer && body != b2outer) {
-      throw new Error("Error: Body is not linked to this constraint");
+      throw new Error("Body is not linked to this constraint");
     }
     if (!this.zpp_inner.active) {
       return nape.geom.Vec3.get(0, 0, 0);
@@ -374,7 +375,7 @@ export class DistanceJoint extends Constraint {
 
   override visitBodies(lambda: (body: Body) => void): void {
     if (lambda == null) {
-      throw new Error("Error: Cannot apply null lambda to bodies");
+      throw new Error("Cannot apply null lambda to bodies");
     }
     const b1outer = this.zpp_inner.b1 == null ? null : this.zpp_inner.b1.outer;
     if (b1outer != null) {

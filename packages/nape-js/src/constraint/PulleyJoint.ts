@@ -4,12 +4,13 @@ import { Vec3 } from "../geom/Vec3";
 import { MatMN } from "../geom/MatMN";
 import { Body } from "../phys/Body";
 import { Constraint } from "./Constraint";
+import { IMPULSE_ERROR_NULL_BODY } from "./Constraint";
 import { ZPP_PulleyJoint } from "../native/constraint/ZPP_PulleyJoint";
 
 /** Read validated x from a Vec2 input. */
 function _readVec2X(v: Vec2): number {
   if ((v as any).zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -19,7 +20,7 @@ function _readVec2X(v: Vec2): number {
 /** Read validated y from a Vec2 input. */
 function _readVec2Y(v: Vec2): number {
   if ((v as any).zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -120,10 +121,10 @@ export class PulleyJoint extends Constraint {
     // Set jointMin
     zpp.immutable_midstep("PulleyJoint::jointMin");
     if (jointMin !== jointMin) {
-      throw new Error("Error: PulleyJoint::jointMin cannot be NaN");
+      throw new Error("PulleyJoint::jointMin cannot be NaN");
     }
     if (jointMin < 0) {
-      throw new Error("Error: PulleyJoint::jointMin must be >= 0");
+      throw new Error("PulleyJoint::jointMin must be >= 0");
     }
     if (zpp.jointMin != jointMin) {
       zpp.jointMin = jointMin;
@@ -133,10 +134,10 @@ export class PulleyJoint extends Constraint {
     // Set jointMax
     zpp.immutable_midstep("PulleyJoint::jointMax");
     if (jointMax !== jointMax) {
-      throw new Error("Error: PulleyJoint::jointMax cannot be NaN");
+      throw new Error("PulleyJoint::jointMax cannot be NaN");
     }
     if (jointMax < 0) {
-      throw new Error("Error: PulleyJoint::jointMax must be >= 0");
+      throw new Error("PulleyJoint::jointMax must be >= 0");
     }
     if (zpp.jointMax != jointMax) {
       zpp.jointMax = jointMax;
@@ -146,7 +147,7 @@ export class PulleyJoint extends Constraint {
     // Set ratio
     zpp.immutable_midstep("PulleyJoint::ratio");
     if (ratio !== ratio) {
-      throw new Error("Error: PulleyJoint::ratio cannot be NaN");
+      throw new Error("PulleyJoint::ratio cannot be NaN");
     }
     if (zpp.ratio != ratio) {
       zpp.ratio = ratio;
@@ -157,10 +158,10 @@ export class PulleyJoint extends Constraint {
   /** @internal Helper to set an anchor during construction. */
   private _setAnchorInit(anchor: Vec2, name: string, set: (x: number, y: number) => void): void {
     if ((anchor as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (anchor == null) {
-      throw new Error("Error: Constraint::" + name + " cannot be null");
+      throw new Error("Constraint::" + name + " cannot be null");
     }
     set(_readVec2X(anchor), _readVec2Y(anchor));
     _disposeWeakVec2(anchor);
@@ -383,10 +384,10 @@ export class PulleyJoint extends Constraint {
   }
   set anchor1(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::anchor1 cannot be null");
+      throw new Error("Constraint::anchor1 cannot be null");
     }
     if (this.zpp_inner.wrap_a1 == null) this.zpp_inner.setup_a1();
     _readVec2X(value);
@@ -402,10 +403,10 @@ export class PulleyJoint extends Constraint {
   }
   set anchor2(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::anchor2 cannot be null");
+      throw new Error("Constraint::anchor2 cannot be null");
     }
     if (this.zpp_inner.wrap_a2 == null) this.zpp_inner.setup_a2();
     _readVec2X(value);
@@ -421,10 +422,10 @@ export class PulleyJoint extends Constraint {
   }
   set anchor3(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::anchor3 cannot be null");
+      throw new Error("Constraint::anchor3 cannot be null");
     }
     if (this.zpp_inner.wrap_a3 == null) this.zpp_inner.setup_a3();
     _readVec2X(value);
@@ -440,10 +441,10 @@ export class PulleyJoint extends Constraint {
   }
   set anchor4(value: Vec2) {
     if ((value as any)?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Constraint::anchor4 cannot be null");
+      throw new Error("Constraint::anchor4 cannot be null");
     }
     if (this.zpp_inner.wrap_a4 == null) this.zpp_inner.setup_a4();
     _readVec2X(value);
@@ -463,10 +464,10 @@ export class PulleyJoint extends Constraint {
   set jointMin(value: number) {
     this.zpp_inner.immutable_midstep("PulleyJoint::jointMin");
     if (value !== value) {
-      throw new Error("Error: PulleyJoint::jointMin cannot be NaN");
+      throw new Error("PulleyJoint::jointMin cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: PulleyJoint::jointMin must be >= 0");
+      throw new Error("PulleyJoint::jointMin must be >= 0");
     }
     if (this.zpp_inner.jointMin != value) {
       this.zpp_inner.jointMin = value;
@@ -481,10 +482,10 @@ export class PulleyJoint extends Constraint {
   set jointMax(value: number) {
     this.zpp_inner.immutable_midstep("PulleyJoint::jointMax");
     if (value !== value) {
-      throw new Error("Error: PulleyJoint::jointMax cannot be NaN");
+      throw new Error("PulleyJoint::jointMax cannot be NaN");
     }
     if (value < 0) {
-      throw new Error("Error: PulleyJoint::jointMax must be >= 0");
+      throw new Error("PulleyJoint::jointMax must be >= 0");
     }
     if (this.zpp_inner.jointMax != value) {
       this.zpp_inner.jointMax = value;
@@ -504,7 +505,7 @@ export class PulleyJoint extends Constraint {
   set ratio(value: number) {
     this.zpp_inner.immutable_midstep("PulleyJoint::ratio");
     if (value !== value) {
-      throw new Error("Error: PulleyJoint::ratio cannot be NaN");
+      throw new Error("PulleyJoint::ratio cannot be NaN");
     }
     if (this.zpp_inner.ratio != value) {
       this.zpp_inner.ratio = value;
@@ -529,7 +530,7 @@ export class PulleyJoint extends Constraint {
       this.zpp_inner.b3 == null ||
       this.zpp_inner.b4 == null
     ) {
-      throw new Error("Error: Cannot compute slack for PulleyJoint if either body is null.");
+      throw new Error("Cannot compute slack for PulleyJoint if either body is null.");
     }
     return this.zpp_inner.slack;
   }
@@ -537,7 +538,7 @@ export class PulleyJoint extends Constraint {
   override impulse(): MatMN {
     const ret = new MatMN(1, 1);
     if (0 >= ret.zpp_inner.m || 0 >= ret.zpp_inner.n) {
-      throw new Error("Error: MatMN indices out of range");
+      throw new Error("MatMN indices out of range");
     }
     ret.zpp_inner.x[0 * ret.zpp_inner.n] = this.zpp_inner.jAcc;
     return ret;
@@ -545,14 +546,14 @@ export class PulleyJoint extends Constraint {
 
   override bodyImpulse(body: Body): Vec3 {
     if (body == null) {
-      throw new Error("Error: Cannot evaluate impulse on null body");
+      throw new Error(IMPULSE_ERROR_NULL_BODY);
     }
     const b1outer = this.zpp_inner.b1?.outer ?? null;
     const b2outer = this.zpp_inner.b2?.outer ?? null;
     const b3outer = this.zpp_inner.b3?.outer ?? null;
     const b4outer = this.zpp_inner.b4?.outer ?? null;
     if (body != b1outer && body != b2outer && body != b3outer && body != b4outer) {
-      throw new Error("Error: Body is not linked to this constraint");
+      throw new Error("Body is not linked to this constraint");
     }
     if (!this.zpp_inner.active) {
       return Vec3.get(0, 0, 0);
@@ -563,7 +564,7 @@ export class PulleyJoint extends Constraint {
 
   override visitBodies(lambda: (body: Body) => void): void {
     if (lambda == null) {
-      throw new Error("Error: Cannot apply null lambda to bodies");
+      throw new Error("Cannot apply null lambda to bodies");
     }
     const b1 = this.zpp_inner.b1?.outer ?? null;
     const b2 = this.zpp_inner.b2?.outer ?? null;

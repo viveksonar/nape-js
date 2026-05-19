@@ -53,7 +53,7 @@ export class GeomPoly {
 
   private _checkDisposed(): void {
     if (this.zpp_disp) {
-      throw new Error("Error: GeomPoly has been disposed and cannot be used!");
+      throw new Error("GeomPoly has been disposed and cannot be used!");
     }
   }
 
@@ -167,7 +167,7 @@ export class GeomPoly {
         : prop === "y"
           ? "bottommost"
           : "rightmost";
-      throw new Error("Error: empty GeomPoly has no defineable " + label + " vertex");
+      throw new Error("empty GeomPoly has no defineable " + label + " vertex");
     }
     let best = this.zpp_inner.vertices;
     let cur = best.next;
@@ -188,14 +188,14 @@ export class GeomPoly {
       for (let i = 0; i < vertices.length; i++) {
         const vite = vertices[i];
         if (vite == null) {
-          throw new Error("Error: Array<Vec2> contains null objects");
+          throw new Error("Array<Vec2> contains null objects");
         }
         if (!(vite instanceof Vec2)) {
-          throw new Error("Error: Array<Vec2> contains non Vec2 objects");
+          throw new Error("Array<Vec2> contains non Vec2 objects");
         }
         const v = vite as Vec2;
         if (v.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         v.zpp_inner.validate();
         const x = v.zpp_inner.x;
@@ -209,10 +209,10 @@ export class GeomPoly {
       while (iter.hasNext()) {
         const v1 = iter.next();
         if (v1 == null) {
-          throw new Error("Error: Vec2List contains null objects");
+          throw new Error("Vec2List contains null objects");
         }
         if (v1.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         v1.zpp_inner.validate();
         const x = v1.zpp_inner.x;
@@ -223,7 +223,7 @@ export class GeomPoly {
       }
     } else if (vertices instanceof GeomPoly) {
       if (vertices.zpp_disp) {
-        throw new Error("Error: GeomPoly has been disposed and cannot be used!");
+        throw new Error("GeomPoly has been disposed and cannot be used!");
       }
       const verts = vertices.zpp_inner.vertices;
       if (verts != null) {
@@ -336,7 +336,7 @@ export class GeomPoly {
   current(): Vec2 {
     this._checkDisposed();
     if (this.zpp_inner.vertices == null) {
-      throw new Error("Error: GeomPoly is empty");
+      throw new Error("GeomPoly is empty");
     }
     return this.zpp_inner.vertices.wrapper();
   }
@@ -348,10 +348,10 @@ export class GeomPoly {
   push(vertex: Vec2): this {
     this._checkDisposed();
     if (vertex != null && vertex.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (vertex == null) {
-      throw new Error("Error: Cannot push null vertex");
+      throw new Error("Cannot push null vertex");
     }
     vertex.zpp_inner.validate();
     const x = vertex.zpp_inner.x;
@@ -368,7 +368,7 @@ export class GeomPoly {
   pop(): this {
     this._checkDisposed();
     if (this.zpp_inner.vertices == null) {
-      throw new Error("Error: Cannot pop from empty polygon");
+      throw new Error("Cannot pop from empty polygon");
     }
     const retv = this._popHead();
     GeomPoly._freeVert(retv);
@@ -378,10 +378,10 @@ export class GeomPoly {
   unshift(vertex: Vec2): this {
     this._checkDisposed();
     if (vertex != null && vertex.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (vertex == null) {
-      throw new Error("Error: Cannot unshift null vertex");
+      throw new Error("Cannot unshift null vertex");
     }
     vertex.zpp_inner.validate();
     const x = vertex.zpp_inner.x;
@@ -398,7 +398,7 @@ export class GeomPoly {
   shift(): this {
     this._checkDisposed();
     if (this.zpp_inner.vertices == null) {
-      throw new Error("Error: Cannot shift from empty polygon");
+      throw new Error("Cannot shift from empty polygon");
     }
     const retv = this._shiftHead();
     GeomPoly._freeVert(retv);
@@ -459,7 +459,7 @@ export class GeomPoly {
 
   dispose(): void {
     if (this.zpp_disp) {
-      throw new Error("Error: GeomPoly has been disposed and cannot be used!");
+      throw new Error("GeomPoly has been disposed and cannot be used!");
     }
     this.clear();
     this.zpp_pool = null;
@@ -529,10 +529,10 @@ export class GeomPoly {
   contains(point: Vec2): boolean {
     this._checkDisposed();
     if (point != null && point.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (point == null) {
-      throw new Error("Error: GeomPoly::contains point cannot be null");
+      throw new Error("GeomPoly::contains point cannot be null");
     }
     point.zpp_inner.validate();
     const px = point.zpp_inner.x;
@@ -619,7 +619,7 @@ export class GeomPoly {
   simplify(epsilon: number): GeomPoly {
     this._checkDisposed();
     if (epsilon <= 0.0) {
-      throw new Error("Error: Epsilon should be > 0 for simplifying a GeomPoly");
+      throw new Error("Epsilon should be > 0 for simplifying a GeomPoly");
     }
     if (this._isDegenRing()) return this.copy();
     const x = ZPP_Simplify.simplify(this.zpp_inner.vertices, epsilon);
@@ -631,7 +631,7 @@ export class GeomPoly {
   simpleDecomposition(output?: any): any {
     this._checkDisposed();
     if (this._isDegenRing()) {
-      throw new Error("Error: Cannot decompose a degenerate polygon");
+      throw new Error("Cannot decompose a degenerate polygon");
     }
     const nape = getNape();
     const MPs = this.zpp_inner.vertices;
@@ -656,7 +656,7 @@ export class GeomPoly {
   monotoneDecomposition(output?: any): any {
     this._checkDisposed();
     if (this._isDegenRing()) {
-      throw new Error("Error: Cannot decompose a degenerate polygon");
+      throw new Error("Cannot decompose a degenerate polygon");
     }
     const nape = getNape();
     const poly = this.zpp_inner.vertices;
@@ -685,7 +685,7 @@ export class GeomPoly {
   convexDecomposition(delaunay: boolean = false, output?: any): any {
     this._checkDisposed();
     if (this._isDegenRing()) {
-      throw new Error("Error: Cannot decompose a degenerate polygon");
+      throw new Error("Cannot decompose a degenerate polygon");
     }
     const nape = getNape();
     const poly = this.zpp_inner.vertices;
@@ -729,7 +729,7 @@ export class GeomPoly {
   triangularDecomposition(delaunay: boolean = false, output?: any): any {
     this._checkDisposed();
     if (this._isDegenRing()) {
-      throw new Error("Error: Cannot decompose a degenerate polygon");
+      throw new Error("Cannot decompose a degenerate polygon");
     }
     const nape = getNape();
     const poly = this.zpp_inner.vertices;
@@ -825,16 +825,16 @@ export class GeomPoly {
   ): any {
     this._checkDisposed();
     if (!(this._isDegenRing() ? true : ZPP_Simple.isSimple(this.zpp_inner.vertices))) {
-      throw new Error("Error: Cut requires a truly simple polygon");
+      throw new Error("Cut requires a truly simple polygon");
     }
     if (start == null || end == null) {
-      throw new Error("Error: Cannot cut with null start/end's");
+      throw new Error("Cannot cut with null start/end's");
     }
     if (start.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (end.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
 
     const ret = ZPP_Cutter.run(
@@ -858,7 +858,7 @@ export class GeomPoly {
   transform(matrix: any): this {
     this._checkDisposed();
     if (matrix == null) {
-      throw new Error("Error: Cannot transform by null matrix");
+      throw new Error("Cannot transform by null matrix");
     }
     this._forEachVert((v: any) => {
       const t = matrix.zpp_inner.a * v.x + matrix.zpp_inner.b * v.y + matrix.zpp_inner.tx;
@@ -871,7 +871,7 @@ export class GeomPoly {
   bounds(): any {
     this._checkDisposed();
     if (this.zpp_inner.vertices == null) {
-      throw new Error("Error: empty GeomPoly has no defineable bounds");
+      throw new Error("empty GeomPoly has no defineable bounds");
     }
     let minx = 1e100;
     let miny = 1e100;

@@ -151,7 +151,7 @@ export class Compound extends Interactor {
   /** Recursively visit all bodies in this compound and its sub-compounds. */
   visitBodies(lambda: (body: Body) => void): void {
     if (lambda == null) {
-      throw new Error("Error: lambda cannot be null for Compound::visitBodies");
+      throw new Error("lambda cannot be null for Compound::visitBodies");
     }
     const bodies = this.zpp_inner.wrap_bodies;
     const bLen = bodies.length;
@@ -168,7 +168,7 @@ export class Compound extends Interactor {
   /** Recursively visit all constraints in this compound and its sub-compounds. */
   visitConstraints(lambda: (constraint: Constraint) => void): void {
     if (lambda == null) {
-      throw new Error("Error: lambda cannot be null for Compound::visitConstraints");
+      throw new Error("lambda cannot be null for Compound::visitConstraints");
     }
     const constraints = this.zpp_inner.wrap_constraints;
     const cLen = constraints.length;
@@ -185,7 +185,7 @@ export class Compound extends Interactor {
   /** Recursively visit all sub-compounds in this compound. */
   visitCompounds(lambda: (compound: Compound) => void): void {
     if (lambda == null) {
-      throw new Error("Error: lambda cannot be null for Compound::visitConstraints");
+      throw new Error("lambda cannot be null for Compound::visitConstraints");
     }
     const compounds = this.zpp_inner.wrap_compounds;
     const compLen = compounds.length;
@@ -205,7 +205,7 @@ export class Compound extends Interactor {
       const shapes = b.zpp_inner.wrap_shapes;
       if (shapes.zpp_inner.inner.head != null) {
         if (b.zpp_inner.world) {
-          throw new Error("Error: Space::world has no worldCOM");
+          throw new Error("Space::world has no worldCOM");
         }
         // Get worldCOM
         if (b.zpp_inner.wrap_worldCOM == null) {
@@ -215,7 +215,7 @@ export class Compound extends Interactor {
 
         // Get mass
         if (b.zpp_inner.world) {
-          throw new Error("Error: Space::world has no mass");
+          throw new Error("Space::world has no mass");
         }
         b.zpp_inner.validate_mass();
         if (b.zpp_inner.massMode == 0 && b.zpp_inner.shapes.head == null) {
@@ -231,7 +231,7 @@ export class Compound extends Interactor {
     });
 
     if (total === 0.0) {
-      throw new Error("Error: COM of an empty Compound is undefined silly");
+      throw new Error("COM of an empty Compound is undefined silly");
     }
     ret.muleq(1 / total);
     if (weak) {
@@ -243,10 +243,10 @@ export class Compound extends Interactor {
   /** Translate all bodies in this compound by the given vector. */
   translate(translation: Vec2): Compound {
     if (translation != null && (translation as any).zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (translation == null) {
-      throw new Error("Error: Cannot translate by null Vec2");
+      throw new Error("Cannot translate by null Vec2");
     }
     const weak = translation.zpp_inner.weak;
     translation.zpp_inner.weak = false;
@@ -266,13 +266,13 @@ export class Compound extends Interactor {
   /** Rotate all bodies in this compound around the given centre point. */
   rotate(centre: Vec2, angle: number): Compound {
     if (centre != null && (centre as any).zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (centre == null) {
-      throw new Error("Error: Cannot rotate about a null Vec2");
+      throw new Error("Cannot rotate about a null Vec2");
     }
     if (angle !== angle) {
-      throw new Error("Error: Cannot rotate by NaN radians");
+      throw new Error("Cannot rotate by NaN radians");
     }
     const weak = centre.zpp_inner.weak;
     centre.zpp_inner.weak = false;

@@ -27,7 +27,7 @@ export class Contact {
   constructor() {
     this.zpp_inner = null as any;
     if (!ZPP_Contact.internal) {
-      throw new Error("Error: Cannot instantiate Contact derp!");
+      throw new Error("Cannot instantiate Contact derp!");
     }
   }
 
@@ -196,14 +196,14 @@ export class Contact {
   /** @internal */
   private _inactiveCheck(): void {
     if (this.zpp_inner.inactiveme()) {
-      throw new Error("Error: Contact not currently in use");
+      throw new Error("Contact not currently in use");
     }
   }
 
   /** @internal */
   private _checkBody(body: Body, colarb: ZPP_ColArbiter): void {
     if (body != colarb.b1.outer && body != colarb.b2.outer) {
-      throw new Error("Error: Contact does not relate to the given body");
+      throw new Error("Contact does not relate to the given body");
     }
   }
 }

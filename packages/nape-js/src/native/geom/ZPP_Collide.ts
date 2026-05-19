@@ -1243,7 +1243,7 @@ export class ZPP_Collide {
                 if (_this.type == 1) {
                   const _this1 = _this.polygon;
                   if (_this1.lverts.next == null) {
-                    throw new Error("Error: An empty polygon has no meaningful localCOM");
+                    throw new Error("An empty polygon has no meaningful localCOM");
                   }
                   if (_this1.lverts.next.next == null) {
                     _this1.localCOMx = _this1.lverts.next.x;
@@ -1357,7 +1357,7 @@ export class ZPP_Collide {
                   if (_this3.type == 1) {
                     const _this4 = _this3.polygon;
                     if (_this4.lverts.next == null) {
-                      throw new Error("Error: An empty polygon has no meaningful localCOM");
+                      throw new Error("An empty polygon has no meaningful localCOM");
                     }
                     if (_this4.lverts.next.next == null) {
                       _this4.localCOMx = _this4.lverts.next.x;
@@ -2196,7 +2196,7 @@ export class ZPP_Collide {
                       if (_this6.type == 1) {
                         const _this7 = _this6.polygon;
                         if (_this7.lverts.next == null) {
-                          throw new Error("Error: An empty polygon has no meaningful localCOM");
+                          throw new Error("An empty polygon has no meaningful localCOM");
                         }
                         if (_this7.lverts.next.next == null) {
                           _this7.localCOMx = _this7.lverts.next.x;

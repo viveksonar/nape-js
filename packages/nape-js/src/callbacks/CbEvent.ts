@@ -26,7 +26,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class CbEvent {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate CbEvent derp!");
+      throw new Error("Cannot instantiate CbEvent derp!");
     }
   }
 

@@ -6,7 +6,7 @@ import { ZPP_Ray } from "../native/geom/ZPP_Ray";
 /** Read validated x from a Vec2. */
 function _readVec2X(v: Vec2): number {
   if (v.zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -16,7 +16,7 @@ function _readVec2X(v: Vec2): number {
 /** Read validated y from a Vec2. */
 function _readVec2Y(v: Vec2): number {
   if (v.zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -53,18 +53,18 @@ export class Ray {
   constructor(origin: Vec2, direction: Vec2) {
     // Validate origin
     if (origin?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (origin == null) {
-      throw new Error("Error: Ray::origin cannot be null");
+      throw new Error("Ray::origin cannot be null");
     }
 
     // Validate direction
     if (direction?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (direction == null) {
-      throw new Error("Error: Ray::direction cannot be null");
+      throw new Error("Ray::direction cannot be null");
     }
 
     // Create internal ZPP_Ray (allocates owned origin/direction Vec2 wrappers)
@@ -119,16 +119,16 @@ export class Ray {
    */
   static fromSegment(start: Vec2, end: Vec2): Ray {
     if (start?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (start == null) {
-      throw new Error("Error: Ray::fromSegment::start is null");
+      throw new Error("Ray::fromSegment::start is null");
     }
     if (end?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (end == null) {
-      throw new Error("Error: Ray::fromSegment::end is null");
+      throw new Error("Ray::fromSegment::end is null");
     }
 
     // Compute direction as (end - start), weak
@@ -145,7 +145,7 @@ export class Ray {
     const maxDist = Math.sqrt(ddx * ddx + ddy * ddy);
 
     if (maxDist !== maxDist) {
-      throw new Error("Error: maxDistance cannot be NaN");
+      throw new Error("maxDistance cannot be NaN");
     }
     ray.zpp_inner.maxdist = maxDist;
 
@@ -167,10 +167,10 @@ export class Ray {
   /** The ray's start point in world coordinates. */
   set origin(value: Vec2) {
     if (value?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Ray::origin cannot be null");
+      throw new Error("Ray::origin cannot be null");
     }
     this.zpp_inner.origin.set(value);
     _disposeWeakVec2(value);
@@ -184,10 +184,10 @@ export class Ray {
   /** The ray's direction vector (need not be unit length; the engine normalises internally). */
   set direction(value: Vec2) {
     if (value?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Ray::direction cannot be null");
+      throw new Error("Ray::direction cannot be null");
     }
     this.zpp_inner.direction.set(value);
     this.zpp_inner.zip_dir = true;
@@ -202,7 +202,7 @@ export class Ray {
   /** Maximum travel distance for raycasting queries. Defaults to `Infinity`. */
   set maxDistance(value: number) {
     if (value !== value) {
-      throw new Error("Error: maxDistance cannot be NaN");
+      throw new Error("maxDistance cannot be NaN");
     }
     this.zpp_inner.maxdist = value;
   }
@@ -264,7 +264,7 @@ export class Ray {
     const ret = new Ray(this.zpp_inner.origin, this.zpp_inner.direction);
     const md = this.zpp_inner.maxdist;
     if (md !== md) {
-      throw new Error("Error: maxDistance cannot be NaN");
+      throw new Error("maxDistance cannot be NaN");
     }
     ret.zpp_inner.maxdist = md;
     return ret;

@@ -49,7 +49,7 @@ export class Material {
 
     if (elasticity !== zpp.elasticity) {
       if (elasticity !== elasticity) {
-        throw new Error("Error: Material::elasticity cannot be NaN");
+        throw new Error("Material::elasticity cannot be NaN");
       }
       zpp.elasticity = elasticity;
       zpp.invalidate(ZPP_Material.WAKE | ZPP_Material.ARBITERS);
@@ -57,10 +57,10 @@ export class Material {
 
     if (dynamicFriction !== zpp.dynamicFriction) {
       if (dynamicFriction !== dynamicFriction) {
-        throw new Error("Error: Material::dynamicFriction cannot be NaN");
+        throw new Error("Material::dynamicFriction cannot be NaN");
       }
       if (dynamicFriction < 0) {
-        throw new Error("Error: Material::dynamicFriction cannot be negative");
+        throw new Error("Material::dynamicFriction cannot be negative");
       }
       zpp.dynamicFriction = dynamicFriction;
       zpp.invalidate(ZPP_Material.WAKE | ZPP_Material.ANGDRAG | ZPP_Material.ARBITERS);
@@ -68,10 +68,10 @@ export class Material {
 
     if (staticFriction !== zpp.staticFriction) {
       if (staticFriction !== staticFriction) {
-        throw new Error("Error: Material::staticFriction cannot be NaN");
+        throw new Error("Material::staticFriction cannot be NaN");
       }
       if (staticFriction < 0) {
-        throw new Error("Error: Material::staticFriction cannot be negative");
+        throw new Error("Material::staticFriction cannot be negative");
       }
       zpp.staticFriction = staticFriction;
       zpp.invalidate(ZPP_Material.WAKE | ZPP_Material.ARBITERS);
@@ -79,10 +79,10 @@ export class Material {
 
     if (density !== zpp.density * 1000) {
       if (density !== density) {
-        throw new Error("Error: Material::density cannot be NaN");
+        throw new Error("Material::density cannot be NaN");
       }
       if (density < 0) {
-        throw new Error("Error: Material::density must be positive");
+        throw new Error("Material::density must be positive");
       }
       zpp.density = density / 1000;
       zpp.invalidate(ZPP_Material.WAKE | ZPP_Material.PROPS);
@@ -90,10 +90,10 @@ export class Material {
 
     if (rollingFriction !== zpp.rollingFriction) {
       if (rollingFriction !== rollingFriction) {
-        throw new Error("Error: Material::rollingFriction cannot be NaN");
+        throw new Error("Material::rollingFriction cannot be NaN");
       }
       if (rollingFriction < 0) {
-        throw new Error("Error: Material::rollingFriction cannot be negative");
+        throw new Error("Material::rollingFriction cannot be negative");
       }
       zpp.rollingFriction = rollingFriction;
       zpp.invalidate(ZPP_Material.WAKE | ZPP_Material.ARBITERS);
@@ -133,7 +133,7 @@ export class Material {
   set elasticity(value: number) {
     if (value !== this.zpp_inner.elasticity) {
       if (value !== value) {
-        throw new Error("Error: Material::elasticity cannot be NaN");
+        throw new Error("Material::elasticity cannot be NaN");
       }
       this.zpp_inner.elasticity = value;
       this.zpp_inner.invalidate(ZPP_Material.WAKE | ZPP_Material.ARBITERS);
@@ -146,10 +146,10 @@ export class Material {
   set dynamicFriction(value: number) {
     if (value !== this.zpp_inner.dynamicFriction) {
       if (value !== value) {
-        throw new Error("Error: Material::dynamicFriction cannot be NaN");
+        throw new Error("Material::dynamicFriction cannot be NaN");
       }
       if (value < 0) {
-        throw new Error("Error: Material::dynamicFriction cannot be negative");
+        throw new Error("Material::dynamicFriction cannot be negative");
       }
       this.zpp_inner.dynamicFriction = value;
       this.zpp_inner.invalidate(ZPP_Material.WAKE | ZPP_Material.ANGDRAG | ZPP_Material.ARBITERS);
@@ -162,10 +162,10 @@ export class Material {
   set staticFriction(value: number) {
     if (value !== this.zpp_inner.staticFriction) {
       if (value !== value) {
-        throw new Error("Error: Material::staticFriction cannot be NaN");
+        throw new Error("Material::staticFriction cannot be NaN");
       }
       if (value < 0) {
-        throw new Error("Error: Material::staticFriction cannot be negative");
+        throw new Error("Material::staticFriction cannot be negative");
       }
       this.zpp_inner.staticFriction = value;
       this.zpp_inner.invalidate(ZPP_Material.WAKE | ZPP_Material.ARBITERS);
@@ -178,10 +178,10 @@ export class Material {
   set density(value: number) {
     if (value !== this.zpp_inner.density * 1000) {
       if (value !== value) {
-        throw new Error("Error: Material::density cannot be NaN");
+        throw new Error("Material::density cannot be NaN");
       }
       if (value < 0) {
-        throw new Error("Error: Material::density must be positive");
+        throw new Error("Material::density must be positive");
       }
       this.zpp_inner.density = value / 1000;
       this.zpp_inner.invalidate(ZPP_Material.WAKE | ZPP_Material.PROPS);
@@ -194,10 +194,10 @@ export class Material {
   set rollingFriction(value: number) {
     if (value !== this.zpp_inner.rollingFriction) {
       if (value !== value) {
-        throw new Error("Error: Material::rollingFriction cannot be NaN");
+        throw new Error("Material::rollingFriction cannot be NaN");
       }
       if (value < 0) {
-        throw new Error("Error: Material::rollingFriction cannot be negative");
+        throw new Error("Material::rollingFriction cannot be negative");
       }
       this.zpp_inner.rollingFriction = value;
       this.zpp_inner.invalidate(ZPP_Material.WAKE | ZPP_Material.ARBITERS);

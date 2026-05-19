@@ -196,7 +196,7 @@ export class ZPP_OptionType {
   append(list: any, val: any): void {
     const napeNs = ZPP_OptionType._nape;
     if (val == null) {
-      throw new Error("Error: Cannot append null, only CbType and CbType list values");
+      throw new Error("Cannot append null, only CbType and CbType list values");
     }
     // Check zpp_inner instanceof ZPP_CbType first (robust against bundler
     // code-splitting that duplicates the public CbType class), then fall back
@@ -239,13 +239,13 @@ export class ZPP_OptionType {
         const cb2 = cbs1[_g1];
         ++_g1;
         if (!(cb2?.zpp_inner instanceof ZPP_CbType) && !(cb2 instanceof napeNs.callbacks.CbType)) {
-          throw new Error("Error: Cannot append non-CbType or CbType list value");
+          throw new Error("Cannot append non-CbType or CbType list value");
         }
         const cbx = cb2;
         this.append_type(list, cbx.zpp_inner as ZPP_CbType);
       }
     } else {
-      throw new Error("Error: Cannot append non-CbType or CbType list value");
+      throw new Error("Cannot append non-CbType or CbType list value");
     }
   }
 }

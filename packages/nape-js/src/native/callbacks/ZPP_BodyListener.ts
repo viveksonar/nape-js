@@ -25,7 +25,7 @@ export class ZPP_BodyListener extends ZPP_Listener {
 
   immutable_options(): void {
     if (this.space != null && this.space.midstep) {
-      throw new Error("Error: Cannot change listener type options during space.step()");
+      throw new Error("Cannot change listener type options during space.step()");
     }
   }
 
@@ -118,7 +118,7 @@ export class ZPP_BodyListener extends ZPP_Listener {
 
   swapEvent(newev: number): void {
     if (newev != 2 && newev != 3) {
-      throw new Error("Error: BodyListener event must be either WAKE or SLEEP only");
+      throw new Error("BodyListener event must be either WAKE or SLEEP only");
     }
     this.removedFromSpace();
     this.event = newev;

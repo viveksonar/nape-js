@@ -116,7 +116,7 @@ export class ZPP_FluidProperties {
     const y = this.gravityy ?? 0;
 
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
 
     // Get or create a Vec2 from the public pool
@@ -152,17 +152,17 @@ export class ZPP_FluidProperties {
     } else {
       // Reuse existing inner Vec2
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const inner = ret.zpp_inner;
       if (inner._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (inner._isimmutable != null) {
         inner._isimmutable();
       }
       if (x !== x || y !== y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
 
       // Check if values actually changed

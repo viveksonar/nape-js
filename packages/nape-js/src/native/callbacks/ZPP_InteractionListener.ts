@@ -506,9 +506,9 @@ export class ZPP_InteractionListener extends ZPP_Listener {
 
   swapEvent(newev: number): void {
     if (this.type == 3) {
-      throw new Error("Error: PreListener event can only be PRE");
+      throw new Error("PreListener event can only be PRE");
     } else if (newev != 0 && newev != 1 && newev != 6) {
-      throw new Error("Error: InteractionListener event must be either BEGIN, END, ONGOING");
+      throw new Error("InteractionListener event must be either BEGIN, END, ONGOING");
     }
     this.removedFromSpace();
     this.event = newev;

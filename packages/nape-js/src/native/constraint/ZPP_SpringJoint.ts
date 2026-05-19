@@ -169,10 +169,10 @@ export class ZPP_SpringJoint extends ZPP_Constraint {
 
   override validate(): void {
     if (this.b1 == null || this.b2 == null) {
-      throw new Error("Error: SpringJoint cannot be simulated null bodies");
+      throw new Error("SpringJoint cannot be simulated null bodies");
     }
     if (this.b1 == this.b2) {
-      throw new Error("Error: SpringJoint cannot be simulated with body1 == body2");
+      throw new Error("SpringJoint cannot be simulated with body1 == body2");
     }
     if (this.b1.space != this.space || this.b2.space != this.space) {
       throw new Error(
@@ -180,7 +180,7 @@ export class ZPP_SpringJoint extends ZPP_Constraint {
       );
     }
     if (this.b1.type != 2 && this.b2.type != 2) {
-      throw new Error("Error: Constraints cannot have both bodies non-dynamic");
+      throw new Error("Constraints cannot have both bodies non-dynamic");
     }
   }
 
@@ -367,7 +367,7 @@ export class ZPP_SpringJoint extends ZPP_Constraint {
       x = 0;
     }
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (ZPP_PubPool.poolVec2 == null) {
@@ -398,21 +398,21 @@ export class ZPP_SpringJoint extends ZPP_Constraint {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -420,7 +420,7 @@ export class ZPP_SpringJoint extends ZPP_Constraint {
       }
       if (ret.zpp_inner.x == x) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: " + "Vec2" + " has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {

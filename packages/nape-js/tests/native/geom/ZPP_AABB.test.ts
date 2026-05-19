@@ -717,7 +717,7 @@ describe("ZPP_AABB", () => {
       // NaN min values trigger the NaN check at line 133-134
       a.minx = NaN;
       a.miny = 0;
-      expect(() => a.getmin()).toThrow("Error: Vec2 components cannot be NaN");
+      expect(() => a.getmin()).toThrow("Vec2 components cannot be NaN");
     });
 
     it("should reuse pooled Vec2 and advance the pool chain", () => {
@@ -974,7 +974,7 @@ describe("ZPP_AABB", () => {
       };
 
       const a = ZPP_AABB.get(1, 2, 5, 6);
-      expect(() => a.getmin()).toThrow("Error: Vec2 is immutable");
+      expect(() => a.getmin()).toThrow("Vec2 is immutable");
     });
 
     it("should throw when existing inner is disposed (via new Vec2 path)", () => {
@@ -1008,7 +1008,7 @@ describe("ZPP_AABB", () => {
       };
 
       const a = ZPP_AABB.get(1, 2, 5, 6);
-      expect(() => a.getmin()).toThrow("Error: Vec2 has been disposed and cannot be used!");
+      expect(() => a.getmin()).toThrow("Vec2 has been disposed and cannot be used!");
     });
   });
 });

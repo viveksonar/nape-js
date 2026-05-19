@@ -13,7 +13,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class Winding {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate Winding derp!");
+      throw new Error("Cannot instantiate Winding derp!");
     }
   }
 
