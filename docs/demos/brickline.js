@@ -44,6 +44,15 @@ const SLIDER_MAX_X = SCREEN_W - 100;
 const SETTLE_EPS = 8;
 const SETTLE_FRAMES = 30;
 
+// Tip detection on a settled brick:
+//   * it drops more than TIP_FALL_PX below its settled y, OR
+//   * its rotation deviates from horizontal by more than TIP_ANGLE_RAD.
+// The floor is wider than the slider range, so a settled brick will never
+// reach FALL_OFF_Y by itself — it'd just slide along the floor. Tracking the
+// settled y per brick catches the case where the brick rolls off the stack.
+const TIP_FALL_PX = 36;
+const TIP_ANGLE_RAD = Math.PI / 3; // 60°
+
 // Visual: the brick palette index rotates per drop so the stack stripes look
 // like alternating courses of masonry.
 const STRIPE_PALETTE = [0, 1, 2, 4];
@@ -72,7 +81,7 @@ let _runner = null;
 let _floor = null;
 let _slider = null;                       // KINEMATIC brick currently moving
 let _sliderDir = 1;                       // +1 right, -1 left
-let _stack = [];                          // settled bricks contributing to score
+let _stack = [];                          // settled bricks — { body, settledY } for tip detection
 let _falling = [];                        // dropped bricks not yet settled — { body, frames, settled }
 let _stackTopWorldY = FLOOR_Y;            // top of the highest settled brick (world y, smaller = higher)
 let _score = 0;
@@ -133,7 +142,7 @@ function topWorldY() {
 function clearWorld() {
   if (_slider && _slider.space) _slider.space = null;
   _slider = null;
-  for (const b of _stack) if (b.space) b.space = null;
+  for (const s of _stack) if (s.body.space) s.body.space = null;
   _stack.length = 0;
   for (const f of _falling) if (f.body.space) f.body.space = null;
   _falling.length = 0;
@@ -155,11 +164,14 @@ function resetGame() {
 }
 
 // Drop the current slider: convert KINEMATIC → DYNAMIC and start a fresh
-// slider above. The dropped body keeps its current horizontal velocity, so the
-// drop has a satisfying lateral throw.
+// slider above. We zero the velocity on conversion so the brick falls
+// straight down — kinematic velocity is carried over otherwise and the brick
+// would sail sideways at slider speed.
 function dropSlider() {
   if (!_slider || _gameOver) return;
   _slider.type = BodyType.DYNAMIC;
+  _slider.velocity = new Vec2(0, 0);
+  _slider.angularVel = 0;
   _falling.push({ body: _slider, frames: 0, settled: false });
   _dropPaletteIdx++;
   _slider = spawnSlider();
@@ -205,7 +217,7 @@ function updateFalling() {
       f.frames++;
       if (f.frames >= SETTLE_FRAMES && !f.settled) {
         f.settled = true;
-        _stack.push(b);
+        _stack.push({ body: b, settledY: b.position.y });
         _score++;
         if (_score > _highScore) _highScore = _score;
         const topOfBrick = b.position.y - BRICK_H / 2;
@@ -218,14 +230,32 @@ function updateFalling() {
   }
 }
 
-// Game-over also fires when a settled brick later tips off the tower.
+// Game-over also fires when a settled brick later tips off the tower —
+// detected by (a) the brick dropping noticeably below its settled y, or
+// (b) its rotation deviating significantly from horizontal. The floor is
+// wide, so a tipped brick just slides along it instead of falling off —
+// the angle / drop checks catch the collapse before it bottoms out.
 function checkStackIntegrity() {
   for (let i = _stack.length - 1; i >= 0; i--) {
-    if (_stack[i].position.y > FALL_OFF_Y) {
+    const s = _stack[i];
+    const b = s.body;
+    if (!b.space) continue;
+    const dropped = b.position.y - s.settledY;
+    const angle = Math.abs(normalizeAngle(b.rotation));
+    if (dropped > TIP_FALL_PX || angle > TIP_ANGLE_RAD || b.position.y > FALL_OFF_Y) {
       triggerGameOver();
       return;
     }
   }
+}
+
+// Wrap an angle into [-π, π] so we can compare against TIP_ANGLE_RAD without
+// false positives near ±2π.
+function normalizeAngle(a) {
+  let x = a % (Math.PI * 2);
+  if (x > Math.PI) x -= Math.PI * 2;
+  else if (x < -Math.PI) x += Math.PI * 2;
+  return x;
 }
 
 function triggerGameOver() {
