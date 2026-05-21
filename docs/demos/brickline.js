@@ -33,6 +33,7 @@ const FALL_OFF_Y = SCREEN_H + 80;         // body.y above this = "fell off"
 const BRICK_W = 80;
 const BRICK_H = 24;
 const SLIDER_GAP_ABOVE = 220;             // slider's vertical gap above the stack top (world units)
+const SLIDER_LIFT_AFTER_DROP = 60;        // lift the next slider this much above the just-dropped brick
 const SLIDER_SPEED_BASE = 220;            // px / sec at score = 0
 const SLIDER_SPEED_GAIN = 12;             // +px/sec per stacked brick (cap below)
 const SLIDER_SPEED_MAX = 480;
@@ -111,10 +112,11 @@ function spawnFloor() {
   return floor;
 }
 
-// Spawn the kinematic slider above the current stack top. World y decreases
-// as the stack grows, so the slider's world position climbs with the tower.
-function spawnSlider() {
-  const targetWorldY = topWorldY() - SLIDER_GAP_ABOVE;
+// Spawn the kinematic slider. Default is SLIDER_GAP_ABOVE over the stack
+// top; pass `yOverride` to place it elsewhere (used right after a drop so
+// the new slider doesn't spawn inside the brick that's still falling).
+function spawnSlider(yOverride) {
+  const targetWorldY = yOverride ?? (topWorldY() - SLIDER_GAP_ABOVE);
   const body = new Body(BodyType.KINEMATIC, new Vec2(SCREEN_W / 2, targetWorldY));
   body.shapes.add(new Polygon(Polygon.box(BRICK_W, BRICK_H)));
   // Material can be assigned now — Kinematic→Dynamic conversion preserves it.
@@ -164,23 +166,30 @@ function resetGame() {
 }
 
 // Drop the current slider: convert KINEMATIC → DYNAMIC and start a fresh
-// slider above. We zero the velocity on conversion so the brick falls
-// straight down — kinematic velocity is carried over otherwise and the brick
-// would sail sideways at slider speed.
+// slider lifted above the now-falling brick. We zero velocity + angularVel
+// on conversion so the brick falls straight down, and place the new slider
+// SLIDER_LIFT_AFTER_DROP above the old one — otherwise it would spawn at
+// the same y and the KINEMATIC collision would shove the just-dropped
+// DYNAMIC brick sideways.
 function dropSlider() {
   if (!_slider || _gameOver) return;
+  const droppedY = _slider.position.y;
   _slider.type = BodyType.DYNAMIC;
   _slider.velocity = new Vec2(0, 0);
   _slider.angularVel = 0;
   _falling.push({ body: _slider, frames: 0, settled: false });
   _dropPaletteIdx++;
-  _slider = spawnSlider();
+  _slider = spawnSlider(droppedY - SLIDER_LIFT_AFTER_DROP);
 }
 
 // Update slider position each step. We do this in step() (not via kinematic
-// velocity alone) so reversal at the edges is exact and predictable. The
-// slider's y is locked to (stackTop - SLIDER_GAP_ABOVE) so the gap stays
-// constant even as the stack grows.
+// velocity alone) so reversal at the edges is exact and predictable.
+//
+// Y-handling: the slider's y is set above the current stack top by
+// SLIDER_GAP_ABOVE, but only when nothing else is in the way. Right after
+// a drop we lifted the new slider further to avoid colliding with the
+// still-falling brick — once the _falling list is empty we lerp the slider
+// back down to the nominal gap so the framing stays consistent.
 function stepSlider(dt) {
   if (!_slider) return;
   const speed = sliderSpeed();
@@ -193,7 +202,17 @@ function stepSlider(dt) {
     nx = SLIDER_MIN_X;
     _sliderDir = 1;
   }
-  const ny = topWorldY() - SLIDER_GAP_ABOVE;
+
+  let ny = p.y;
+  if (_falling.length === 0) {
+    // Lerp back to nominal — but only downward (toward the stack). If the
+    // stack has grown taller, spawnSlider() handled the upward jump.
+    const target = topWorldY() - SLIDER_GAP_ABOVE;
+    if (target > p.y) {
+      ny = p.y + Math.min(target - p.y, 120 * dt);
+    }
+  }
+
   _slider.position = new Vec2(nx, ny);
   _slider.velocity = new Vec2(_sliderDir * speed, 0);
 }
