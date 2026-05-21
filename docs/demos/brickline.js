@@ -33,17 +33,25 @@ const FALL_OFF_Y = SCREEN_H + 80;         // body.y above this = "fell off"
 const BRICK_W = 80;
 const BRICK_H = 24;
 const SLIDER_GAP_ABOVE = 220;             // slider's vertical gap above the stack top (world units)
-const SLIDER_LIFT_AFTER_DROP = 60;        // lift the next slider this much above the just-dropped brick
-const SLIDER_SPEED_BASE = 220;            // px / sec at score = 0
-const SLIDER_SPEED_GAIN = 12;             // +px/sec per stacked brick (cap below)
-const SLIDER_SPEED_MAX = 480;
+const SLIDER_SPEED_BASE = 120;            // px / sec at score = 0
+const SLIDER_SPEED_GAIN = 8;              // +px/sec per stacked brick (cap below)
+const SLIDER_SPEED_MAX = 360;
 const SLIDER_MIN_X = 100;
 const SLIDER_MAX_X = SCREEN_W - 100;
+const RESPAWN_DELAY_STEPS = 25;           // ~0.4s pause before a new slider appears after a drop
 
 // Settle / scoring: a brick counts toward the tower once its vertical speed
 // is below SETTLE_EPS for SETTLE_FRAMES consecutive physics steps.
 const SETTLE_EPS = 8;
 const SETTLE_FRAMES = 30;
+
+// "Missed the stack" check, applied when a brick settles. A brick that lands
+// stably on the tower top sits at y ≈ _stackTopWorldY - BRICK_H/2. A brick
+// that rolled off and landed alongside the stack sits at the floor — its y
+// is at or below _stackTopWorldY. We treat anything settling at
+// >= _stackTopWorldY + MISSED_STACK_PX (i.e. more than this far below the
+// existing stack top) as a miss and end the run.
+const MISSED_STACK_PX = BRICK_H * 0.5;
 
 // Tip detection on a settled brick:
 //   * it drops more than TIP_FALL_PX below its settled y, OR
@@ -51,8 +59,8 @@ const SETTLE_FRAMES = 30;
 // The floor is wider than the slider range, so a settled brick will never
 // reach FALL_OFF_Y by itself — it'd just slide along the floor. Tracking the
 // settled y per brick catches the case where the brick rolls off the stack.
-const TIP_FALL_PX = 36;
-const TIP_ANGLE_RAD = Math.PI / 3; // 60°
+const TIP_FALL_PX = 24;
+const TIP_ANGLE_RAD = Math.PI / 4; // 45°
 
 // Visual: the brick palette index rotates per drop so the stack stripes look
 // like alternating courses of masonry.
@@ -91,6 +99,7 @@ let _gameOver = false;
 let _restartLockTimer = 0;
 let _flashTimer = 0;
 let _dropPaletteIdx = 0;
+let _respawnTimer = 0;                    // steps remaining until the next slider appears
 
 let _lastKeyDown = null;
 
@@ -112,11 +121,12 @@ function spawnFloor() {
   return floor;
 }
 
-// Spawn the kinematic slider. Default is SLIDER_GAP_ABOVE over the stack
-// top; pass `yOverride` to place it elsewhere (used right after a drop so
-// the new slider doesn't spawn inside the brick that's still falling).
-function spawnSlider(yOverride) {
-  const targetWorldY = yOverride ?? (topWorldY() - SLIDER_GAP_ABOVE);
+// Spawn the kinematic slider at the nominal gap above the current stack top.
+// The slider's y is fixed for its whole lifetime — stepSlider() only updates
+// x — so the brick always falls from the same screen height (no upward
+// drift across drops).
+function spawnSlider() {
+  const targetWorldY = topWorldY() - SLIDER_GAP_ABOVE;
   const body = new Body(BodyType.KINEMATIC, new Vec2(SCREEN_W / 2, targetWorldY));
   body.shapes.add(new Polygon(Polygon.box(BRICK_W, BRICK_H)));
   // Material can be assigned now — Kinematic→Dynamic conversion preserves it.
@@ -157,6 +167,7 @@ function clearWorld() {
   _flashTimer = 0;
   _dropPaletteIdx = 0;
   _sliderDir = 1;
+  _respawnTimer = 0;
 }
 
 function resetGame() {
@@ -165,31 +176,26 @@ function resetGame() {
   _slider = spawnSlider();
 }
 
-// Drop the current slider: convert KINEMATIC → DYNAMIC and start a fresh
-// slider lifted above the now-falling brick. We zero velocity + angularVel
-// on conversion so the brick falls straight down, and place the new slider
-// SLIDER_LIFT_AFTER_DROP above the old one — otherwise it would spawn at
-// the same y and the KINEMATIC collision would shove the just-dropped
-// DYNAMIC brick sideways.
+// Drop the current slider: convert KINEMATIC → DYNAMIC, zero velocity (so
+// the brick falls straight down), and remove the slider from play. A new
+// slider spawns after RESPAWN_DELAY_STEPS — this gap prevents the new
+// KINEMATIC slider from colliding with the still-falling DYNAMIC brick at
+// the same spawn point, which previously shoved the brick sideways.
 function dropSlider() {
   if (!_slider || _gameOver) return;
-  const droppedY = _slider.position.y;
   _slider.type = BodyType.DYNAMIC;
   _slider.velocity = new Vec2(0, 0);
   _slider.angularVel = 0;
   _falling.push({ body: _slider, frames: 0, settled: false });
   _dropPaletteIdx++;
-  _slider = spawnSlider(droppedY - SLIDER_LIFT_AFTER_DROP);
+  _slider = null;
+  _respawnTimer = RESPAWN_DELAY_STEPS;
 }
 
 // Update slider position each step. We do this in step() (not via kinematic
-// velocity alone) so reversal at the edges is exact and predictable.
-//
-// Y-handling: the slider's y is set above the current stack top by
-// SLIDER_GAP_ABOVE, but only when nothing else is in the way. Right after
-// a drop we lifted the new slider further to avoid colliding with the
-// still-falling brick — once the _falling list is empty we lerp the slider
-// back down to the nominal gap so the framing stays consistent.
+// velocity alone) so reversal at the edges is exact and predictable. The
+// slider's y is left at whatever spawnSlider() chose, so the drop height
+// stays constant for the slider's whole lifetime.
 function stepSlider(dt) {
   if (!_slider) return;
   const speed = sliderSpeed();
@@ -202,18 +208,7 @@ function stepSlider(dt) {
     nx = SLIDER_MIN_X;
     _sliderDir = 1;
   }
-
-  let ny = p.y;
-  if (_falling.length === 0) {
-    // Lerp back to nominal — but only downward (toward the stack). If the
-    // stack has grown taller, spawnSlider() handled the upward jump.
-    const target = topWorldY() - SLIDER_GAP_ABOVE;
-    if (target > p.y) {
-      ny = p.y + Math.min(target - p.y, 120 * dt);
-    }
-  }
-
-  _slider.position = new Vec2(nx, ny);
+  _slider.position = new Vec2(nx, p.y);
   _slider.velocity = new Vec2(_sliderDir * speed, 0);
 }
 
@@ -231,10 +226,25 @@ function updateFalling() {
       triggerGameOver();
       return;
     }
+    // A brick that ends up significantly tilted while still falling is
+    // tipping off the stack — end the run before it has a chance to "settle"
+    // in some unstable resting position on the floor.
+    const angle = Math.abs(normalizeAngle(b.rotation));
     const speed = Math.abs(b.velocity.y) + Math.abs(b.velocity.x);
     if (speed < SETTLE_EPS) {
+      if (angle > TIP_ANGLE_RAD) {
+        triggerGameOver();
+        return;
+      }
       f.frames++;
       if (f.frames >= SETTLE_FRAMES && !f.settled) {
+        // Did the brick actually land on the tower? If its centre came to
+        // rest more than MISSED_STACK_PX below the current stack top, it
+        // missed the stack (rolled off the side). End the run.
+        if (b.position.y >= _stackTopWorldY + MISSED_STACK_PX) {
+          triggerGameOver();
+          return;
+        }
         f.settled = true;
         _stack.push({ body: b, settledY: b.position.y });
         _score++;
@@ -350,6 +360,11 @@ export default {
     if (_flashTimer > 0) _flashTimer--;
     if (_restartLockTimer > 0) _restartLockTimer--;
     if (_gameOver) return;
+
+    if (_respawnTimer > 0) {
+      _respawnTimer--;
+      if (_respawnTimer === 0 && !_slider) _slider = spawnSlider();
+    }
 
     stepSlider(1 / 60);
     updateFalling();
