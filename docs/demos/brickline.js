@@ -125,9 +125,18 @@ function spawnFloor() {
 // The slider's y is fixed for its whole lifetime — stepSlider() only updates
 // x — so the brick always falls from the same screen height (no upward
 // drift across drops).
-function spawnSlider() {
+//
+// Each post-drop respawn picks a random x and random direction so the player
+// can't game the run by mashing the click button at a fixed cadence: the
+// brick re-enters from somewhere fresh every time.
+function spawnSlider(randomStart) {
   const targetWorldY = topWorldY() - SLIDER_GAP_ABOVE;
-  const body = new Body(BodyType.KINEMATIC, new Vec2(SCREEN_W / 2, targetWorldY));
+  let startX = SCREEN_W / 2;
+  if (randomStart) {
+    startX = SLIDER_MIN_X + Math.random() * (SLIDER_MAX_X - SLIDER_MIN_X);
+    _sliderDir = Math.random() < 0.5 ? -1 : 1;
+  }
+  const body = new Body(BodyType.KINEMATIC, new Vec2(startX, targetWorldY));
   body.shapes.add(new Polygon(Polygon.box(BRICK_W, BRICK_H)));
   // Material can be assigned now — Kinematic→Dynamic conversion preserves it.
   body.shapes.at(0).material = makeBrickMaterial();
@@ -363,7 +372,7 @@ export default {
 
     if (_respawnTimer > 0) {
       _respawnTimer--;
-      if (_respawnTimer === 0 && !_slider) _slider = spawnSlider();
+      if (_respawnTimer === 0 && !_slider) _slider = spawnSlider(true);
     }
 
     stepSlider(1 / 60);
