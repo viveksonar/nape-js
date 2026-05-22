@@ -26,10 +26,18 @@ const COUNTER_W           = 42;
 const COUNTER_H           = 60;
 const COUNTER_TOP_LOCAL_Y = -COUNTER_H / 2;
 
-// Rope — rigid (jointMin == jointMax). Ratio=1 means 1:1 mechanical coupling:
-// each cm down on the cabin side lifts the counterweight by exactly one cm.
+// Rope — soft (slightly springy) coupling. jointMin == jointMax keeps the
+// rope at a fixed nominal length so dropping cargo on one side lifts the
+// other (a slack jointMin=0 rope would let both sides simply fall together
+// when balanced). The constraint is made soft (stiff=false) with heavy
+// damping so it doesn't fight the floor's normal force at rest — the rigid
+// stiff=true variant produces a pump-loop jitter when one side bottoms out.
+// Ratio=1 means 1:1 mechanical coupling: 1 cm down on the cabin lifts the
+// counterweight by 1 cm.
 const ROPE_LENGTH = 360;
 const RATIO       = 1.0;
+const ROPE_FREQUENCY = 12; // Hz — stiff enough to look like a rope
+const ROPE_DAMPING   = 1;  // critical damping — no spring oscillation
 
 // Initial position: half the rope on each side, plus offset to top-of-body.
 // Verify: (CABIN_INIT_Y + CABIN_TOP_LOCAL_Y - GANTRY_Y)
@@ -151,9 +159,9 @@ export default {
     _cabin   = buildCabin(space, leftX,  CABIN_INIT_Y);
     _counter = buildCounter(space, rightX, COUNTER_INIT_Y);
 
-    // Rope: total = leftRope + RATIO * rightRope = ROPE_LENGTH. jointMin ==
-    // jointMax makes the rope rigid; raise jointMax above jointMin to model
-    // a slack-tolerant rope (e.g. ROPE_LENGTH and ROPE_LENGTH + 40).
+    // Rope: total = leftRope + RATIO * rightRope = ROPE_LENGTH. A soft
+    // constraint (stiff=false) absorbs the standoff between the rope and the
+    // floor when the cabin lands, eliminating the rigid-coupling jitter.
     _pulley = new PulleyJoint(
       space.world, _cabin,
       space.world, _counter,
@@ -165,6 +173,9 @@ export default {
       ROPE_LENGTH,
       RATIO,
     );
+    _pulley.stiff = false;
+    _pulley.frequency = ROPE_FREQUENCY;
+    _pulley.damping = ROPE_DAMPING;
     _pulley.space = space;
   },
 
