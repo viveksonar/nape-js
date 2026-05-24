@@ -469,8 +469,9 @@ export default {
       }
     }
 
-    // Payload fell off-screen → treat as level fail
-    if (_payload.position.y > _screenH + 60 || _payload.position.x < -60 || _payload.position.x > _screenW + 60) {
+    // Payload fell off-screen with no ropes left → level fail
+    const hasRope = _joints.some((j) => j.joint.space != null);
+    if (!hasRope && (_payload.position.y > _screenH + 60 || _payload.position.x < -60 || _payload.position.x > _screenW + 60)) {
       _state = "lost";
     }
 
