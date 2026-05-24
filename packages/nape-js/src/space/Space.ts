@@ -43,7 +43,7 @@ export class Space {
    */
   constructor(gravity?: Vec2, broadphase?: Broadphase) {
     if (gravity != null && gravity.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
 
     const gravityInner = gravity == null ? null : gravity.zpp_inner;
@@ -108,10 +108,10 @@ export class Space {
 
   set gravity(value: Vec2) {
     if (value?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (value == null) {
-      throw new Error("Error: Space::gravity cannot be null");
+      throw new Error("Space::gravity cannot be null");
     }
     if (this.zpp_inner.wrap_gravity == null) {
       this.zpp_inner.getgravity();
@@ -225,10 +225,10 @@ export class Space {
   }
   set subSteps(value: number) {
     if (value !== value) {
-      throw new Error("Error: Space::subSteps cannot be NaN");
+      throw new Error("Space::subSteps cannot be NaN");
     }
     if (value < 1) {
-      throw new Error("Error: Space::subSteps must be at least 1");
+      throw new Error("Space::subSteps must be at least 1");
     }
     this.zpp_inner.subSteps = Math.floor(value);
   }
@@ -242,7 +242,7 @@ export class Space {
   }
   set worldAngularDrag(value: number) {
     if (value !== value) {
-      throw new Error("Error: Space::worldAngularDrag cannot be NaN");
+      throw new Error("Space::worldAngularDrag cannot be NaN");
     }
     this.zpp_inner.global_ang_drag = value;
   }
@@ -256,7 +256,7 @@ export class Space {
   }
   set worldLinearDrag(value: number) {
     if (value !== value) {
-      throw new Error("Error: Space::worldLinearDrag cannot be NaN");
+      throw new Error("Space::worldLinearDrag cannot be NaN");
     }
     this.zpp_inner.global_lin_drag = value;
   }
@@ -330,16 +330,16 @@ export class Space {
    */
   step(deltaTime: number, velocityIterations: number = 10, positionIterations: number = 10): void {
     if (deltaTime !== deltaTime) {
-      throw new Error("Error: deltaTime cannot be NaN");
+      throw new Error("deltaTime cannot be NaN");
     }
     if (deltaTime <= 0) {
-      throw new Error("Error: deltaTime must be strictly positive");
+      throw new Error("deltaTime must be strictly positive");
     }
     if (velocityIterations <= 0) {
-      throw new Error("Error: must use atleast one velocity iteration");
+      throw new Error("must use atleast one velocity iteration");
     }
     if (positionIterations <= 0) {
-      throw new Error("Error: must use atleast one position iteration");
+      throw new Error("must use atleast one position iteration");
     }
     this.zpp_inner.step(deltaTime, velocityIterations, positionIterations);
   }
@@ -350,7 +350,7 @@ export class Space {
    */
   clear(): void {
     if (this.zpp_inner.midstep) {
-      throw new Error("Error: Space::clear() cannot be called during space step()");
+      throw new Error("Space::clear() cannot be called during space step()");
     }
     this.zpp_inner.clear();
   }
@@ -366,7 +366,7 @@ export class Space {
    */
   visitBodies(lambda: (body: Body) => void): void {
     if (lambda == null) {
-      throw new Error("Error: lambda cannot be null for Space::visitBodies");
+      throw new Error("lambda cannot be null for Space::visitBodies");
     }
     const nape = getNape();
     // Iterate bodies
@@ -425,7 +425,7 @@ export class Space {
    */
   visitConstraints(lambda: (constraint: Constraint) => void): void {
     if (lambda == null) {
-      throw new Error("Error: lambda cannot be null for Space::visitConstraints");
+      throw new Error("lambda cannot be null for Space::visitConstraints");
     }
     const nape = getNape();
     // Iterate constraints
@@ -484,7 +484,7 @@ export class Space {
    */
   visitCompounds(lambda: (compound: Compound) => void): void {
     if (lambda == null) {
-      throw new Error("Error: lambda cannot be null for Space::visitCompounds");
+      throw new Error("lambda cannot be null for Space::visitCompounds");
     }
     const nape = getNape();
     const compList = this.zpp_inner.wrap_compounds;
@@ -526,7 +526,7 @@ export class Space {
    */
   interactionType(shape1: Shape, shape2: Shape): InteractionType | null {
     if (shape1 == null || shape2 == null) {
-      throw new Error("Error: Cannot evaluate interaction type for null shapes");
+      throw new Error("Cannot evaluate interaction type for null shapes");
     }
     const s1 = (shape1 as any).zpp_inner;
     const s2 = (shape2 as any).zpp_inner;
@@ -534,7 +534,7 @@ export class Space {
       (s1.body != null ? s1.body.outer : null) == null ||
       (s2.body != null ? s2.body.outer : null) == null
     ) {
-      throw new Error("Error: Cannot evaluate interaction type for shapes not part of a Body");
+      throw new Error("Cannot evaluate interaction type for shapes not part of a Body");
     }
     const b1 = s1.body;
     const b2 = s2.body;
@@ -664,10 +664,10 @@ export class Space {
     output?: ShapeList | null,
   ): ShapeList {
     if (point?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (point == null) {
-      throw new Error("Error: Cannot evaluate shapes under a null point :)");
+      throw new Error("Cannot evaluate shapes under a null point :)");
     }
     const inner = point.zpp_inner;
     if (inner._validate != null) inner._validate();
@@ -694,10 +694,10 @@ export class Space {
     output?: BodyList | null,
   ): BodyList {
     if (point?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (point == null) {
-      throw new Error("Error: Cannot evaluate objects under a null point :)");
+      throw new Error("Cannot evaluate objects under a null point :)");
     }
     const inner = point.zpp_inner;
     if (inner._validate != null) inner._validate();
@@ -728,12 +728,12 @@ export class Space {
     output?: ShapeList | null,
   ): ShapeList {
     if (aabb == null) {
-      throw new Error("Error: Cannot evaluate shapes in a null AABB :)");
+      throw new Error("Cannot evaluate shapes in a null AABB :)");
     }
     const zi = aabb.zpp_inner;
     if (zi._validate != null) zi._validate();
     if (zi.maxx - zi.minx == 0 || zi.maxy - zi.miny == 0) {
-      throw new Error("Error: Cannot evaluate shapes in degenerate AABB :/");
+      throw new Error("Cannot evaluate shapes in degenerate AABB :/");
     }
     const filterInner = filter == null ? null : ((filter as any).zpp_inner ?? filter);
     return this.zpp_inner.shapesInAABB(aabb, strict, containment, filterInner, output);
@@ -757,12 +757,12 @@ export class Space {
     output?: BodyList | null,
   ): BodyList {
     if (aabb == null) {
-      throw new Error("Error: Cannot evaluate objects in a null AABB :)");
+      throw new Error("Cannot evaluate objects in a null AABB :)");
     }
     const zi = aabb.zpp_inner;
     if (zi._validate != null) zi._validate();
     if (zi.maxx - zi.minx == 0 || zi.maxy - zi.miny == 0) {
-      throw new Error("Error: Cannot evaluate objects in degenerate AABB :/");
+      throw new Error("Cannot evaluate objects in degenerate AABB :/");
     }
     const filterInner = filter == null ? null : ((filter as any).zpp_inner ?? filter);
     return this.zpp_inner.bodiesInAABB(aabb, strict, containment, filterInner, output);
@@ -786,16 +786,16 @@ export class Space {
     output?: ShapeList | null,
   ): ShapeList {
     if (position?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (position == null) {
-      throw new Error("Error: Cannot evaluate shapes at null circle :)");
+      throw new Error("Cannot evaluate shapes at null circle :)");
     }
     if (radius !== radius) {
-      throw new Error("Error: Circle radius cannot be NaN");
+      throw new Error("Circle radius cannot be NaN");
     }
     if (radius <= 0) {
-      throw new Error("Error: Circle radius must be strictly positive");
+      throw new Error("Circle radius must be strictly positive");
     }
     const filterInner = filter == null ? null : ((filter as any).zpp_inner ?? filter);
     const ret = this.zpp_inner.shapesInCircle(position, radius, containment, filterInner, output);
@@ -821,16 +821,16 @@ export class Space {
     output?: BodyList | null,
   ): BodyList {
     if (position?.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (position == null) {
-      throw new Error("Error: Cannot evaluate objects at null circle :)");
+      throw new Error("Cannot evaluate objects at null circle :)");
     }
     if (radius !== radius) {
-      throw new Error("Error: Circle radius cannot be NaN");
+      throw new Error("Circle radius cannot be NaN");
     }
     if (radius <= 0) {
-      throw new Error("Error: Circle radius must be strictly positive");
+      throw new Error("Circle radius must be strictly positive");
     }
     const filterInner = filter == null ? null : ((filter as any).zpp_inner ?? filter);
     const ret = this.zpp_inner.bodiesInCircle(position, radius, containment, filterInner, output);
@@ -854,11 +854,11 @@ export class Space {
     output?: ShapeList | null,
   ): ShapeList {
     if (shape == null) {
-      throw new Error("Error: Cannot evaluate shapes in a null shapes :)");
+      throw new Error("Cannot evaluate shapes in a null shapes :)");
     }
     const szpp = (shape as any).zpp_inner;
     if ((szpp.body != null ? szpp.body.outer : null) == null) {
-      throw new Error("Error: Query shape needs to be inside a Body to be well defined :)");
+      throw new Error("Query shape needs to be inside a Body to be well defined :)");
     }
     if (szpp.type == 1) {
       const res = szpp.polygon.valid();
@@ -868,7 +868,7 @@ export class Space {
         ZPP_Flags.internal = false;
       }
       if (res != ZPP_Flags.ValidationResult_VALID) {
-        throw new Error("Error: Polygon query shape is invalid : " + res.toString());
+        throw new Error("Polygon query shape is invalid : " + res.toString());
       }
     }
     const filterInner = filter == null ? null : ((filter as any).zpp_inner ?? filter);
@@ -891,11 +891,11 @@ export class Space {
     output?: BodyList | null,
   ): BodyList {
     if (shape == null) {
-      throw new Error("Error: Cannot evaluate bodies in a null shapes :)");
+      throw new Error("Cannot evaluate bodies in a null shapes :)");
     }
     const szpp = (shape as any).zpp_inner;
     if ((szpp.body != null ? szpp.body.outer : null) == null) {
-      throw new Error("Error: Query shape needs to be inside a Body to be well defined :)");
+      throw new Error("Query shape needs to be inside a Body to be well defined :)");
     }
     if (szpp.type == 1) {
       const res = szpp.polygon.valid();
@@ -905,7 +905,7 @@ export class Space {
         ZPP_Flags.internal = false;
       }
       if (res != ZPP_Flags.ValidationResult_VALID) {
-        throw new Error("Error: Polygon query shape is invalid : " + res.toString());
+        throw new Error("Polygon query shape is invalid : " + res.toString());
       }
     }
     const filterInner = filter == null ? null : ((filter as any).zpp_inner ?? filter);
@@ -927,7 +927,7 @@ export class Space {
     output?: ShapeList | null,
   ): ShapeList {
     if (body == null) {
-      throw new Error("Error: Cannot evaluate shapes in null body");
+      throw new Error("Cannot evaluate shapes in null body");
     }
     const nape = getNape();
     const ret = output == null ? new nape.shape.ShapeList() : output;
@@ -968,7 +968,7 @@ export class Space {
    */
   bodiesInBody(body: Body, filter?: InteractionFilter | null, output?: BodyList | null): BodyList {
     if (body == null) {
-      throw new Error("Error: Cannot evaluate shapes in null body");
+      throw new Error("Cannot evaluate shapes in null body");
     }
     const nape = getNape();
     const ret = output == null ? new nape.phys.BodyList() : output;
@@ -1014,14 +1014,14 @@ export class Space {
     filter?: InteractionFilter | null,
   ): ConvexResult | null {
     if (shape == null) {
-      throw new Error("Error: Cannot cast null shape :)");
+      throw new Error("Cannot cast null shape :)");
     }
     const szpp = (shape as any).zpp_inner;
     if ((szpp.body != null ? szpp.body.outer : null) == null) {
-      throw new Error("Error: Shape must belong to a body to be cast.");
+      throw new Error("Shape must belong to a body to be cast.");
     }
     if (deltaTime < 0 || deltaTime !== deltaTime) {
-      throw new Error("Error: deltaTime must be positive");
+      throw new Error("deltaTime must be positive");
     }
     return this.zpp_inner.convexCast(szpp, deltaTime, filter, liveSweep);
   }
@@ -1044,14 +1044,14 @@ export class Space {
     output?: ConvexResultList | null,
   ): ConvexResultList {
     if (shape == null) {
-      throw new Error("Error: Cannot cast null shape :)");
+      throw new Error("Cannot cast null shape :)");
     }
     const szpp = (shape as any).zpp_inner;
     if ((szpp.body != null ? szpp.body.outer : null) == null) {
-      throw new Error("Error: Shape must belong to a body to be cast.");
+      throw new Error("Shape must belong to a body to be cast.");
     }
     if (deltaTime < 0 || deltaTime !== deltaTime) {
-      throw new Error("Error: deltaTime must be positive");
+      throw new Error("deltaTime must be positive");
     }
     return this.zpp_inner.convexMultiCast(szpp, deltaTime, filter, liveSweep, output);
   }
@@ -1066,7 +1066,7 @@ export class Space {
    */
   rayCast(ray: Ray, inner: boolean = false, filter?: InteractionFilter | null): RayResult | null {
     if (ray == null) {
-      throw new Error("Error: Cannot cast null ray :)");
+      throw new Error("Cannot cast null ray :)");
     }
     return this.zpp_inner.rayCast(ray, inner, filter);
   }
@@ -1087,7 +1087,7 @@ export class Space {
     output?: RayResultList | null,
   ): RayResultList {
     if (ray == null) {
-      throw new Error("Error: Cannot cast null ray :)");
+      throw new Error("Cannot cast null ray :)");
     }
     return this.zpp_inner.rayMultiCast(ray, inner, filter, output);
   }
@@ -1114,7 +1114,7 @@ export class Space {
    */
   debugDraw(drawer: DebugDraw, flags: number = DebugDrawFlags.ALL): void {
     if (drawer == null) {
-      throw new Error("Error: drawer cannot be null for Space::debugDraw");
+      throw new Error("drawer cannot be null for Space::debugDraw");
     }
 
     const drawShapes = (flags & DebugDrawFlags.SHAPES) !== 0;

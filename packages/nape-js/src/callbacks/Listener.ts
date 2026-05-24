@@ -50,7 +50,7 @@ export class Listener {
 
   constructor() {
     if (!ZPP_Listener.internal) {
-      throw new Error("Error: Cannot instantiate Listener derp!");
+      throw new Error("Cannot instantiate Listener derp!");
     }
     this.zpp_inner = null as unknown as ZPP_Listener;
   }
@@ -88,7 +88,7 @@ export class Listener {
 
   set event(event: CbEvent) {
     if (event == null) {
-      throw new Error("Error: Cannot set listener event type to null");
+      throw new Error("Cannot set listener event type to null");
     }
     if (ZPP_Listener.events[this.zpp_inner.event] != event) {
       const xevent = cbEventToNumber(event);

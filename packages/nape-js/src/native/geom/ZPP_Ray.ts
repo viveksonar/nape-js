@@ -71,18 +71,18 @@ export class ZPP_Ray {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -90,7 +90,7 @@ export class ZPP_Ray {
       }
       if (ret.zpp_inner.x == 0) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {
@@ -144,18 +144,18 @@ export class ZPP_Ray {
       ret2.zpp_inner.outer = ret2;
     } else {
       if (ret2 != null && ret2.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this4 = ret2.zpp_inner;
       if (_this4._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this4._isimmutable != null) {
         _this4._isimmutable();
       }
       let tmp1: boolean;
       if (ret2 != null && ret2.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this5 = ret2.zpp_inner;
       if (_this5._validate != null) {
@@ -163,7 +163,7 @@ export class ZPP_Ray {
       }
       if (ret2.zpp_inner.x == 0) {
         if (ret2 != null && ret2.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this6 = ret2.zpp_inner;
         if (_this6._validate != null) {
@@ -221,7 +221,7 @@ export class ZPP_Ray {
       this.zip_dir = false;
       const nape = getNape();
       if (this.dirx * this.dirx + this.diry * this.diry < nape.Config.epsilon) {
-        throw new Error("Error: Ray::direction is degenerate");
+        throw new Error("Ray::direction is degenerate");
       }
       const d = this.dirx * this.dirx + this.diry * this.diry;
       const imag = 1.0 / Math.sqrt(d);
@@ -376,7 +376,7 @@ export class ZPP_Ray {
   private static _allocVec2(x: number, y: number): any {
     const nape = getNape();
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
 
     let ret: any;
@@ -409,17 +409,17 @@ export class ZPP_Ray {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let same: boolean;
       if (ret.zpp_inner._validate != null) {
@@ -458,7 +458,7 @@ export class ZPP_Ray {
           if (c.type == 1) {
             const _this = c.polygon;
             if (_this.lverts.next == null) {
-              throw new Error("Error: An empty polygon has no meaningful localCOM");
+              throw new Error("An empty polygon has no meaningful localCOM");
             }
             if (_this.lverts.next.next == null) {
               _this.localCOMx = _this.lverts.next.x;
@@ -558,10 +558,10 @@ export class ZPP_Ray {
     while (cx_ite != null) {
       const j = cx_ite.elt;
       if (res.zpp_inner.next != null) {
-        throw new Error("Error: This object has been disposed of and cannot be used");
+        throw new Error("This object has been disposed of and cannot be used");
       }
       if (j.zpp_inner.next != null) {
-        throw new Error("Error: This object has been disposed of and cannot be used");
+        throw new Error("This object has been disposed of and cannot be used");
       }
       if (res.zpp_inner.toiDistance < j.zpp_inner.toiDistance) {
         break;

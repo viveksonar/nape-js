@@ -60,26 +60,26 @@ export interface ConcaveBodyOptions {
 export function createConcaveBody(vertices: Vec2[] | GeomPoly, options?: ConcaveBodyOptions): Body {
   // --- Validate input ---
   if (vertices == null) {
-    throw new Error("Error: vertices cannot be null");
+    throw new Error("vertices cannot be null");
   }
 
   // Build a GeomPoly (copy to avoid mutating user input)
   let geom: GeomPoly;
   if (vertices instanceof GeomPoly) {
     if (vertices.zpp_disp) {
-      throw new Error("Error: GeomPoly has been disposed and cannot be used!");
+      throw new Error("GeomPoly has been disposed and cannot be used!");
     }
     geom = vertices.copy();
   } else {
     if (!Array.isArray(vertices)) {
-      throw new Error("Error: vertices must be an Array<Vec2> or GeomPoly");
+      throw new Error("vertices must be an Array<Vec2> or GeomPoly");
     }
     if (vertices.length < 3) {
-      throw new Error("Error: At least 3 vertices are required, got " + vertices.length);
+      throw new Error("At least 3 vertices are required, got " + vertices.length);
     }
     for (let i = 0; i < vertices.length; i++) {
       if (vertices[i] == null) {
-        throw new Error("Error: vertices[" + i + "] is null");
+        throw new Error("vertices[" + i + "] is null");
       }
     }
     geom = new GeomPoly(vertices);
@@ -88,15 +88,15 @@ export function createConcaveBody(vertices: Vec2[] | GeomPoly, options?: Concave
   // Validate geometry
   if (geom.size() < 3) {
     geom.dispose();
-    throw new Error("Error: At least 3 vertices are required, got " + geom.size());
+    throw new Error("At least 3 vertices are required, got " + geom.size());
   }
   if (geom.isDegenerate()) {
     geom.dispose();
-    throw new Error("Error: Polygon is degenerate (zero area)");
+    throw new Error("Polygon is degenerate (zero area)");
   }
   if (!geom.isSimple()) {
     geom.dispose();
-    throw new Error("Error: Polygon is self-intersecting");
+    throw new Error("Polygon is self-intersecting");
   }
 
   // --- Optional simplification ---
@@ -108,7 +108,7 @@ export function createConcaveBody(vertices: Vec2[] | GeomPoly, options?: Concave
 
     if (geom.size() < 3 || geom.isDegenerate()) {
       geom.dispose();
-      throw new Error("Error: Polygon became degenerate after simplification (epsilon too large)");
+      throw new Error("Polygon became degenerate after simplification (epsilon too large)");
     }
   }
 

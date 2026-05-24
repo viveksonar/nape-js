@@ -40,7 +40,7 @@ export class Vec2 {
    */
   constructor(x: number = 0, y: number = 0) {
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
 
     let zpp: ZPP_Vec2;
@@ -67,7 +67,7 @@ export class Vec2 {
   /** @internal Check that this Vec2 has not been disposed. */
   private _checkDisposed(): void {
     if (this.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
   }
 
@@ -101,7 +101,7 @@ export class Vec2 {
     this._checkDisposed();
     this._checkImmutable();
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     this._validate();
     if (this.zpp_inner.x !== x || this.zpp_inner.y !== y) {
@@ -204,7 +204,7 @@ export class Vec2 {
    */
   static get(x: number = 0, y: number = 0, weak: boolean = false): Vec2 {
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     return Vec2._poolGet(x, y, weak);
   }
@@ -218,7 +218,7 @@ export class Vec2 {
    */
   static weak(x: number = 0, y: number = 0): Vec2 {
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     return Vec2._poolGet(x, y, true);
   }
@@ -235,10 +235,10 @@ export class Vec2 {
    */
   static fromPolar(length: number, angle: number, weak: boolean = false): Vec2 {
     if (length !== length) {
-      throw new Error("Error: Vec2::length cannot be NaN");
+      throw new Error("Vec2::length cannot be NaN");
     }
     if (angle !== angle) {
-      throw new Error("Error: Vec2::angle cannot be NaN");
+      throw new Error("Vec2::angle cannot be NaN");
     }
     const x = length * Math.cos(angle);
     const y = length * Math.sin(angle);
@@ -269,16 +269,16 @@ export class Vec2 {
    */
   static lerp(a: Vec2, b: Vec2, t: number, weak: boolean = false): Vec2 {
     if (a != null && a.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (b != null && b.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (a == null || b == null) {
-      throw new Error("Error: Cannot lerp with null Vec2");
+      throw new Error("Cannot lerp with null Vec2");
     }
     if (t !== t) {
-      throw new Error("Error: Cannot lerp with NaN t");
+      throw new Error("Cannot lerp with NaN t");
     }
     a.zpp_inner.validate();
     b.zpp_inner.validate();
@@ -301,10 +301,10 @@ export class Vec2 {
    */
   static eq(a: Vec2, b: Vec2, epsilon: number = 0): boolean {
     if (a != null && a.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (b != null && b.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (a == null || b == null) {
       const ret = a == null && b == null;
@@ -332,13 +332,13 @@ export class Vec2 {
    */
   static dsq(a: Vec2, b: Vec2): number {
     if (a != null && a.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (b != null && b.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (a == null || b == null) {
-      throw new Error("Error: Cannot compute squared distance between null Vec2");
+      throw new Error("Cannot compute squared distance between null Vec2");
     }
     a.zpp_inner.validate();
     const ax = a.zpp_inner.x;
@@ -363,13 +363,13 @@ export class Vec2 {
    */
   static distance(a: Vec2, b: Vec2): number {
     if (a != null && a.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (b != null && b.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (a == null || b == null) {
-      throw new Error("Error: Cannot compute squared distance between null Vec2");
+      throw new Error("Cannot compute squared distance between null Vec2");
     }
     a.zpp_inner.validate();
     const ax = a.zpp_inner.x;
@@ -403,7 +403,7 @@ export class Vec2 {
     this._validate();
     if (this.zpp_inner.x !== value) {
       if (value !== value) {
-        throw new Error("Error: Vec2::x cannot be NaN");
+        throw new Error("Vec2::x cannot be NaN");
       }
       this.zpp_inner.x = value;
       this._invalidate();
@@ -424,7 +424,7 @@ export class Vec2 {
     this._validate();
     if (this.zpp_inner.y !== value) {
       if (value !== value) {
-        throw new Error("Error: Vec2::y cannot be NaN");
+        throw new Error("Vec2::y cannot be NaN");
       }
       this.zpp_inner.y = value;
       this._invalidate();
@@ -450,14 +450,14 @@ export class Vec2 {
     this._checkDisposed();
     this._checkImmutable();
     if (value !== value) {
-      throw new Error("Error: Vec2::length cannot be NaN");
+      throw new Error("Vec2::length cannot be NaN");
     }
     this._validate();
     const x = this.zpp_inner.x;
     const y = this.zpp_inner.y;
     const lsq = x * x + y * y;
     if (lsq === 0) {
-      throw new Error("Error: Cannot set length of a zero vector");
+      throw new Error("Cannot set length of a zero vector");
     }
     const scale = value / Math.sqrt(lsq);
     this._setXY(x * scale, y * scale);
@@ -489,7 +489,7 @@ export class Vec2 {
     this._checkDisposed();
     this._checkImmutable();
     if (value !== value) {
-      throw new Error("Error: Vec2::angle cannot be NaN");
+      throw new Error("Vec2::angle cannot be NaN");
     }
     this._validate();
     const x = this.zpp_inner.x;
@@ -527,11 +527,11 @@ export class Vec2 {
   set(vector: Vec2): this {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     this._checkImmutable();
     if (vector == null) {
-      throw new Error("Error: Cannot assign null Vec2");
+      throw new Error("Cannot assign null Vec2");
     }
     vector.zpp_inner.validate();
     const x = vector.zpp_inner.x;
@@ -574,7 +574,7 @@ export class Vec2 {
   equals(other: Vec2, epsilon: number = 0): boolean {
     this._checkDisposed();
     if (other != null && other.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (other == null) {
       return false;
@@ -610,7 +610,7 @@ export class Vec2 {
     this._checkDisposed();
     this._checkImmutable();
     if (angle !== angle) {
-      throw new Error("Error: Cannot rotate Vec2 by NaN");
+      throw new Error("Cannot rotate Vec2 by NaN");
     }
     if (angle % (Math.PI * 2) !== 0) {
       const s = Math.sin(angle);
@@ -633,13 +633,13 @@ export class Vec2 {
   reflect(vec: Vec2, weak: boolean = false): Vec2 {
     this._checkDisposed();
     if (vec != null && vec.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     this._validate();
     const x = this.zpp_inner.x;
     const y = this.zpp_inner.y;
     if (Math.sqrt(x * x + y * y) === 0) {
-      throw new Error("Error: Cannot reflect in zero vector");
+      throw new Error("Cannot reflect in zero vector");
     }
     // normal = unit of this, then: result = vec - 2*(normal·vec)*normal
     const normal = Vec2._poolGet(x, y, true);
@@ -663,7 +663,7 @@ export class Vec2 {
     const y = this.zpp_inner.y;
     const lsq = x * x + y * y;
     if (Math.sqrt(lsq) === 0) {
-      throw new Error("Error: Cannot normalise vector of length 0");
+      throw new Error("Cannot normalise vector of length 0");
     }
     const imag = 1.0 / Math.sqrt(lsq);
     this._setXY(x * imag, y * imag);
@@ -685,7 +685,7 @@ export class Vec2 {
     const y = this.zpp_inner.y;
     const lsq = x * x + y * y;
     if (Math.sqrt(lsq) === 0) {
-      throw new Error("Error: Cannot normalise vector of length 0");
+      throw new Error("Cannot normalise vector of length 0");
     }
     const scale = 1 / Math.sqrt(lsq);
     return Vec2._poolGet(x * scale, y * scale, weak);
@@ -701,10 +701,10 @@ export class Vec2 {
   add(vector: Vec2, weak: boolean = false): Vec2 {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (vector == null) {
-      throw new Error("Error: Cannot add null vectors");
+      throw new Error("Cannot add null vectors");
     }
     this._validate();
     vector.zpp_inner.validate();
@@ -726,10 +726,10 @@ export class Vec2 {
   addMul(vector: Vec2, scalar: number, weak: boolean = false): Vec2 {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (vector == null) {
-      throw new Error("Error: Cannot add null vectors");
+      throw new Error("Cannot add null vectors");
     }
     this._validate();
     vector.zpp_inner.validate();
@@ -750,10 +750,10 @@ export class Vec2 {
   sub(vector: Vec2, weak: boolean = false): Vec2 {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (vector == null) {
-      throw new Error("Error: Cannot subtract null vectors");
+      throw new Error("Cannot subtract null vectors");
     }
     this._validate();
     vector.zpp_inner.validate();
@@ -774,7 +774,7 @@ export class Vec2 {
   mul(scalar: number, weak: boolean = false): Vec2 {
     this._checkDisposed();
     if (scalar !== scalar) {
-      throw new Error("Error: Cannot multiply with NaN");
+      throw new Error("Cannot multiply with NaN");
     }
     this._validate();
     const x = this.zpp_inner.x * scalar;
@@ -791,11 +791,11 @@ export class Vec2 {
   addeq(vector: Vec2): this {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     this._checkImmutable();
     if (vector == null) {
-      throw new Error("Error: Cannot add null vectors");
+      throw new Error("Cannot add null vectors");
     }
     this._validate();
     vector.zpp_inner.validate();
@@ -815,11 +815,11 @@ export class Vec2 {
   subeq(vector: Vec2): this {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     this._checkImmutable();
     if (vector == null) {
-      throw new Error("Error: Cannot subtract null vectors");
+      throw new Error("Cannot subtract null vectors");
     }
     this._validate();
     vector.zpp_inner.validate();
@@ -840,7 +840,7 @@ export class Vec2 {
     this._checkDisposed();
     this._checkImmutable();
     if (scalar !== scalar) {
-      throw new Error("Error: Cannot multiply with NaN");
+      throw new Error("Cannot multiply with NaN");
     }
     this._validate();
     const x = this.zpp_inner.x * scalar;
@@ -858,10 +858,10 @@ export class Vec2 {
   dot(vector: Vec2): number {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (vector == null) {
-      throw new Error("Error: Cannot take dot product with null vector");
+      throw new Error("Cannot take dot product with null vector");
     }
     this._validate();
     vector.zpp_inner.validate();
@@ -880,10 +880,10 @@ export class Vec2 {
   cross(vector: Vec2): number {
     this._checkDisposed();
     if (vector != null && vector.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     if (vector == null) {
-      throw new Error("Error: Cannot take cross product with null vector");
+      throw new Error("Cannot take cross product with null vector");
     }
     this._validate();
     vector.zpp_inner.validate();
@@ -912,11 +912,11 @@ export class Vec2 {
    */
   dispose(): void {
     if (this.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     this._checkImmutable();
     if (this.zpp_inner._inuse) {
-      throw new Error("Error: This Vec2 is not disposable");
+      throw new Error("This Vec2 is not disposable");
     }
 
     // Free the ZPP_Vec2 back to internal pool

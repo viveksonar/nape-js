@@ -86,10 +86,10 @@ export class InteractionListener extends Listener {
     ZPP_Listener.internal = false;
 
     if (handler == null) {
-      throw new Error("Error: InteractionListener::handler cannot be null");
+      throw new Error("InteractionListener::handler cannot be null");
     }
     if (event == null) {
-      throw new Error("Error: CbEvent cannot be null for InteractionListener");
+      throw new Error("CbEvent cannot be null for InteractionListener");
     }
 
     let xevent: number;
@@ -121,7 +121,7 @@ export class InteractionListener extends Listener {
 
     // Set interaction type
     if (interactionType == null) {
-      throw new Error("Error: Cannot set listener interaction type to null");
+      throw new Error("Cannot set listener interaction type to null");
     }
     const currentType = numberToInteractionType(this.zpp_inner_zn.itype);
     if (currentType != interactionType) {
@@ -154,7 +154,7 @@ export class InteractionListener extends Listener {
 
   set handler(handler: (cb: InteractionCallback) => void) {
     if (handler == null) {
-      throw new Error("Error: InteractionListener::handler cannot be null");
+      throw new Error("InteractionListener::handler cannot be null");
     }
     this.zpp_inner_zn.handleri = handler as (cb: any) => void;
   }
@@ -166,7 +166,7 @@ export class InteractionListener extends Listener {
 
   set interactionType(interactionType: InteractionType | null) {
     if (interactionType == null) {
-      throw new Error("Error: Cannot set listener interaction type to null");
+      throw new Error("Cannot set listener interaction type to null");
     }
     const currentType = numberToInteractionType(this.zpp_inner_zn.itype);
     if (currentType != interactionType) {

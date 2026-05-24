@@ -207,7 +207,7 @@ export class InteractionFilter {
    */
   shouldCollide(filter: InteractionFilter): boolean {
     if (filter == null) {
-      throw new Error("Error: filter argument cannot be null for shouldCollide");
+      throw new Error("filter argument cannot be null for shouldCollide");
     }
     return this.zpp_inner.shouldCollide(filter.zpp_inner);
   }
@@ -219,7 +219,7 @@ export class InteractionFilter {
    */
   shouldSense(filter: InteractionFilter): boolean {
     if (filter == null) {
-      throw new Error("Error: filter argument cannot be null for shouldSense");
+      throw new Error("filter argument cannot be null for shouldSense");
     }
     return this.zpp_inner.shouldSense(filter.zpp_inner);
   }
@@ -231,7 +231,7 @@ export class InteractionFilter {
    */
   shouldFlow(filter: InteractionFilter): boolean {
     if (filter == null) {
-      throw new Error("Error: filter argument cannot be null for shouldFlow");
+      throw new Error("filter argument cannot be null for shouldFlow");
     }
     return this.zpp_inner.shouldFlow(filter.zpp_inner);
   }

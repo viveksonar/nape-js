@@ -142,27 +142,27 @@ export class ZPP_SpaceArbiterList {
   // ========== Immutable overrides ==========
 
   push(_obj: any): void {
-    throw new Error("Error: ArbiterList is immutable");
+    throw new Error("ArbiterList is immutable");
   }
 
   pop(): any {
-    throw new Error("Error: ArbiterList is immutable");
+    throw new Error("ArbiterList is immutable");
   }
 
   unshift(_obj: any): void {
-    throw new Error("Error: ArbiterList is immutable");
+    throw new Error("ArbiterList is immutable");
   }
 
   shift(): any {
-    throw new Error("Error: ArbiterList is immutable");
+    throw new Error("ArbiterList is immutable");
   }
 
   remove(_obj: any): void {
-    throw new Error("Error: ArbiterList is immutable");
+    throw new Error("ArbiterList is immutable");
   }
 
   clear(): void {
-    throw new Error("Error: ArbiterList is immutable");
+    throw new Error("ArbiterList is immutable");
   }
 
   // ========== Indexed access ==========
@@ -170,7 +170,7 @@ export class ZPP_SpaceArbiterList {
   at(index: number): any {
     this.zpp_vm();
     if (index < 0 || index >= this.zpp_gl()) {
-      throw new Error("Error: Index out of bounds");
+      throw new Error("Index out of bounds");
     }
     let ret: any = null;
     let accum_length = 0;

@@ -105,7 +105,7 @@ export class ZPP_Constraint {
   // --- Mid-step guard ---
   immutable_midstep(name: string): void {
     if (this.space != null && this.space.midstep) {
-      throw new Error("Error: Constraint::" + name + " cannot be set during space step()");
+      throw new Error("Constraint::" + name + " cannot be set during space step()");
     }
   }
 
@@ -352,10 +352,10 @@ export class ZPP_Constraint {
 
     const maxError = me.zpp_inner.maxError;
     if (maxError !== maxError) {
-      throw new Error("Error: Constraint::maxError cannot be NaN");
+      throw new Error("Constraint::maxError cannot be NaN");
     }
     if (maxError < 0) {
-      throw new Error("Error: Constraint::maxError must be >=0");
+      throw new Error("Constraint::maxError must be >=0");
     }
     if (ret.zpp_inner.maxError != maxError) {
       ret.zpp_inner.maxError = maxError;
@@ -364,10 +364,10 @@ export class ZPP_Constraint {
 
     const maxForce = me.zpp_inner.maxForce;
     if (maxForce !== maxForce) {
-      throw new Error("Error: Constraint::maxForce cannot be NaN");
+      throw new Error("Constraint::maxForce cannot be NaN");
     }
     if (maxForce < 0) {
-      throw new Error("Error: Constraint::maxForce must be >=0");
+      throw new Error("Constraint::maxForce must be >=0");
     }
     if (ret.zpp_inner.maxForce != maxForce) {
       ret.zpp_inner.maxForce = maxForce;
@@ -376,10 +376,10 @@ export class ZPP_Constraint {
 
     const damping = me.zpp_inner.damping;
     if (damping !== damping) {
-      throw new Error("Error: Constraint::Damping cannot be Nan");
+      throw new Error("Constraint::Damping cannot be Nan");
     }
     if (damping < 0) {
-      throw new Error("Error: Constraint::Damping must be >=0");
+      throw new Error("Constraint::Damping must be >=0");
     }
     if (ret.zpp_inner.damping != damping) {
       ret.zpp_inner.damping = damping;
@@ -390,10 +390,10 @@ export class ZPP_Constraint {
 
     const frequency = me.zpp_inner.frequency;
     if (frequency !== frequency) {
-      throw new Error("Error: Constraint::Frequency cannot be NaN");
+      throw new Error("Constraint::Frequency cannot be NaN");
     }
     if (frequency <= 0) {
-      throw new Error("Error: Constraint::Frequency must be >0");
+      throw new Error("Constraint::Frequency must be >0");
     }
     if (ret.zpp_inner.frequency != frequency) {
       ret.zpp_inner.frequency = frequency;

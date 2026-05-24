@@ -69,6 +69,10 @@ import popcorn             from "./demos/popcorn.js?v=3.35.0";
 import rollercoaster       from "./demos/rollercoaster.js?v=3.35.0";
 import convexCast          from "./demos/convex-cast.js?v=3.35.0";
 import floppyFists         from "./demos/floppy-fists.js?v=3.35.0";
+import minigolf             from "./demos/minigolf.js?v=3.35.0";
+import wyrm                 from "./demos/wyrm.js?v=3.35.0";
+import brickline            from "./demos/brickline.js?v=3.35.0";
+import pulleyCrane          from "./demos/pulley-crane.js?v=3.35.0";
 import cordfall            from "./demos/cordfall.js?v=3.35.0";
 
 // Note on order: cardEntries reverses ALL_DEMOS, so the LAST tuple entry
@@ -108,6 +112,10 @@ const ALL_DEMOS = [
   rollercoaster,
   convexCast,
   floppyFists,
+  minigolf,
+  wyrm,
+  brickline,
+  pulleyCrane,
   cordfall,
 ];
 

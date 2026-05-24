@@ -14,7 +14,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class ValidationResult {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate ValidationResult derp!");
+      throw new Error("Cannot instantiate ValidationResult derp!");
     }
   }
 

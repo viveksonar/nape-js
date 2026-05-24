@@ -24,7 +24,7 @@ export class MatMN {
    */
   constructor(rows: number, cols: number) {
     if (rows <= 0 || cols <= 0) {
-      throw new Error("Error: MatMN::dimensions cannot be < 1");
+      throw new Error("MatMN::dimensions cannot be < 1");
     }
     this.zpp_inner = new ZPP_MatMN(rows, cols);
     this.zpp_inner.outer = this;
@@ -76,7 +76,7 @@ export class MatMN {
    */
   x(row: number, col: number): number {
     if (row < 0 || col < 0 || row >= this.zpp_inner.m || col >= this.zpp_inner.n) {
-      throw new Error("Error: MatMN indices out of range");
+      throw new Error("MatMN indices out of range");
     }
     return this.zpp_inner.x[row * this.zpp_inner.n + col];
   }
@@ -90,7 +90,7 @@ export class MatMN {
    */
   setx(row: number, col: number, value: number): number {
     if (row < 0 || col < 0 || row >= this.zpp_inner.m || col >= this.zpp_inner.n) {
-      throw new Error("Error: MatMN indices out of range");
+      throw new Error("MatMN indices out of range");
     }
     return (this.zpp_inner.x[row * this.zpp_inner.n + col] = value);
   }
@@ -149,7 +149,7 @@ export class MatMN {
       fst = false;
       for (let j = 0; j < this.zpp_inner.n; j++) {
         if (i < 0 || j < 0 || i >= this.zpp_inner.m || j >= this.zpp_inner.n) {
-          throw new Error("Error: MatMN indices out of range");
+          throw new Error("MatMN indices out of range");
         }
         ret += this.zpp_inner.x[i * this.zpp_inner.n + j] + " ";
       }
@@ -180,7 +180,7 @@ export class MatMN {
   mul(matrix: MatMN): MatMN {
     const y = matrix;
     if (this.zpp_inner.n !== y.zpp_inner.m) {
-      throw new Error("Error: Matrix dimensions aren't compatible");
+      throw new Error("Matrix dimensions aren't compatible");
     }
     const ret = new MatMN(this.zpp_inner.m, y.zpp_inner.n);
     for (let i = 0; i < this.zpp_inner.m; i++) {

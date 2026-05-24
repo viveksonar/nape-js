@@ -133,7 +133,7 @@ describe("ZPP_Edge", () => {
     it("should throw if polygon is null", () => {
       const e = new ZPP_Edge();
       e.polygon = null;
-      expect(() => e.lnorm_validate()).toThrow("Error: Edge not currently in use");
+      expect(() => e.lnorm_validate()).toThrow("Edge not currently in use");
     });
 
     it("should call polygon.validate_laxi and update wrap_lnorm", () => {
@@ -160,14 +160,14 @@ describe("ZPP_Edge", () => {
     it("should throw if polygon is null", () => {
       const e = new ZPP_Edge();
       e.polygon = null;
-      expect(() => e.gnorm_validate()).toThrow("Error: Edge not currently in use");
+      expect(() => e.gnorm_validate()).toThrow("Edge not currently in use");
     });
 
     it("should throw if polygon.body is null", () => {
       const e = new ZPP_Edge();
       e.polygon = { body: null };
       expect(() => e.gnorm_validate()).toThrow(
-        "Error: Edge worldNormal only makes sense if the parent Polygon is contained within a rigid body",
+        "Edge worldNormal only makes sense if the parent Polygon is contained within a rigid body",
       );
     });
 
@@ -228,7 +228,7 @@ describe("ZPP_Edge", () => {
       const e = new ZPP_Edge();
       e.lnormx = NaN;
       e.lnormy = 0;
-      expect(() => e.getlnorm()).toThrow("Error: Vec2 components cannot be NaN");
+      expect(() => e.getlnorm()).toThrow("Vec2 components cannot be NaN");
     });
   });
 
@@ -237,7 +237,7 @@ describe("ZPP_Edge", () => {
       const e = new ZPP_Edge();
       e.gnormx = 0;
       e.gnormy = NaN;
-      expect(() => e.getgnorm()).toThrow("Error: Vec2 components cannot be NaN");
+      expect(() => e.getgnorm()).toThrow("Vec2 components cannot be NaN");
     });
   });
 });

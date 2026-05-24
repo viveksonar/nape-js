@@ -91,7 +91,7 @@ export class ZPP_Edge {
 
   lnorm_validate(): void {
     if (this.polygon == null) {
-      throw new Error("Error: Edge not currently in use");
+      throw new Error("Edge not currently in use");
     }
     this.polygon.validate_laxi();
     this.wrap_lnorm.zpp_inner.x = this.lnormx;
@@ -100,7 +100,7 @@ export class ZPP_Edge {
 
   gnorm_validate(): void {
     if (this.polygon == null) {
-      throw new Error("Error: Edge not currently in use");
+      throw new Error("Edge not currently in use");
     }
     if (this.polygon.body == null) {
       throw new Error(
@@ -118,7 +118,7 @@ export class ZPP_Edge {
     const x = this.lnormx;
     const y = this.lnormy;
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -163,7 +163,7 @@ export class ZPP_Edge {
     const x = this.gnormx;
     const y = this.gnormy;
     if (x !== x || y !== y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (zpp.util.ZPP_PubPool.poolVec2 == null) {

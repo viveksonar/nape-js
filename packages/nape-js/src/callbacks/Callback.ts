@@ -24,7 +24,7 @@ export class Callback {
 
   constructor() {
     if (!ZPP_Callback.internal) {
-      throw new Error("Error: Callback cannot be instantiated derp!");
+      throw new Error("Callback cannot be instantiated derp!");
     }
   }
 

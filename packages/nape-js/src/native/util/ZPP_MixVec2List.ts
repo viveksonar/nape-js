@@ -127,7 +127,7 @@ Object.defineProperty((ZPP_MixVec2ListCtor as any).prototype, "length", {
 (ZPP_MixVec2ListCtor as any).prototype.at = function (this: any, index: number): any {
   this.zpp_vm();
   if (index < 0 || index >= this.zpp_gl()) {
-    throw new Error("Error: Index out of bounds");
+    throw new Error("Index out of bounds");
   }
   if (this.zpp_inner.reverse_flag) {
     index = this.zpp_gl() - 1 - index;
@@ -149,12 +149,12 @@ Object.defineProperty((ZPP_MixVec2ListCtor as any).prototype, "length", {
 
 (ZPP_MixVec2ListCtor as any).prototype.push = function (this: any, obj: any): boolean {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: Vec2List is immutable");
+    throw new Error("Vec2List is immutable");
   }
   this.zpp_inner.modify_test();
   this.zpp_vm();
   if (obj.zpp_inner._inuse) {
-    throw new Error("Error: Vec2 is already in use");
+    throw new Error("Vec2 is already in use");
   }
   const cont = this.zpp_inner.adder != null ? this.zpp_inner.adder(obj) : true;
   if (cont) {
@@ -178,12 +178,12 @@ Object.defineProperty((ZPP_MixVec2ListCtor as any).prototype, "length", {
 
 (ZPP_MixVec2ListCtor as any).prototype.unshift = function (this: any, obj: any): boolean {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: Vec2List is immutable");
+    throw new Error("Vec2List is immutable");
   }
   this.zpp_inner.modify_test();
   this.zpp_vm();
   if (obj.zpp_inner._inuse) {
-    throw new Error("Error: Vec2 is already in use");
+    throw new Error("Vec2 is already in use");
   }
   const cont = this.zpp_inner.adder != null ? this.zpp_inner.adder(obj) : true;
   if (cont) {
@@ -207,11 +207,11 @@ Object.defineProperty((ZPP_MixVec2ListCtor as any).prototype, "length", {
 
 (ZPP_MixVec2ListCtor as any).prototype.pop = function (this: any): any {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: Vec2List is immutable");
+    throw new Error("Vec2List is immutable");
   }
   this.zpp_inner.modify_test();
   if (this.empty()) {
-    throw new Error("Error: Cannot remove from empty list");
+    throw new Error("Cannot remove from empty list");
   }
   this.zpp_vm();
   let ret: any;
@@ -248,11 +248,11 @@ Object.defineProperty((ZPP_MixVec2ListCtor as any).prototype, "length", {
 
 (ZPP_MixVec2ListCtor as any).prototype.shift = function (this: any): any {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: Vec2List is immutable");
+    throw new Error("Vec2List is immutable");
   }
   this.zpp_inner.modify_test();
   if (this.empty()) {
-    throw new Error("Error: Cannot remove from empty list");
+    throw new Error("Cannot remove from empty list");
   }
   this.zpp_vm();
   let ret: any;
@@ -289,7 +289,7 @@ Object.defineProperty((ZPP_MixVec2ListCtor as any).prototype, "length", {
 
 (ZPP_MixVec2ListCtor as any).prototype.remove = function (this: any, obj: any): boolean {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: Vec2List is immutable");
+    throw new Error("Vec2List is immutable");
   }
   this.zpp_inner.modify_test();
   this.zpp_vm();
@@ -320,7 +320,7 @@ Object.defineProperty((ZPP_MixVec2ListCtor as any).prototype, "length", {
 
 (ZPP_MixVec2ListCtor as any).prototype.clear = function (this: any): void {
   if (this.zpp_inner.immutable) {
-    throw new Error("Error: Vec2List is immutable");
+    throw new Error("Vec2List is immutable");
   }
   if (this.zpp_inner.reverse_flag) {
     while (!this.empty()) this.pop();

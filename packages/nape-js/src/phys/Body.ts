@@ -32,7 +32,7 @@ import type { GravMassMode } from "./GravMassMode";
 /** Read validated x from a Vec2 input. */
 function _readVec2X(v: Vec2): number {
   if (v.zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -42,7 +42,7 @@ function _readVec2X(v: Vec2): number {
 /** Read validated y from a Vec2 input. */
 function _readVec2Y(v: Vec2): number {
   if (v.zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
   const inner = v.zpp_inner;
   if (inner._validate != null) inner._validate();
@@ -52,7 +52,7 @@ function _readVec2Y(v: Vec2): number {
 /** Check a Vec2 is not disposed. */
 function _checkVec2Disposed(v: Vec2): void {
   if (v != null && v.zpp_disp) {
-    throw new Error("Error: Vec2 has been disposed and cannot be used!");
+    throw new Error("Vec2 has been disposed and cannot be used!");
   }
 }
 
@@ -76,7 +76,7 @@ function _setVec2Prop(
 ): Vec2 {
   _checkVec2Disposed(source);
   if (source == null) {
-    throw new Error("Error: Body::" + propName + " cannot be null");
+    throw new Error("Body::" + propName + " cannot be null");
   }
   if (wrapper == null && setupFn != null) {
     setupFn();
@@ -150,11 +150,11 @@ export class Body extends Interactor {
 
     zpp.immutable_midstep("Body::type");
     if (zpp.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (ZPP_Body.types[zpp.type] !== type1) {
       if (type1 == null) {
-        throw new Error("Error: Cannot use null BodyType");
+        throw new Error("Cannot use null BodyType");
       }
       const ntype = _bodyTypeToInt(type1, nape);
       if (ntype === 1 && zpp.space != null) {
@@ -216,11 +216,11 @@ export class Body extends Interactor {
     const zpp = this.zpp_inner;
     zpp.immutable_midstep("Body::type");
     if (zpp.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (ZPP_Body.types[zpp.type] !== value) {
       if (value == null) {
-        throw new Error("Error: Cannot use null BodyType");
+        throw new Error("Cannot use null BodyType");
       }
       const nape = getNape();
       const ntype = _bodyTypeToInt(value, nape);
@@ -286,14 +286,14 @@ export class Body extends Interactor {
     const zpp = this.zpp_inner;
     zpp.immutable_midstep("Body::rotation");
     if (zpp.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (zpp.type === 1 && zpp.space != null) {
-      throw new Error("Error: Static objects cannot be rotated once inside a Space");
+      throw new Error("Static objects cannot be rotated once inside a Space");
     }
     if (zpp.rot !== value) {
       if (value !== value) {
-        throw new Error("Error: Body::rotation cannot be NaN");
+        throw new Error("Body::rotation cannot be NaN");
       }
       zpp.rot = value;
       zpp.invalidate_rot();
@@ -332,14 +332,14 @@ export class Body extends Interactor {
   set angularVel(value: number) {
     const zpp = this.zpp_inner;
     if (zpp.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (zpp.angvel !== value) {
       if (value !== value) {
-        throw new Error("Error: Body::angularVel cannot be NaN");
+        throw new Error("Body::angularVel cannot be NaN");
       }
       if (zpp.type === 1) {
-        throw new Error("Error: A static object cannot be given a velocity");
+        throw new Error("A static object cannot be given a velocity");
       }
       zpp.angvel = value;
       zpp.wake();
@@ -373,11 +373,11 @@ export class Body extends Interactor {
   set kinAngVel(value: number) {
     const zpp = this.zpp_inner;
     if (zpp.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (zpp.kinangvel !== value) {
       if (value !== value) {
-        throw new Error("Error: Body::kinAngVel cannot be NaN");
+        throw new Error("Body::kinAngVel cannot be NaN");
       }
       zpp.kinangvel = value;
       zpp.wake();
@@ -435,13 +435,13 @@ export class Body extends Interactor {
   set torque(value: number) {
     const zpp = this.zpp_inner;
     if (zpp.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (zpp.type !== 2) {
-      throw new Error("Error: Non-dynamic body cannot have torque applied.");
+      throw new Error("Non-dynamic body cannot have torque applied.");
     }
     if (value !== value) {
-      throw new Error("Error: Body::torque cannot be NaN");
+      throw new Error("Body::torque cannot be NaN");
     }
     if (zpp.torque !== value) {
       zpp.torque = value;
@@ -459,7 +459,7 @@ export class Body extends Interactor {
    */
   get mass(): number {
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world has no mass");
+      throw new Error("Space::world has no mass");
     }
     this.zpp_inner.validate_mass();
     if (this.zpp_inner.massMode === 0 && this.zpp_inner.shapes.head == null) {
@@ -472,16 +472,16 @@ export class Body extends Interactor {
   set mass(value: number) {
     this.zpp_inner.immutable_midstep("Body::mass");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (value !== value) {
-      throw new Error("Error: Mass cannot be NaN");
+      throw new Error("Mass cannot be NaN");
     }
     if (value <= 0) {
-      throw new Error("Error: Mass must be strictly positive");
+      throw new Error("Mass must be strictly positive");
     }
     if (value >= Infinity) {
-      throw new Error("Error: Mass cannot be infinite, use allowMovement = false instead");
+      throw new Error("Mass cannot be infinite, use allowMovement = false instead");
     }
     this.zpp_inner.massMode = 1;
     this.zpp_inner.cmass = value;
@@ -494,7 +494,7 @@ export class Body extends Interactor {
    */
   get inertia(): number {
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world has no inertia");
+      throw new Error("Space::world has no inertia");
     }
     this.zpp_inner.validate_inertia();
     if (this.zpp_inner.inertiaMode === 0 && this.zpp_inner.shapes.head == null) {
@@ -507,16 +507,16 @@ export class Body extends Interactor {
   set inertia(value: number) {
     this.zpp_inner.immutable_midstep("Body::inertia");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (value !== value) {
-      throw new Error("Error: Inertia cannot be NaN");
+      throw new Error("Inertia cannot be NaN");
     }
     if (value <= 0) {
-      throw new Error("Error: Inertia must be strictly positive");
+      throw new Error("Inertia must be strictly positive");
     }
     if (value >= Infinity) {
-      throw new Error("Error: Inertia cannot be infinite, use allowRotation = false instead");
+      throw new Error("Inertia cannot be infinite, use allowRotation = false instead");
     }
     this.zpp_inner.inertiaMode = 1;
     this.zpp_inner.cinertia = value;
@@ -542,7 +542,7 @@ export class Body extends Interactor {
   /** Gravitational mass. Defaults to the same as `mass`. */
   get gravMass(): number {
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world has no gravMass");
+      throw new Error("Space::world has no gravMass");
     }
     this.zpp_inner.validate_gravMass();
     if (this.zpp_inner.shapes.head == null) {
@@ -557,10 +557,10 @@ export class Body extends Interactor {
   set gravMass(value: number) {
     this.zpp_inner.immutable_midstep("Body::gravMass");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (value !== value) {
-      throw new Error("Error: gravMass cannot be NaN");
+      throw new Error("gravMass cannot be NaN");
     }
     this.zpp_inner.gravMassMode = 1;
     this.zpp_inner.gravMass = value;
@@ -582,10 +582,10 @@ export class Body extends Interactor {
   set gravMassScale(value: number) {
     this.zpp_inner.immutable_midstep("Body::gravMassScale");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (value !== value) {
-      throw new Error("Error: gravMassScale cannot be NaN");
+      throw new Error("gravMassScale cannot be NaN");
     }
     this.zpp_inner.gravMassMode = 2;
     this.zpp_inner.gravMassScale = value;
@@ -672,7 +672,7 @@ export class Body extends Interactor {
     }
     this.zpp_inner.immutable_midstep("Body::space");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     const currentSpace = this.zpp_inner.space == null ? null : this.zpp_inner.space.outer;
     if (currentSpace !== space) {
@@ -719,7 +719,7 @@ export class Body extends Interactor {
    */
   get bounds(): AABB {
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world has no bounds");
+      throw new Error("Space::world has no bounds");
     }
     return AABB._wrap(this.zpp_inner.aabb.wrapper());
   }
@@ -738,7 +738,7 @@ export class Body extends Interactor {
    */
   get localCOM(): Vec2 {
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world has no localCOM");
+      throw new Error("Space::world has no localCOM");
     }
     if (this.zpp_inner.wrap_localCOM == null) {
       const ret = Vec2.get(this.zpp_inner.localCOMx, this.zpp_inner.localCOMy);
@@ -756,7 +756,7 @@ export class Body extends Interactor {
    */
   get worldCOM(): Vec2 {
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world has no worldCOM");
+      throw new Error("Space::world has no worldCOM");
     }
     if (this.zpp_inner.wrap_worldCOM == null) {
       const ret = Vec2.get(this.zpp_inner.worldCOMx, this.zpp_inner.worldCOMy);
@@ -783,10 +783,10 @@ export class Body extends Interactor {
     const nape = getNape();
     this.zpp_inner.immutable_midstep("Body::massMode");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (value == null) {
-      throw new Error("Error: cannot use null massMode");
+      throw new Error("cannot use null massMode");
     }
     const d = _ensureFlag("MassMode_DEFAULT", () => new nape.phys.MassMode());
     this.zpp_inner.massMode = value === d ? 0 : 1;
@@ -804,10 +804,10 @@ export class Body extends Interactor {
     const nape = getNape();
     this.zpp_inner.immutable_midstep("Body::inertiaMode");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (value == null) {
-      throw new Error("Error: Cannot use null InertiaMode");
+      throw new Error("Cannot use null InertiaMode");
     }
     const f = _ensureFlag("InertiaMode_FIXED", () => new nape.phys.InertiaMode());
     this.zpp_inner.inertiaMode = value === f ? 1 : 0;
@@ -826,10 +826,10 @@ export class Body extends Interactor {
     const nape = getNape();
     this.zpp_inner.immutable_midstep("Body::gravMassMode");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (value == null) {
-      throw new Error("Error: Cannot use null gravMassMode");
+      throw new Error("Cannot use null gravMassMode");
     }
     const s = _ensureFlag("GravMassMode_SCALED", () => new nape.phys.GravMassMode());
     if (value === s) {
@@ -852,7 +852,7 @@ export class Body extends Interactor {
    */
   copy(): Body {
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world cannot be copied");
+      throw new Error("Space::world cannot be copied");
     }
     return this.zpp_inner.copy();
   }
@@ -889,7 +889,7 @@ export class Body extends Interactor {
     }
     this.zpp_inner.immutable_midstep("Body::space");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (deltaTime === 0) {
       return this;
@@ -940,7 +940,7 @@ export class Body extends Interactor {
   localPointToWorld(point: Vec2, weak: boolean = false): Vec2 {
     _checkVec2Disposed(point);
     if (point == null) {
-      throw new Error("Error: Cannot transform null Vec2");
+      throw new Error("Cannot transform null Vec2");
     }
     this.zpp_inner.validate_axis();
     const px = _readVec2X(point);
@@ -960,7 +960,7 @@ export class Body extends Interactor {
   worldPointToLocal(point: Vec2, weak: boolean = false): Vec2 {
     _checkVec2Disposed(point);
     if (point == null) {
-      throw new Error("Error: Cannot transform null Vec2");
+      throw new Error("Cannot transform null Vec2");
     }
     this.zpp_inner.validate_axis();
     const px = _readVec2X(point) - this.zpp_inner.posx;
@@ -980,7 +980,7 @@ export class Body extends Interactor {
   localVectorToWorld(vector: Vec2, weak: boolean = false): Vec2 {
     _checkVec2Disposed(vector);
     if (vector == null) {
-      throw new Error("Error: Cannot transform null Vec2");
+      throw new Error("Cannot transform null Vec2");
     }
     this.zpp_inner.validate_axis();
     const vx = _readVec2X(vector);
@@ -1000,7 +1000,7 @@ export class Body extends Interactor {
   worldVectorToLocal(vector: Vec2, weak: boolean = false): Vec2 {
     _checkVec2Disposed(vector);
     if (vector == null) {
-      throw new Error("Error: Cannot transform null Vec2");
+      throw new Error("Cannot transform null Vec2");
     }
     this.zpp_inner.validate_axis();
     const vx = _readVec2X(vector);
@@ -1028,10 +1028,10 @@ export class Body extends Interactor {
     _checkVec2Disposed(impulse);
     if (pos != null) _checkVec2Disposed(pos);
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (impulse == null) {
-      throw new Error("Error: Cannot apply null impulse to Body");
+      throw new Error("Cannot apply null impulse to Body");
     }
     // If sleepable and body is sleeping, dispose weak Vec2s and return
     if (sleepable && this.isSleeping) {
@@ -1069,7 +1069,7 @@ export class Body extends Interactor {
    */
   applyAngularImpulse(impulse: number, sleepable: boolean = false): Body {
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (sleepable && this.isSleeping) {
       return this;
@@ -1114,14 +1114,14 @@ export class Body extends Interactor {
     // Set angular velocity
     const angularVel = (targetRotation - this.zpp_inner.rot) * idt;
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (this.zpp_inner.angvel !== angularVel) {
       if (angularVel !== angularVel) {
-        throw new Error("Error: Body::angularVel cannot be NaN");
+        throw new Error("Body::angularVel cannot be NaN");
       }
       if (this.zpp_inner.type === 1) {
-        throw new Error("Error: A static object cannot be given a velocity");
+        throw new Error("A static object cannot be given a velocity");
       }
       this.zpp_inner.angvel = angularVel;
       this.zpp_inner.wake();
@@ -1143,10 +1143,10 @@ export class Body extends Interactor {
     this.zpp_inner.immutable_midstep("Body::translateShapes()");
     _checkVec2Disposed(translation);
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (translation == null) {
-      throw new Error("Error: Cannot displace by null Vec2");
+      throw new Error("Cannot displace by null Vec2");
     }
     const weak = translation.zpp_inner.weak;
     translation.zpp_inner.weak = false;
@@ -1168,7 +1168,7 @@ export class Body extends Interactor {
   rotateShapes(angle: number): Body {
     this.zpp_inner.immutable_midstep("Body::rotateShapes()");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     let cx_ite = this.zpp_inner.shapes.head;
     while (cx_ite != null) {
@@ -1187,7 +1187,7 @@ export class Body extends Interactor {
   scaleShapes(scaleX: number, scaleY: number): Body {
     this.zpp_inner.immutable_midstep("Body::scaleShapes()");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     let cx_ite = this.zpp_inner.shapes.head;
     while (cx_ite != null) {
@@ -1205,7 +1205,7 @@ export class Body extends Interactor {
   transformShapes(matrix: Mat23): Body {
     this.zpp_inner.immutable_midstep("Body::transformShapes()");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     let cx_ite = this.zpp_inner.shapes.head;
     while (cx_ite != null) {
@@ -1223,10 +1223,10 @@ export class Body extends Interactor {
   align(): Body {
     this.zpp_inner.immutable_midstep("Body::align()");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     if (this.zpp_inner.shapes.head == null) {
-      throw new Error("Error: Cannot align empty Body");
+      throw new Error("Cannot align empty Body");
     }
     this.zpp_inner.validate_localCOM();
     const dx = Vec2.get(-this.zpp_inner.localCOMx, -this.zpp_inner.localCOMy);
@@ -1256,10 +1256,10 @@ export class Body extends Interactor {
   rotate(centre: Vec2, angle: number): Body {
     _checkVec2Disposed(centre);
     if (centre == null) {
-      throw new Error("Error: Cannot rotate about a null Vec2");
+      throw new Error("Cannot rotate about a null Vec2");
     }
     if (angle !== angle) {
-      throw new Error("Error: Cannot rotate by NaN radians");
+      throw new Error("Cannot rotate by NaN radians");
     }
     const weak = centre.zpp_inner.weak;
     centre.zpp_inner.weak = false;
@@ -1287,14 +1287,14 @@ export class Body extends Interactor {
       const zpp = this.zpp_inner;
       zpp.immutable_midstep("Body::rotation");
       if (zpp.world) {
-        throw new Error("Error: Space::world is immutable");
+        throw new Error("Space::world is immutable");
       }
       if (zpp.type === 1 && zpp.space != null) {
-        throw new Error("Error: Static objects cannot be rotated once inside a Space");
+        throw new Error("Static objects cannot be rotated once inside a Space");
       }
       if (zpp.rot !== newRot) {
         if (newRot !== newRot) {
-          throw new Error("Error: Body::rotation cannot be NaN");
+          throw new Error("Body::rotation cannot be NaN");
         }
         zpp.rot = newRot;
         zpp.invalidate_rot();
@@ -1314,14 +1314,14 @@ export class Body extends Interactor {
   setShapeMaterials(material: Material): Body {
     this.zpp_inner.immutable_midstep("Body::setShapeMaterials()");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     let cx_ite = this.zpp_inner.shapes.head;
     while (cx_ite != null) {
       const shape = cx_ite.elt.outer;
       shape.zpp_inner.immutable_midstep("Shape::material");
       if (material == null) {
-        throw new Error("Error: Cannot assign null as Shape material");
+        throw new Error("Cannot assign null as Shape material");
       }
       shape.zpp_inner.setMaterial(material.zpp_inner);
       shape.zpp_inner.material.wrapper();
@@ -1338,14 +1338,14 @@ export class Body extends Interactor {
   setShapeFilters(filter: InteractionFilter): Body {
     this.zpp_inner.immutable_midstep("Body::setShapeFilters()");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     let cx_ite = this.zpp_inner.shapes.head;
     while (cx_ite != null) {
       const shape = cx_ite.elt.outer;
       shape.zpp_inner.immutable_midstep("Shape::filter");
       if (filter == null) {
-        throw new Error("Error: Cannot assign null as Shape filter");
+        throw new Error("Cannot assign null as Shape filter");
       }
       shape.zpp_inner.setFilter(filter.zpp_inner);
       shape.zpp_inner.filter.wrapper();
@@ -1362,7 +1362,7 @@ export class Body extends Interactor {
   setShapeFluidProperties(fluidProperties: FluidProperties): Body {
     this.zpp_inner.immutable_midstep("Body::setShapeFluidProperties()");
     if (this.zpp_inner.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
     const nape = getNape();
     let cx_ite = this.zpp_inner.shapes.head;
@@ -1396,7 +1396,7 @@ export class Body extends Interactor {
   contains(point: Vec2): boolean {
     _checkVec2Disposed(point);
     if (point == null) {
-      throw new Error("Error: Cannot check containment of null point");
+      throw new Error("Cannot check containment of null point");
     }
     const wasWeak = point.zpp_inner.weak;
     point.zpp_inner.weak = false;

@@ -317,7 +317,7 @@ export class ZPP_Interactor {
     if (this.ibody != null) {
       const _this = this.ibody;
       if (_this.space != null && _this.space.midstep) {
-        throw new Error("Error: " + n + " cannot be set during a space step()");
+        throw new Error(`${n} cannot be set during a space step()`);
       }
     } else if (this.ishape != null) {
       this.ishape.__immutable_midstep(n);

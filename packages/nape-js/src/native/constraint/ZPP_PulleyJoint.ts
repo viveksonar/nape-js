@@ -222,7 +222,7 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       x = 0;
     }
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -253,21 +253,21 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -275,7 +275,7 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       }
       if (ret.zpp_inner.x == x) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {
@@ -327,7 +327,7 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       x = 0;
     }
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -358,21 +358,21 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -380,7 +380,7 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       }
       if (ret.zpp_inner.x == x) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {
@@ -432,7 +432,7 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       x = 0;
     }
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -463,21 +463,21 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -485,7 +485,7 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       }
       if (ret.zpp_inner.x == x) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {
@@ -537,7 +537,7 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       x = 0;
     }
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
     let ret: any;
     if (zpp.util.ZPP_PubPool.poolVec2 == null) {
@@ -568,21 +568,21 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       let tmp: boolean;
       if (ret != null && ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this1 = ret.zpp_inner;
       if (_this1._validate != null) {
@@ -590,7 +590,7 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       }
       if (ret.zpp_inner.x == x) {
         if (ret != null && ret.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         const _this2 = ret.zpp_inner;
         if (_this2._validate != null) {
@@ -659,10 +659,10 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
 
   override validate(): void {
     if (this.b1 == null || this.b2 == null || this.b3 == null || this.b4 == null) {
-      throw new Error("Error: PulleyJoint cannot be simulated with null bodies");
+      throw new Error("PulleyJoint cannot be simulated with null bodies");
     }
     if (this.b1 == this.b2 || this.b3 == this.b4) {
-      throw new Error("Error: PulleyJoint cannot have body1==body2 or body3==body4");
+      throw new Error("PulleyJoint cannot have body1==body2 or body3==body4");
     }
     if (
       this.b1.space != this.space ||
@@ -675,13 +675,13 @@ export class ZPP_PulleyJoint extends ZPP_Constraint {
       );
     }
     if (this.jointMin > this.jointMax) {
-      throw new Error("Error: PulleyJoint must have jointMin <= jointMax");
+      throw new Error("PulleyJoint must have jointMin <= jointMax");
     }
     if (this.b1.type != 2 && this.b2.type != 2) {
-      throw new Error("Error: PulleyJoint cannot have both bodies in a linked pair non-dynamic");
+      throw new Error("PulleyJoint cannot have both bodies in a linked pair non-dynamic");
     }
     if (this.b3.type != 2 && this.b4.type != 2) {
-      throw new Error("Error: PulleyJoint cannot have both bodies in a linked pair non-dynamic");
+      throw new Error("PulleyJoint cannot have both bodies in a linked pair non-dynamic");
     }
   }
 

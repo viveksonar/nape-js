@@ -95,7 +95,7 @@ export class ZPP_ConvexRayResult {
 
   disposed(): void {
     if (this.next != null) {
-      throw new Error("Error: This object has been disposed of and cannot be used");
+      throw new Error("This object has been disposed of and cannot be used");
     }
   }
 
@@ -135,17 +135,17 @@ export class ZPP_ConvexRayResult {
 
     // Validate the Vec2 wrapper
     if (v != null && v.zpp_disp) {
-      throw new Error("Error: Vec2 has been disposed and cannot be used!");
+      throw new Error("Vec2 has been disposed and cannot be used!");
     }
     const zppInner: ZPP_Vec2 = v.zpp_inner;
     if (zppInner._immutable) {
-      throw new Error("Error: Vec2 is immutable");
+      throw new Error("Vec2 is immutable");
     }
     if (zppInner._isimmutable != null) {
       zppInner._isimmutable();
     }
     if (zppInner._inuse) {
-      throw new Error("Error: This Vec2 is not disposable");
+      throw new Error("This Vec2 is not disposable");
     }
 
     // Disconnect wrapper ↔ inner

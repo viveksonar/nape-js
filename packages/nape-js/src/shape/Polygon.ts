@@ -40,7 +40,7 @@ export class Polygon extends Shape {
     const nape = getNape();
 
     if (localVerts == null) {
-      throw new Error("Error: localVerts cannot be null");
+      throw new Error("localVerts cannot be null");
     }
 
     // --- Resolve overloaded parameters ---
@@ -78,13 +78,13 @@ export class Polygon extends Shape {
     if (Array.isArray(localVerts)) {
       for (const v of localVerts) {
         if (v == null) {
-          throw new Error("Error: Array<Vec2> contains null objects");
+          throw new Error("Array<Vec2> contains null objects");
         }
         if (!(v instanceof Vec2)) {
-          throw new Error("Error: Array<Vec2> contains non Vec2 objects");
+          throw new Error("Array<Vec2> contains non Vec2 objects");
         }
         if ((v as any).zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         if (zpp.wrap_lverts == null) zpp.getlverts();
         const inner = v.zpp_inner;
@@ -119,10 +119,10 @@ export class Polygon extends Shape {
         iter.zpp_critical = false;
         const v = iter.zpp_inner.at(iter.zpp_i++);
         if (v == null) {
-          throw new Error("Error: Vec2List contains null objects");
+          throw new Error("Vec2List contains null objects");
         }
         if (v.zpp_disp) {
-          throw new Error("Error: Vec2 has been disposed and cannot be used!");
+          throw new Error("Vec2 has been disposed and cannot be used!");
         }
         if (zpp.wrap_lverts == null) zpp.getlverts();
         const inner = v.zpp_inner;
@@ -171,7 +171,7 @@ export class Polygon extends Shape {
     // --- Handle localCOM ---
     if (localCOM != null) {
       if ((localCOM as any).zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const inner = localCOM.zpp_inner;
       if (inner._validate != null) inner._validate();
@@ -258,7 +258,7 @@ export class Polygon extends Shape {
    */
   static rect(x: number, y: number, width: number, height: number, weak: boolean = false): Vec2[] {
     if (x !== x || y !== y || width !== width || height !== height) {
-      throw new Error("Error: Polygon.rect cannot accept NaN arguments");
+      throw new Error("Polygon.rect cannot accept NaN arguments");
     }
     const v1 = new Vec2(x, y);
     v1.zpp_inner.weak = weak;
@@ -280,7 +280,7 @@ export class Polygon extends Shape {
    */
   static box(width: number, height: number = width, weak: boolean = false): Vec2[] {
     if (width !== width || height !== height) {
-      throw new Error("Error: Polygon.box cannot accept NaN arguments");
+      throw new Error("Polygon.box cannot accept NaN arguments");
     }
     return Polygon.rect(-width / 2, -height / 2, width, height, weak);
   }
@@ -302,7 +302,7 @@ export class Polygon extends Shape {
     weak: boolean = false,
   ): Vec2[] {
     if (xRadius !== xRadius || yRadius !== yRadius || angleOffset !== angleOffset) {
-      throw new Error("Error: Polygon.regular cannot accept NaN arguments");
+      throw new Error("Polygon.regular cannot accept NaN arguments");
     }
     const result: Vec2[] = [];
     const dangle = (Math.PI * 2) / edgeCount;

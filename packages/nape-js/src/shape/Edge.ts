@@ -20,7 +20,7 @@ export class Edge {
 
   constructor() {
     if (!ZPP_Edge.internal) {
-      throw new Error("Error: Cannot instantiate an Edge derp!");
+      throw new Error("Cannot instantiate an Edge derp!");
     }
   }
 
@@ -49,7 +49,7 @@ export class Edge {
   get polygon(): Polygon {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     return zpp.polygon.outer_zn;
   }
@@ -58,7 +58,7 @@ export class Edge {
   get localNormal(): Vec2 {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     if (zpp.wrap_lnorm == null) {
       zpp.getlnorm();
@@ -70,7 +70,7 @@ export class Edge {
   get worldNormal(): Vec2 {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     if (zpp.wrap_gnorm == null) {
       zpp.getgnorm();
@@ -82,7 +82,7 @@ export class Edge {
   get length(): number {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     zpp.polygon.validate_laxi();
     return zpp.length;
@@ -92,7 +92,7 @@ export class Edge {
   get localProjection(): number {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     zpp.polygon.validate_laxi();
     return zpp.lprojection;
@@ -102,7 +102,7 @@ export class Edge {
   get worldProjection(): number {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     if (zpp.polygon.body == null) {
       throw new Error(
@@ -117,7 +117,7 @@ export class Edge {
   get localVertex1(): Vec2 {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     zpp.polygon.validate_laxi();
     return this._wrapVert(zpp.lp0);
@@ -127,7 +127,7 @@ export class Edge {
   get localVertex2(): Vec2 {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     zpp.polygon.validate_laxi();
     return this._wrapVert(zpp.lp1);
@@ -137,7 +137,7 @@ export class Edge {
   get worldVertex1(): Vec2 {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     zpp.polygon.validate_gaxi();
     return this._wrapVert(zpp.gp0);
@@ -147,7 +147,7 @@ export class Edge {
   get worldVertex2(): Vec2 {
     const zpp = this.zpp_inner;
     if (zpp.polygon == null) {
-      throw new Error("Error: Edge not current in use");
+      throw new Error("Edge not current in use");
     }
     zpp.polygon.validate_gaxi();
     return this._wrapVert(zpp.gp1);

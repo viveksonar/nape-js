@@ -12,7 +12,7 @@ import { ZPP_Flags } from "../native/util/ZPP_Flags";
 export class ShapeType {
   constructor() {
     if (!ZPP_Flags.internal) {
-      throw new Error("Error: Cannot instantiate ShapeType derp!");
+      throw new Error("Cannot instantiate ShapeType derp!");
     }
   }
 

@@ -304,7 +304,7 @@ describe("ZPP_OptionType", () => {
   describe("append", () => {
     it("should throw for null val", () => {
       const ot = new ZPP_OptionType();
-      expect(() => ot.append(ot.includes, null)).toThrow("Error: Cannot append null");
+      expect(() => ot.append(ot.includes, null)).toThrow("Cannot append null");
     });
 
     it("should handle CbType instance", () => {
@@ -319,7 +319,7 @@ describe("ZPP_OptionType", () => {
     it("should throw for invalid types", () => {
       const ot = new ZPP_OptionType();
       expect(() => ot.append(ot.includes, 42)).toThrow(
-        "Error: Cannot append non-CbType or CbType list value",
+        "Cannot append non-CbType or CbType list value",
       );
     });
 
@@ -338,7 +338,7 @@ describe("ZPP_OptionType", () => {
     it("should throw for array with non-CbType elements", () => {
       const ot = new ZPP_OptionType();
       expect(() => ot.append(ot.includes, [42])).toThrow(
-        "Error: Cannot append non-CbType or CbType list value",
+        "Cannot append non-CbType or CbType list value",
       );
     });
 

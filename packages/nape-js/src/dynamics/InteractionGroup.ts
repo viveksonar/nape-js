@@ -73,7 +73,7 @@ export class InteractionGroup {
   }
   set group(value: InteractionGroup | null) {
     if (value === (this as any)) {
-      throw new Error("Error: Cannot assign InteractionGroup to itself");
+      throw new Error("Cannot assign InteractionGroup to itself");
     }
     this.zpp_inner.setGroup(value == null ? null : value.zpp_inner);
   }

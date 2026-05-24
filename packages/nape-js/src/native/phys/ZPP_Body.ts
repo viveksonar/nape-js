@@ -563,7 +563,7 @@ export class ZPP_Body {
   pos_invalidate(pos: ZPP_Vec2): void {
     this.immutable_midstep("Body::position");
     if (this.type === 1 && this.space != null) {
-      throw new Error("Error: Cannot move a static object once inside a Space");
+      throw new Error("Cannot move a static object once inside a Space");
     }
     if (!(this.posx === pos.x && this.posy === pos.y)) {
       this.posx = pos.x;
@@ -580,7 +580,7 @@ export class ZPP_Body {
 
   vel_invalidate(vel: ZPP_Vec2): void {
     if (this.type === 1) {
-      throw new Error("Error: Static body cannot have its velocity set.");
+      throw new Error("Static body cannot have its velocity set.");
     }
     this.velx = vel.x;
     this.vely = vel.y;
@@ -616,7 +616,7 @@ export class ZPP_Body {
 
   force_invalidate(force: ZPP_Vec2): void {
     if (this.type !== 2) {
-      throw new Error("Error: Non-dynamic body cannot have force applied.");
+      throw new Error("Non-dynamic body cannot have force applied.");
     }
     this.forcex = force.x;
     this.forcey = force.y;
@@ -639,7 +639,7 @@ export class ZPP_Body {
     const nape = ZPP_Body._nape;
 
     if (x != x || y != y) {
-      throw new Error("Error: Vec2 components cannot be NaN");
+      throw new Error("Vec2 components cannot be NaN");
     }
 
     let ret: any;
@@ -672,17 +672,17 @@ export class ZPP_Body {
       ret.zpp_inner.outer = ret;
     } else {
       if (ret.zpp_disp) {
-        throw new Error("Error: Vec2 has been disposed and cannot be used!");
+        throw new Error("Vec2 has been disposed and cannot be used!");
       }
       const _this = ret.zpp_inner;
       if (_this._immutable) {
-        throw new Error("Error: Vec2 is immutable");
+        throw new Error("Vec2 is immutable");
       }
       if (_this._isimmutable != null) {
         _this._isimmutable();
       }
       if (x != x || y != y) {
-        throw new Error("Error: Vec2 components cannot be NaN");
+        throw new Error("Vec2 components cannot be NaN");
       }
       // Only invalidate if changed
       let same: boolean;
@@ -959,7 +959,7 @@ export class ZPP_Body {
 
   validate_aabb(): void {
     if (this.shapes.head == null) {
-      throw new Error("Error: Body bounds only makes sense if it contains shapes");
+      throw new Error("Body bounds only makes sense if it contains shapes");
     }
     if (this.zip_aabb) {
       this.zip_aabb = false;
@@ -1039,7 +1039,7 @@ export class ZPP_Body {
       }
     }
     if (poly.lverts.next == null) {
-      throw new Error("Error: An empty polygon has no meaningful bounds");
+      throw new Error("An empty polygon has no meaningful bounds");
     }
     const p0 = poly.gverts.next;
     poly.aabb.minx = p0.x;
@@ -1059,7 +1059,7 @@ export class ZPP_Body {
 
   aabb_validate(): void {
     if (this.shapes.head == null) {
-      throw new Error("Error: bounds only makes sense when Body has shapes");
+      throw new Error("bounds only makes sense when Body has shapes");
     }
     this.validate_aabb();
   }
@@ -1077,7 +1077,7 @@ export class ZPP_Body {
 
   private _computePolygonLocalCOM(poly: any): void {
     if (poly.lverts.next == null) {
-      throw new Error("Error: An empty polygon has no meaningful localCOM");
+      throw new Error("An empty polygon has no meaningful localCOM");
     }
     if (poly.lverts.next.next == null) {
       poly.localCOMx = poly.lverts.next.x;
@@ -1195,14 +1195,14 @@ export class ZPP_Body {
 
   getlocalCOM(): void {
     if (this.shapes.head == null) {
-      throw new Error("Error: Body has no shapes so cannot compute its localCOM");
+      throw new Error("Body has no shapes so cannot compute its localCOM");
     }
     this.validate_localCOM();
   }
 
   getworldCOM(): void {
     if (this.shapes.head == null) {
-      throw new Error("Error: Body has no shapes so cannot compute its worldCOM");
+      throw new Error("Body has no shapes so cannot compute its worldCOM");
     }
     this.validate_worldCOM();
   }
@@ -1211,7 +1211,7 @@ export class ZPP_Body {
 
   __immutable_midstep(): void {
     if (this.world) {
-      throw new Error("Error: Space::world is immutable");
+      throw new Error("Space::world is immutable");
     }
   }
 
@@ -1219,10 +1219,10 @@ export class ZPP_Body {
 
   clear(): void {
     if (this.space != null) {
-      throw new Error("Error: Cannot clear a Body if it is currently being used by a Space!");
+      throw new Error("Cannot clear a Body if it is currently being used by a Space!");
     }
     if (this.constraints.head != null) {
-      throw new Error("Error: Cannot clear a Body if it is currently being used by a constraint!");
+      throw new Error("Cannot clear a Body if it is currently being used by a constraint!");
     }
     while (this.shapes.head != null) {
       const s = this.shapes.pop_unsafe();
@@ -1333,7 +1333,7 @@ export class ZPP_Body {
   shapes_modifiable(): void {
     this.immutable_midstep("Body::shapes");
     if (this.type === 1 && this.space != null) {
-      throw new Error("Error: Cannot modifiy shapes of static object once added to Space");
+      throw new Error("Cannot modifiy shapes of static object once added to Space");
     }
   }
 

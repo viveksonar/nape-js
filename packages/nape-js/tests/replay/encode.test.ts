@@ -123,6 +123,77 @@ describe("encodeReplay / decodeReplay", () => {
       bytes[5] = 0;
       expect(() => decodeReplay(bytes)).toThrow(/unsupported version/);
     });
+
+    it("throws when buffer is truncated mid-payload", () => {
+      const replay = makeReplay<{ tag: string }>(5, (f) => (f === 2 ? { tag: "payload" } : null));
+      const full = encodeReplay(replay);
+      // Strip the last ~10 bytes — falls inside either the trailing keyframe
+      // count or the inputs section, depending on layout. Either way the
+      // DataView reads past the end and DataView throws RangeError, or the
+      // subarray decoding produces garbage — both are acceptable failures.
+      const truncated = full.slice(0, full.byteLength - 10);
+      expect(() => decodeReplay(truncated)).toThrow();
+    });
+
+    it("rejects future-version replays", () => {
+      // The current implementation accepts ONLY the exact REPLAY_VERSION —
+      // verify forward-incompatible files fail loudly rather than silently.
+      const replay = makeReplay(0);
+      const bytes = encodeReplay(replay);
+      // Bump version u16 at offset 4 → REPLAY_VERSION + 1
+      const futureVersion = bytes[4] + 1;
+      bytes[4] = futureVersion;
+      bytes[5] = 0;
+      expect(() => decodeReplay(bytes)).toThrow(/unsupported version/);
+    });
+
+    it("rejects a buffer that's too short to even hold the header", () => {
+      // Header alone is 4 (magic) + 2 (version) + 4 (frameCount) + 4
+      // (initLen) = 14 bytes. Anything less must fail at the first read.
+      const tiny = new Uint8Array(4); // just enough for the magic check
+      expect(() => decodeReplay(tiny)).toThrow();
+    });
+  });
+
+  describe("large frame jumps", () => {
+    it("encodes sparse input at very high frame index", () => {
+      // Inputs hold absolute frame indices (no delta encoding). A single
+      // input at frame 1,000,000 must round-trip without precision loss
+      // even though the encoder writes u32 frame indices directly.
+      const space = new Space(new Vec2(0, 600));
+      space.deterministic = true;
+      const ball = new Body(BodyType.DYNAMIC, new Vec2(0, 0));
+      ball.shapes.add(new Circle(10));
+      ball.space = space;
+      const r = new Recorder<{ marker: number }>(space, { keyframeEvery: 0 });
+      // Advance the recorder to a high frame index without stepping the
+      // space N million times — recordFrame() only increments a counter.
+      for (let i = 0; i < 999_999; i++) r.recordFrame(null);
+      r.recordFrame({ marker: 42 });
+      const replay = r.finish();
+      const decoded = decodeReplay<{ marker: number }>(encodeReplay(replay));
+      expect(decoded.frameCount).toBe(1_000_000);
+      expect(decoded.inputs).toHaveLength(1);
+      expect(decoded.inputs[0].frame).toBe(999_999);
+      expect(decoded.inputs[0].payload).toEqual({ marker: 42 });
+    });
+
+    it("encodes inputs with multi-frame gaps", () => {
+      // Inputs at frames 0, 5000, 10000 — the encoder writes absolute frame
+      // indices, so large gaps shouldn't affect anything beyond size.
+      const space = new Space(new Vec2(0, 600));
+      space.deterministic = true;
+      const r = new Recorder<{ n: number }>(space, { keyframeEvery: 0 });
+      r.recordFrame({ n: 0 });
+      for (let i = 1; i < 5000; i++) r.recordFrame(null);
+      r.recordFrame({ n: 1 });
+      for (let i = 5001; i < 10000; i++) r.recordFrame(null);
+      r.recordFrame({ n: 2 });
+      const replay = r.finish();
+      const decoded = decodeReplay<{ n: number }>(encodeReplay(replay));
+      expect(decoded.inputs.map((i) => i.frame)).toEqual([0, 5000, 10000]);
+      expect(decoded.inputs.map((i) => (i.payload as { n: number }).n)).toEqual([0, 1, 2]);
+    });
   });
 
   describe("output shape", () => {

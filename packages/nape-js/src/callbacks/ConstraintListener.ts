@@ -56,7 +56,7 @@ export class ConstraintListener extends Listener {
     ZPP_Listener.internal = false;
 
     if (handler == null) {
-      throw new Error("Error: ConstraintListener::handler cannot be null");
+      throw new Error("ConstraintListener::handler cannot be null");
     }
 
     let xevent: number;
@@ -104,7 +104,7 @@ export class ConstraintListener extends Listener {
 
   set handler(handler: (cb: ConstraintCallback) => void) {
     if (handler == null) {
-      throw new Error("Error: ConstraintListener::handler cannot be null");
+      throw new Error("ConstraintListener::handler cannot be null");
     }
     this.zpp_inner_zn.handler = handler;
   }
