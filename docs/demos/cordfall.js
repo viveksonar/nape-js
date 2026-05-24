@@ -1,5 +1,5 @@
 /**
- * Cordfall — cut the ropes and guide the payload safely down.
+ * Cordfall — cut the ropes, guide the payload to the goal.
  *
  * Mechanics:
  *  - A small circular payload hangs from DistanceJoints anchored to static pivots.
@@ -7,7 +7,9 @@
  *    the cut segment is removed (`joint.space = null`).
  *  - Spike sensors cause level failure.
  *  - Bubble helpers apply upward force to the payload when touching.
+ *  - Goal sensor triggers level completion.
  *  - 5 levels with a "next level" button on completion.
+ *  - Optional star rating based on ropes cut (fewer = better).
  *
  * Engine features showcased:
  *  - DistanceJoint + runtime joint removal
@@ -22,11 +24,13 @@ import {
 // ── Palette ───────────────────────────────────────────────────────────────
 const C_PAYLOAD  = 1;  // blue
 const C_ANCHOR   = 0;  // red   (static pivot discs)
+const C_GOAL     = 3;  // purple
 const C_SPIKE    = 4;  // orange
 const C_BUBBLE   = 2;  // green
 
 // ── CbTypes ──────────────────────────────────────────────────────────────
 const cbPayload = new CbType();
+const cbGoal    = new CbType();
 const cbSpike   = new CbType();
 const cbBubble  = new CbType();
 
@@ -39,6 +43,7 @@ const cbBubble  = new CbType();
 //    ropes   : [{ai, slack}]    – ai = anchor index; slack added to rest length
 //    spikes  : [{x,y,w,h}]      – spike sensor rectangles
 //    bubbles : [{x,y,r}]        – bubble sensor circles
+//    goal    : {x,y,r}          – goal sensor circle
 
 const LEVELS = [
   // ── Level 1 — single rope, no hazards ──────────────────────────────
@@ -48,6 +53,7 @@ const LEVELS = [
     ropes:   [{ ai: 0, slack: 10 }],
     spikes:  [],
     bubbles: [],
+    goal:    { x: W / 2, y: H * 0.80 },
   }),
 
   // ── Level 2 — two ropes, one spike ──────────────────────────────────
@@ -60,6 +66,7 @@ const LEVELS = [
     ropes:   [{ ai: 0, slack: 5 }, { ai: 1, slack: 5 }],
     spikes:  [{ x: W / 2 - 10, y: H * 0.62, w: 20, h: 16 }],
     bubbles: [],
+    goal:    { x: W * 0.75, y: H * 0.80 },
   }),
 
   // ── Level 3 — two ropes, bubble helper, spike on right ──────────────
@@ -72,6 +79,7 @@ const LEVELS = [
     ropes:   [{ ai: 0, slack: 0 }, { ai: 1, slack: 0 }],
     spikes:  [{ x: W * 0.70 - 10, y: H * 0.55, w: 20, h: 16 }],
     bubbles: [{ x: W * 0.28, y: H * 0.65, r: 28 }],
+    goal:    { x: W * 0.25, y: H * 0.80 },
   }),
 
   // ── Level 4 — three ropes, two spikes, bubble in middle ──────────────
@@ -88,6 +96,7 @@ const LEVELS = [
       { x: W * 0.68 - 10, y: H * 0.58, w: 20, h: 16 },
     ],
     bubbles: [{ x: W / 2, y: H * 0.68, r: 30 }],
+    goal:    { x: W / 2, y: H * 0.85 },
   }),
 
   // ── Level 5 — four ropes, spike gauntlet, two bubbles ────────────────
@@ -112,17 +121,21 @@ const LEVELS = [
       { x: W * 0.20, y: H * 0.72, r: 28 },
       { x: W * 0.80, y: H * 0.72, r: 28 },
     ],
+    goal: { x: W / 2, y: H * 0.87 },
   }),
 ];
 
 // ── Module-level state ────────────────────────────────────────────────────
 let _levelIdx     = 0;
 let _state        = "playing";  // "playing" | "won" | "lost"
+let _ropesCut     = 0;
+let _startRopes   = 0;
 
 let _payload      = null;
-let _joints       = [];         // { joint, anchor }
+let _joints       = [];         // { joint, ax, ay, bx, by } — world-space endpoints cached
 let _anchors      = [];         // static pivot bodies
-let _bubbles      = [];         // bubble sensor bodies
+let _bubbles      = [];         // { body, r }
+let _goalBody     = null;
 let _screenW      = 600;
 let _screenH      = 600;
 
@@ -146,14 +159,25 @@ function segmentsIntersect(ax, ay, bx, by, cx, cy, dx, dy) {
   return t >= 0 && t <= 1 && u >= 0 && u <= 1;
 }
 
+/** Distance from point (px,py) to segment (ax,ay)–(bx,by). */
+function pointSegDist(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay;
+  const lenSq = dx * dx + dy * dy;
+  if (lenSq === 0) return Math.hypot(px - ax, py - ay);
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lenSq));
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+}
+
 // ── Level builder ─────────────────────────────────────────────────────────
 function buildLevel(space, W, H) {
-  _state    = "playing";
-  _joints   = [];
-  _anchors  = [];
-  _bubbles  = [];
-  _payload  = null;
-  _cutting  = false;
+  _state      = "playing";
+  _ropesCut   = 0;
+  _joints     = [];
+  _anchors    = [];
+  _bubbles    = [];
+  _payload    = null;
+  _goalBody   = null;
+  _cutting    = false;
 
   const def = LEVELS[_levelIdx](W, H);
 
@@ -191,6 +215,7 @@ function buildLevel(space, W, H) {
     joint.space  = space;
     _joints.push({ joint, anchor });
   }
+  _startRopes = _joints.length;
 
   // Spikes (sensor polygons)
   for (const s of def.spikes) {
@@ -218,7 +243,23 @@ function buildLevel(space, W, H) {
     _bubbles.push(b);
   }
 
+  // Goal (sensor circle)
+  _goalBody = new Body(BodyType.STATIC, new Vec2(def.goal.x, def.goal.y));
+  const goalShape = new Circle(22);
+  goalShape.sensorEnabled = true;
+  goalShape.cbTypes.add(cbGoal);
+  _goalBody.shapes.add(goalShape);
+  _goalBody.userData._colorIdx = C_GOAL;
+  _goalBody.userData._kind = "goal";
+  _goalBody.space = space;
+
   // Interaction listeners
+  space.listeners.add(new InteractionListener(
+    CbEvent.BEGIN, InteractionType.SENSOR,
+    cbPayload, cbGoal,
+    () => { if (_state === "playing") _state = "won"; },
+  ));
+
   space.listeners.add(new InteractionListener(
     CbEvent.BEGIN, InteractionType.SENSOR,
     cbPayload, cbSpike,
@@ -256,6 +297,15 @@ function applyCut(space, x0, y0, x1, y1) {
   }
 }
 
+// ── Star rating ───────────────────────────────────────────────────────────
+function computeStars() {
+  if (_ropesCut === 0) return 3;       // shouldn't happen but guard
+  const fraction = _ropesCut / _startRopes;
+  if (fraction <= 0.5) return 3;
+  if (fraction <= 0.75) return 2;
+  return 1;
+}
+
 // ── HUD drawing ───────────────────────────────────────────────────────────
 function drawHUD(ctx, W, H) {
   // Level indicator
@@ -266,6 +316,10 @@ function drawHUD(ctx, W, H) {
   ctx.restore();
 
   if (_state === "won") {
+    const stars = computeStars();
+    const starStr = "★".repeat(stars) + "☆".repeat(3 - stars);
+
+    // Dark overlay
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,0.55)";
     ctx.fillRect(0, 0, W, H);
@@ -273,9 +327,18 @@ function drawHUD(ctx, W, H) {
     ctx.textAlign = "center";
     ctx.fillStyle = "#7ee787";
     ctx.font = "bold 32px system-ui, sans-serif";
-    ctx.fillText("Level Complete!", W / 2, H / 2 - 28);
+    ctx.fillText("Level Complete!", W / 2, H / 2 - 48);
 
-    const bw = 160, bh = 36, bx = W / 2 - bw / 2, by = H / 2 + 10;
+    ctx.fillStyle = "#ffa657";
+    ctx.font = "28px system-ui, sans-serif";
+    ctx.fillText(starStr, W / 2, H / 2 - 10);
+
+    ctx.fillStyle = "rgba(180,200,255,0.8)";
+    ctx.font = "14px monospace";
+    ctx.fillText(`Ropes cut: ${_ropesCut} / ${_startRopes}`, W / 2, H / 2 + 22);
+
+    // Button
+    const bw = 160, bh = 36, bx = W / 2 - bw / 2, by = H / 2 + 42;
     ctx.fillStyle = "#238636";
     ctx.beginPath();
     ctx.roundRect(bx, by, bw, bh, 6);
@@ -366,7 +429,7 @@ function hitNextButton(x, y, W, H) {
   const bw = _state === "won" ? 160 : 140;
   const bh = 36;
   const bx = W / 2 - bw / 2;
-  const by = H / 2 + 10;
+  const by = H / 2 + (_state === "won" ? 42 : 10);
   return x >= bx && x <= bx + bw && y >= by && y <= by + bh;
 }
 
