@@ -145,8 +145,6 @@ let _cutX0        = 0;  // visual start (original click position)
 let _cutY0        = 0;
 let _cutX1        = 0;  // visual end (current drag position)
 let _cutY1        = 0;
-let _cutPrevX     = 0;  // previous drag position for per-frame intersection test
-let _cutPrevY     = 0;
 
 // ── Geometry helpers ─────────────────────────────────────────────────────
 
@@ -496,21 +494,19 @@ export default {
     }
   },
 
-  drag(x, y, space) {
+  drag(x, y) {
     if (_state !== "playing") return;
     if (!_cutting) {
       _cutting = true;
-      _cutX0 = x; _cutY0 = y;   // visual start — fixed for this stroke
-      _cutPrevX = x; _cutPrevY = y;
+      _cutX0 = x; _cutY0 = y;
     }
-    _cutX1 = x; _cutY1 = y;     // visual end — tracks current position
-    // Intersect prev→current segment so fast swipes still register
-    const px = _cutPrevX, py = _cutPrevY;
-    _cutPrevX = x; _cutPrevY = y;
-    applyCut(space, px, py, x, y);
+    _cutX1 = x; _cutY1 = y;
   },
 
   release(space) {
+    if (_cutting) {
+      applyCut(space, _cutX0, _cutY0, _cutX1, _cutY1);
+    }
     _cutting = false;
   },
 
