@@ -136,6 +136,8 @@ let _joints       = [];         // { joint, ax, ay, bx, by } — world-space end
 let _anchors      = [];         // static pivot bodies
 let _bubbles      = [];         // { body, r }
 let _goalBody     = null;
+let _screenW      = 600;
+let _screenH      = 600;
 
 // Cut stroke state
 let _cutting      = false;
@@ -446,6 +448,8 @@ export default {
   workerCompatible: false,
 
   setup(space, W, H) {
+    _screenW = W;
+    _screenH = H;
     space.gravity = new Vec2(0, 400);
     buildLevel(space, W, H);
   },
@@ -476,35 +480,32 @@ export default {
     }
   },
 
-  click(x, y, space, W, H) {
-    if (hitNextButton(x, y, W, H)) {
-      // Advance or restart
+  click(x, y, space) {
+    if (hitNextButton(x, y, _screenW, _screenH)) {
       if (_state === "won") {
         _levelIdx = _levelIdx < LEVELS.length - 1 ? _levelIdx + 1 : 0;
-      } else {
-        // _state === "lost": retry same level
       }
-      // Clear all bodies and rebuild
+      // "lost": retry same level — _levelIdx unchanged
       for (const b of [...space.bodies]) b.space = null;
       for (const c of [...space.constraints]) c.space = null;
-      buildLevel(space, W, H);
+      buildLevel(space, _screenW, _screenH);
     }
   },
 
-  drag(x, y) {
+  drag(x, y, space) {
     if (_state !== "playing") return;
     if (!_cutting) {
       _cutting = true;
       _cutX0 = x; _cutY0 = y;
     }
     _cutX1 = x; _cutY1 = y;
+    // Test on every drag frame so fast swipes still register
+    applyCut(space);
+    // Start new segment from current position for next frame
+    _cutX0 = x; _cutY0 = y;
   },
 
-  release(x, y, space) {
-    if (_cutting) {
-      _cutX1 = x; _cutY1 = y;
-      applyCut(space);
-    }
+  release(space) {
     _cutting = false;
   },
 
