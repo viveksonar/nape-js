@@ -316,9 +316,6 @@ function drawHUD(ctx, W, H) {
   ctx.restore();
 
   if (_state === "won") {
-    const stars = computeStars();
-    const starStr = "★".repeat(stars) + "☆".repeat(3 - stars);
-
     // Dark overlay
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,0.55)";
@@ -327,18 +324,10 @@ function drawHUD(ctx, W, H) {
     ctx.textAlign = "center";
     ctx.fillStyle = "#7ee787";
     ctx.font = "bold 32px system-ui, sans-serif";
-    ctx.fillText("Level Complete!", W / 2, H / 2 - 48);
-
-    ctx.fillStyle = "#ffa657";
-    ctx.font = "28px system-ui, sans-serif";
-    ctx.fillText(starStr, W / 2, H / 2 - 10);
-
-    ctx.fillStyle = "rgba(180,200,255,0.8)";
-    ctx.font = "14px monospace";
-    ctx.fillText(`Ropes cut: ${_ropesCut} / ${_startRopes}`, W / 2, H / 2 + 22);
+    ctx.fillText("Level Complete!", W / 2, H / 2 - 28);
 
     // Button
-    const bw = 160, bh = 36, bx = W / 2 - bw / 2, by = H / 2 + 42;
+    const bw = 160, bh = 36, bx = W / 2 - bw / 2, by = H / 2 + 10;
     ctx.fillStyle = "#238636";
     ctx.beginPath();
     ctx.roundRect(bx, by, bw, bh, 6);
@@ -429,7 +418,7 @@ function hitNextButton(x, y, W, H) {
   const bw = _state === "won" ? 160 : 140;
   const bh = 36;
   const bx = W / 2 - bw / 2;
-  const by = H / 2 + (_state === "won" ? 42 : 10);
+  const by = H / 2 + 10;
   return x >= bx && x <= bx + bw && y >= by && y <= by + bh;
 }
 
