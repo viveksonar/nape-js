@@ -21,6 +21,10 @@ import {
   DistanceJoint, CbType, CbEvent, InteractionListener, InteractionType,
 } from "../nape-js.esm.js";
 
+// ── Constants ─────────────────────────────────────────────────────────────
+const PAYLOAD_RADIUS = 14;       // must match the Circle radius in buildLevel
+const BUBBLE_FORCE   = 280;      // upward force (units/s) applied inside a bubble
+
 // ── Palette ───────────────────────────────────────────────────────────────
 const C_PAYLOAD  = 1;  // blue
 const C_ANCHOR   = 0;  // red   (static pivot discs)
@@ -132,9 +136,9 @@ let _ropesCut     = 0;
 let _startRopes   = 0;
 
 let _payload      = null;
-let _joints       = [];         // { joint, ax, ay, bx, by } — world-space endpoints cached
+let _joints       = [];         // { joint, anchor } — anchor is the static pivot body
 let _anchors      = [];         // static pivot bodies
-let _bubbles      = [];         // { body, r }
+let _bubbles      = [];         // bubble sensor bodies
 let _goalBody     = null;
 let _screenW      = 600;
 let _screenH      = 600;
@@ -157,15 +161,6 @@ function segmentsIntersect(ax, ay, bx, by, cx, cy, dx, dy) {
   const t = ((cx - ax) * dyCD - (cy - ay) * dxCD) / denom;
   const u = ((cx - ax) * dyAB - (cy - ay) * dxAB) / denom;
   return t >= 0 && t <= 1 && u >= 0 && u <= 1;
-}
-
-/** Distance from point (px,py) to segment (ax,ay)–(bx,by). */
-function pointSegDist(px, py, ax, ay, bx, by) {
-  const dx = bx - ax, dy = by - ay;
-  const lenSq = dx * dx + dy * dy;
-  if (lenSq === 0) return Math.hypot(px - ax, py - ay);
-  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lenSq));
-  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
 }
 
 // ── Level builder ─────────────────────────────────────────────────────────
@@ -193,7 +188,7 @@ function buildLevel(space, W, H) {
 
   // Payload
   _payload = new Body(BodyType.DYNAMIC, new Vec2(def.payload.x, def.payload.y));
-  _payload.shapes.add(new Circle(14, undefined, new Material(0.4, 0.3, 0.2, 2)));
+  _payload.shapes.add(new Circle(PAYLOAD_RADIUS, undefined, new Material(0.4, 0.3, 0.2, 2)));
   _payload.userData._colorIdx = C_PAYLOAD;
   _payload.userData._kind = "payload";
   _payload.cbTypes.add(cbPayload);
@@ -269,27 +264,23 @@ function buildLevel(space, W, H) {
 
 // ── Rope endpoint helpers ─────────────────────────────────────────────────
 
-/** Return current world-space endpoints {ax,ay,bx,by} for a joint entry. */
+/** Return current world-space endpoints {ax,ay,bx,by} for a joint entry.
+ *  Only call this when jEntry.joint.space != null and _payload != null. */
 function ropeEndpoints(jEntry) {
-  const j = jEntry.joint;
-  // anchor1 is the static pivot, anchor2 is the payload
   const b1 = jEntry.anchor;
-  const b2 = _payload;
-  if (!b1 || !b2 || !j.space) return null;
-  // The joint anchors are defined at the body COM (Vec2(0,0)), so world
-  // position == body position for both.
+  // Joint anchors are Vec2(0,0) in local space → world position == body position.
   return {
     ax: b1.position.x, ay: b1.position.y,
-    bx: b2.position.x, by: b2.position.y,
+    bx: _payload.position.x, by: _payload.position.y,
   };
 }
 
 // ── Cut logic ─────────────────────────────────────────────────────────────
 function applyCut(space, x0, y0, x1, y1) {
+  if (!_payload) return;
   for (const jEntry of _joints) {
     if (!jEntry.joint.space) continue;
     const ep = ropeEndpoints(jEntry);
-    if (!ep) continue;
     if (segmentsIntersect(x0, y0, x1, y1, ep.ax, ep.ay, ep.bx, ep.by)) {
       jEntry.joint.space = null;
       _ropesCut++;
@@ -299,7 +290,6 @@ function applyCut(space, x0, y0, x1, y1) {
 
 // ── Star rating ───────────────────────────────────────────────────────────
 function computeStars() {
-  if (_ropesCut === 0) return 3;       // shouldn't happen but guard
   const fraction = _ropesCut / _startRopes;
   if (fraction <= 0.5) return 3;
   if (fraction <= 0.75) return 2;
@@ -449,18 +439,22 @@ export default {
       const py = _payload.position.y;
       for (const b of _bubbles) {
         if (!b.space) continue;
-        const r = b.userData._r + 14; // 14 = payload radius
+        const r = b.userData._r + PAYLOAD_RADIUS;
         const dx = px - b.position.x;
         const dy = py - b.position.y;
         if (dx * dx + dy * dy < r * r) {
-          _payload.applyImpulse(new Vec2(0, -280 * (1 / 60)));
+          _payload.applyImpulse(new Vec2(0, -(BUBBLE_FORCE / 60)));
         }
       }
     }
 
     // Payload fell off-screen with no ropes left → level fail
     const hasRope = _joints.some((j) => j.joint.space != null);
-    if (!hasRope && (_payload.position.y > _screenH + 60 || _payload.position.x < -60 || _payload.position.x > _screenW + 60)) {
+    if (_payload && !hasRope && (
+      _payload.position.y > _screenH + 60 ||
+      _payload.position.x < -60 ||
+      _payload.position.x > _screenW + 60
+    )) {
       _state = "lost";
     }
 
@@ -480,6 +474,7 @@ export default {
       // "lost": retry same level — _levelIdx unchanged
       for (const b of [...space.bodies]) b.space = null;
       for (const c of [...space.constraints]) c.space = null;
+      for (const l of [...space.listeners]) l.space = null;
       buildLevel(space, _screenW, _screenH);
     }
   },
