@@ -24,6 +24,7 @@ export const GAME_DEMO_IDS = new Set([
   "portals",
   "arena-defense",
   "floppy-fists",
+  "cordfall",
 ]);
 
 export const CATEGORIES = [
