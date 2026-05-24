@@ -141,10 +141,12 @@ let _screenH      = 600;
 
 // Cut stroke state
 let _cutting      = false;
-let _cutX0        = 0;
+let _cutX0        = 0;  // visual start (original click position)
 let _cutY0        = 0;
-let _cutX1        = 0;
+let _cutX1        = 0;  // visual end (current drag position)
 let _cutY1        = 0;
+let _cutPrevX     = 0;  // previous drag position for per-frame intersection test
+let _cutPrevY     = 0;
 
 // ── Geometry helpers ─────────────────────────────────────────────────────
 
@@ -285,15 +287,12 @@ function ropeEndpoints(jEntry) {
 }
 
 // ── Cut logic ─────────────────────────────────────────────────────────────
-function applyCut(space) {
+function applyCut(space, x0, y0, x1, y1) {
   for (const jEntry of _joints) {
     if (!jEntry.joint.space) continue;
     const ep = ropeEndpoints(jEntry);
     if (!ep) continue;
-    if (segmentsIntersect(
-      _cutX0, _cutY0, _cutX1, _cutY1,
-      ep.ax, ep.ay, ep.bx, ep.by,
-    )) {
+    if (segmentsIntersect(x0, y0, x1, y1, ep.ax, ep.ay, ep.bx, ep.by)) {
       jEntry.joint.space = null;
       _ropesCut++;
     }
@@ -501,13 +500,14 @@ export default {
     if (_state !== "playing") return;
     if (!_cutting) {
       _cutting = true;
-      _cutX0 = x; _cutY0 = y;
+      _cutX0 = x; _cutY0 = y;   // visual start — fixed for this stroke
+      _cutPrevX = x; _cutPrevY = y;
     }
-    _cutX1 = x; _cutY1 = y;
-    // Test on every drag frame so fast swipes still register
-    applyCut(space);
-    // Start new segment from current position for next frame
-    _cutX0 = x; _cutY0 = y;
+    _cutX1 = x; _cutY1 = y;     // visual end — tracks current position
+    // Intersect prev→current segment so fast swipes still register
+    const px = _cutPrevX, py = _cutPrevY;
+    _cutPrevX = x; _cutPrevY = y;
+    applyCut(space, px, py, x, y);
   },
 
   release(space) {
