@@ -472,6 +472,11 @@ export default {
       }
     }
 
+    // Payload fell off-screen → treat as level fail
+    if (_payload.position.y > _screenH + 60 || _payload.position.x < -60 || _payload.position.x > _screenW + 60) {
+      _state = "lost";
+    }
+
     // Remove joints whose bodies have left the space (safety)
     for (const jEntry of _joints) {
       if (jEntry.joint.space && (!_payload || !_payload.space)) {
